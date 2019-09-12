@@ -3,5 +3,7 @@ from django.http import HttpResponse
 
 # Create your views here.
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+def expe(request):
+
+    link1 = 'http://diran.univ-littoral.fr/api/images/bathroom/bathroom_00200.png'
+    return render(request, 'expe/expe.html', {'expe_name': 'test_expe', 'link1': link1})
