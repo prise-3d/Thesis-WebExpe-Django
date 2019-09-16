@@ -1,12 +1,26 @@
-{% extends 'expe/base.html' %}
+{% extends 'base.html' %}
+
+{% load staticfiles %}
 
 {% block title %}
     Expe {{ expe_name }}
 {% endblock %}
 
 {% block content %}
-    <p>Display reconstructed image here</p>
+    
+    {% if request.session.begin %}
+        <h3>{{ question }}</h3>
+        <p>{{ indication }}</p>
+    {% endif %}
+    
+    <!-- TODO : Load    img from bitmap with javascript `loadImg.js` -->
+    {% if not request.session.begin %}
+        <img id="expeImg" src="/{{img_merged_path}}" data-img="{{request.session.img_merged}}"/>
+    {% endif %}
 
-    <!-- TODO : Load img from bitmap with javascript `loadImg.js` -->
-    <img src="{{ link1 }}"/>
+    {% block javascripts %}
+        <script src="{% static "js/pnglib.js" %}"></script>
+        <script src="{% static "js/loadImg.js" %}"></script>
+        <script src="{% static "js/keyEvents.js" %}"></script>
+    {% endblock %}
 {% endblock %}
