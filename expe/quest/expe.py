@@ -87,12 +87,7 @@ for i in range(5):
     #current_image = Image.open(image_path)
     current_image= get_image(diran_domain_name, dataset, next_stim)
     crop_image, percentage, orientation, position = crop_images(image_ref, current_image)
-    img = visual.ImageStim(win=mywin, image=crop_image)
-    img.draw()
-    mywin.flip()
-    start = time.time()
-    key_answer = event.waitKeys(keyList=["left","right"])
-    end = time.time()
+
     answerTime.append(end-start)
     if key_answer == ['left']:
         answer = 1 #one image
