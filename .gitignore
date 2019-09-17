@@ -115,5 +115,5 @@ GitHub.sublime-settings
 !.vscode/extensions.json 
 .history
 
-expe_results
+# exclude media folder
 media

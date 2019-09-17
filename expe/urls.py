@@ -8,6 +8,7 @@ from . import views
 urlpatterns = [
     path('', views.expe_list, name='expe_list'),
     path('expe', views.expe, name='expe'),
+    path('indications', views.indications, name='indications'),
 ]
 
 if settings.DEBUG is True:

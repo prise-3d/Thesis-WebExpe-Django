@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+    Expe {{ expe_name }}
+{% endblock %}
+
+{% block content %}
+    
+    <h3>{{question}}</h3>
+    <p>{{indication}}</p>
+
+    <br />
+    <p>Press enter to begin experience</p>
+    
+    {% block javascripts %}
+        <script src="{% static "js/indications.js" %}"></script>
+    {% endblock %}
+{% endblock %}
