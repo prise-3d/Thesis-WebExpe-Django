@@ -7,6 +7,11 @@ import pandas as pd
 # TODO : Currently `weibull` is not used as default function
 # from psychometric import weibull
 
+
+# PARAMETERS of the psychometric function
+chance_level = 0 #e.g. chance_level should be 0.5 for 2AFC (Two-alternative forced choice) procedure
+threshold_prob = 1.-(1.-chance_level)/2.0 #the probability level at the threshold
+
 def reformat_params(params):
     '''Unroll multiple lists into array of their products.'''
     if isinstance(params, list):
@@ -17,6 +22,26 @@ def reformat_params(params):
         params = params[:, np.newaxis]
     return params
 
+
+# quest_plus.py comes also with psychometric.py wich includes the definition of the weibull and weibull_db function
+# here I define the logistic function using the same template that works with the quest_plus implementation
+def logistic(x, params, corr_at_thresh=threshold_prob, chance_level=chance_level):
+        # unpack params
+        if len(params) == 3:
+            THRESHOLD, SLOPE, lapse = params
+        else:
+            THRESHOLD, SLOPE = params
+            lapse = 0.
+
+        b = 4 * SLOPE
+        a = -b * THRESHOLD
+
+        return chance_level + (1 - lapse - chance_level) / (1 + np.exp(-(a + b*x)))
+    
+
+# that's a wrapper function to specify wich  psychometric function one we want to use for the QUEST procedure
+def psychometric_fun( x , params ):
+    return logistic(x , params ,  corr_at_thresh=threshold_prob, chance_level=chance_level)
 
 # TODO:
 # - [ ] highlight lowest point in entropy in plot

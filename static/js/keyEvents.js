@@ -4,11 +4,6 @@ document.onkeydown = checkKey;
 urlParams = new URLSearchParams(window.location.search);
 
 // Utils informations
-var host     = window.location.host
-var pathname = window.location.pathname
-var baseUrl  = location.protocol + "//" + host + pathname
-
-
 var KEYCODE_Q           = '81'
 var KEYCODE_ENTER       = '13'
 var KEYCODE_LEFT_ARROW  = '37'
@@ -21,9 +16,6 @@ if (urlParams.has('scene')){
    var expe  = urlParams.get('expe')
 }
 
-console.log(scene)
-console.log(expe)
-
 function checkKey(e) {
 
    e = e || window.event;
@@ -31,13 +23,15 @@ function checkKey(e) {
    if (e.keyCode == '81') {
       // `q` for quit expe
       console.log('`q` key is pressed')
-      window.location = ''
+      window.location = baseUrl
    }
    else if (e.keyCode == '13') {
 
+      console.log("Here")
       // check if experience is begin
       if (!BEGIN_EXPE){
 
+         console.log("And Here")
          // right arrow
          window.location = window.location.href + "&begin=true"
       } 
@@ -69,12 +63,10 @@ function checkKey(e) {
             // increment step
             iteration++;
          }
-
-         var params = "?scene=" + scene + "&expe=" + expe + "&begin=true&iteration=" + iteration + "&answer=" + answer
          
-         console.log(baseUrl)
-
-         window.location = baseUrl + params
+         // construct url with params for experience
+         var params = "?scene=" + scene + "&expe=" + expe + "&iteration=" + iteration + "&answer=" + answer
+         window.location = baseExpeUrl + params
       }
    }
 }

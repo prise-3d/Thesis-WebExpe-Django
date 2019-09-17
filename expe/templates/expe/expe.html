@@ -8,22 +8,30 @@
 
 {% block content %}
     
-    {% if request.session.begin %}
-        <h3>{{ question }}</h3>
-        <p>{{ indication }}</p>
+    {% if request.session.expe_finished %}
+        <h3>{{end_text}}</h3>
 
         <br />
-        <p>Press enter to begin experience</p>
+        <p>You will be redirected in <span id="refreshTime">5</span> sec to home page</p>
     {% endif %}
-    
+
     <!-- TODO : Load    img from bitmap with javascript `loadImg.js` -->
-    {% if not request.session.begin %}
+    {% if not request.session.expe_finished %}
         <img id="expeImg" src="/{{img_merged_path}}" data-img="{{request.session.img_merged}}"/>
     {% endif %}
 
     {% block javascripts %}
         <script type="text/javascript"> 
-            var BEGIN_EXPE = "{{request.session.begin}}"
+            // Utils informations
+            var host     = window.location.host
+            var pathname = window.location.pathname
+
+            var baseUrl      = location.protocol + "//" + host
+            var baseExpeUrl  = location.protocol + "//" + host + pathname
+
+            // get access to django variables
+            var BEGIN_EXPE = "{{request.session.expe_started}}"
+            var END_EXPE   = "{{request.session.expe_finished}}"
         </script>
         <script src="{% static "js/loadImg.js" %}"></script>
         <script src="{% static "js/keyEvents.js" %}"></script>

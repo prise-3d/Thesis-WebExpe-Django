@@ -1,8 +1,10 @@
-
-from PIL import Image
+# main imports
 import os
 import numpy as np
 import random
+
+# processing imports
+from PIL import Image
 
 def crop_images(img1, img2, per=None, orien=None, swap_img=None):
     '''
