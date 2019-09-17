@@ -5,6 +5,7 @@ GET_SCENE_IMAGE_API_URL     = DIRAN_DOMAIN_NAME + "api/getImage?sceneName={0}&im
 GET_SCENES_API_URL          = DIRAN_DOMAIN_NAME + "api/listScenes"
 
 # folder variables
+model_expe_folder           = "expes_models/{0}/"
 output_expe_folder          = "expes_results/{0}/"
 output_tmp_folder           = "tmp"
 

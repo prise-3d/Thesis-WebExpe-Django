@@ -22,7 +22,9 @@
     {% endif %}
 
     {% block javascripts %}
-        <script src="{% static "js/pnglib.js" %}"></script>
+        <script type="text/javascript"> 
+            var BEGIN_EXPE = "{{request.session.begin}}"
+        </script>
         <script src="{% static "js/loadImg.js" %}"></script>
         <script src="{% static "js/keyEvents.js" %}"></script>
     {% endblock %}
