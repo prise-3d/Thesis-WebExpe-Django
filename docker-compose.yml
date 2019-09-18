@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+
+    webexpe:
+        container_name: webexpeinstance
+        image: djangowebexpe
+        restart: always
+        volumes:
+            - "./media:/usr/src/media" # get access to log files
+        ports:
+           - "8000:8000"
