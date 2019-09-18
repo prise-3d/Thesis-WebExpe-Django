@@ -5,3 +5,4 @@ questplus
 psychopy
 pandas
 requests
+docker-compose

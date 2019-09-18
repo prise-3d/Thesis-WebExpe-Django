@@ -11,7 +11,7 @@ run:
 	@echo "----------------------------------------------------------------"
 	@echo "Process to run new instance"
 	@echo "----------------------------------------------------------------"
-	docker run -p 8000:8000 -it -d --name webexpeinstance djangowebexpe
+	docker-compose up
 	@echo "----------------------------------------------------------------"
 	@echo "Your docker instance is now launched with name 'webexpeinstance'"
 	@echo "Your website is now accessible at http://localhost:8000"
