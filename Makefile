@@ -4,7 +4,7 @@ build:
 	@echo "----------------------------------------------------------------"
 	docker build --no-cache . --tag djangowebexpe
 	@echo "----------------------------------------------------------------"
-	@echo "Image is now build you can run instance using 'make run'
+	@echo "Image is now build you can run instance using 'make run'"
 	@echo "----------------------------------------------------------------"
 
 run: 
