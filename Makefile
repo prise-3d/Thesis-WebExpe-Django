@@ -1,7 +1,3 @@
-# get information about webexpeinstance
-WEBEXPE_RUN=$(docker ps | grep webexpeinstance)
-WEBEXPE_STOP=$(docker ps -a | grep webexpeinstance)
-
 build:
 	@echo "----------------------------------------------------------------"
 	@echo "Update of djangowebexpe image"

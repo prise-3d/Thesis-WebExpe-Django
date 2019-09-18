@@ -23,14 +23,16 @@ def run_quest_one_image(request, model_filepath, output_file):
     expe_name = request.session.get('expe')
 
     # by default
-    iterations = 0
+    iteration = 0
+
+    # used to stop when necessary
+    if 'iteration' in request.GET:
+        iteration = int(request.GET.get('iteration'))
 
     # first time only init `quest`
     # if experience is started we can save data
     if request.session.get('expe_started'):
         answer = int(request.GET.get('answer'))
-        iterations = int(request.GET.get('iteration'))
-
         answer_time = time.time() - request.session['answer_time']
         print("Answer time is ", answer_time)
         previous_percentage = request.session.get('expe_percentage')
@@ -51,7 +53,7 @@ def run_quest_one_image(request, model_filepath, output_file):
         qp = pickle.load(filehandler)
     
     # construct image and update `quest` only if necessary
-    if iterations < cfg.expes_configuration[expe_name]['params']['iterations']:
+    if iteration < cfg.expes_configuration[expe_name]['params']['iterations']:
         # process `quest`
         next_stim = qp.next_contrast()
         print("Next quality ", next_stim)
@@ -72,7 +74,7 @@ def run_quest_one_image(request, model_filepath, output_file):
         # TODO : check `i` variable 
         # update of `quest`
         # qp.update(qualities[i], answer)
-        qp.update(qualities[iterations], answer) 
+        qp.update(qualities[iteration], answer) 
         entropy = qp.get_entropy()
 
         line = str(next_stim) 

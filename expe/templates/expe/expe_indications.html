@@ -9,10 +9,10 @@
 {% block content %}
     
     <h3>{{question}}</h3>
-    <p>{{indication}}</p>
-
     <br />
-    <p>Press enter to begin experience</p>
+    <h5>{{indication}}</h5>
+
+    <p id="expeIndication"><strong>Press enter to begin experience</strong></p>
     
     {% block javascripts %}
         <script src="{% static "js/indications.js" %}"></script>
