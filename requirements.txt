@@ -4,4 +4,4 @@ Pillow
 questplus
 psychopy
 pandas
-psychometric
+requests

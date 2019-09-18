@@ -11,7 +11,7 @@ Web site which contains experiences on synthesis images (perception of noise).
 You need to have python, pip
 
 ```
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 ## Run server
