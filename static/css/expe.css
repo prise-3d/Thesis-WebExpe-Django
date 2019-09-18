@@ -1,5 +1,5 @@
 body {
-    background-color: grey;
+    background-color: lightgrey;
 }
 
 .container{
@@ -9,4 +9,8 @@ body {
 
 #expeImg{
     display: none;
+}
+
+#expeIndication{
+    margin-top: 30%;
 }

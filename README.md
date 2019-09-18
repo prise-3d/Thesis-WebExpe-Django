@@ -6,15 +6,17 @@ Web site which contains experiences on synthesis images (perception of noise).
 
 ## Installation
 
-## Requirements
+### 1. Manually
+
+#### Requirements
 
 You need to have python, pip
 
 ```
-pip install -r requirements.txt
+pip install -r requirementst.txt
 ```
 
-## Run server
+#### Run server
 
 And then, run the server :
 
@@ -28,6 +30,27 @@ or if you want to precise a specific port number :
 python project/manage.py runserver 8080
 ```
 
+### 2. Using docker (recommended)
+
+You can use make commands:
+
+```
+make build
+```
+
+```
+make run
+```
+
+Or simply:
+
+```
+make deploy
+```
+
+Will run `build` and `run` commands at once.
+
+You also have `stop` and `remove` commands to stop and remove current generated docker instance.
 
 ## How to contribute ?
 
