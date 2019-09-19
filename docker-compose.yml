@@ -7,6 +7,6 @@ services:
         image: djangowebexpe
         restart: always
         volumes:
-            - "./media:/usr/src/media" # get access to log files
+            - "./media:/usr/src/app/media" # get access to log files
         ports:
            - "8000:8000"
