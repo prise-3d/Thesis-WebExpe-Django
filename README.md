@@ -51,9 +51,9 @@ make deploy
 Will run `build` and `run` commands at once.
 
 You also have `stop`, `remove`, `clean` commands:
-- `stop`: stop current container instance
-- `remove`: stop and remove container instance
-- `clean`: stop and remove container instance. Also remove docker image
+- `stop`: stop current container instance if exists
+- `remove`: stop and remove container instance if exists
+- `clean`: remove docker image if exists
 
 ## How to contribute ?
 
