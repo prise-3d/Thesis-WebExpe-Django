@@ -25,7 +25,7 @@ SECRET_KEY = 'lsz*#tezp#cp+xowok*+tddp*5((%o27(6i$1tneykf9*y4gyg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["diran.univ-littoral.fr", "localhost", "127.0.0.1"]
 
 
 # Application definition
