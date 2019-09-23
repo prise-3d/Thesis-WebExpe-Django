@@ -5,10 +5,15 @@ from django.conf.urls.static import static
 
 from . import views
 
+app_name = 'expe'
+
 urlpatterns = [
     path('', views.expe_list, name='expe_list'),
     path('expe', views.expe, name='expe'),
     path('indications', views.indications, name='indications'),
+    path('admin/results', views.list_results, name='results'),
+    path('admin/results/<str:expe>', views.list_results, name='results_expe'),
+    path('admin/download', views.download_result, name='download')
 ]
 
 if settings.DEBUG is True:
