@@ -2,6 +2,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 # main imports
 import os
@@ -12,6 +14,9 @@ import numpy as np
 from datetime import datetime
 import pickle 
 import time
+import zipfile
+from io import StringIO
+
 
 # expe imports
 from .expes.quest_plus import QuestPlus
@@ -38,6 +43,9 @@ def expe_list(request):
 
     # get list of experiences
     expes = cfg.expe_name_list
+
+    # by default user restart expe
+    request.session['expe_started'] = False
 
     return render(request, 'expe/expe_list.html', {'scenes': scenes, 'expes': expes})
 
@@ -80,12 +88,12 @@ def expe(request):
 
     # create output folder for expe_result
     current_day = datetime.strftime(datetime.utcnow(), "%Y-%m-%d")
-    results_folder = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder.format(current_day))
+    results_folder = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder_name_day.format(expe_name, current_day))
 
     if not os.path.exists(results_folder):
         os.makedirs(results_folder)
 
-    result_filename = expe_name + '_' + scene_name + '_' + request.session.get('id') + '_' + request.session.get('timestamp') +".csv"
+    result_filename = scene_name + '_' + request.session.get('id') + '_' + request.session.get('timestamp') +".csv"
     results_filepath = os.path.join(results_folder, result_filename)
 
     if not os.path.exists(results_filepath):
@@ -95,7 +103,7 @@ def expe(request):
         output_file = open(results_filepath, 'a')
 
     # create `quest` object if not exists    
-    models_folder = os.path.join(settings.MEDIA_ROOT, cfg.model_expe_folder.format(current_day))
+    models_folder = os.path.join(settings.MEDIA_ROOT, cfg.model_expe_folder.format(expe_name, current_day))
 
     if not os.path.exists(models_folder):
         os.makedirs(models_folder)
@@ -134,8 +142,85 @@ def expe(request):
     return render(request, 'expe/expe.html', data)
 
 
-def refresh_data(request, expe_name, scene_name):
+@login_required(login_url="login/")
+def list_results(request, expe=None):
+    """
+    Return all results obtained from experiences
+    """
 
+    if expe is None:
+        folders = cfg.expe_name_list
+    else:
+        if expe in cfg.expe_name_list:
+            folder_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder, expe)
+
+            # init folder dictionnary
+            folders = {}
+
+            print(folder_path)
+
+            if os.path.exists(folder_path):
+            
+                days = os.listdir(folder_path)
+                print(days)
+
+                folder = {}
+
+                for day in days:
+                    day_path = os.path.join(folder_path, day)
+                    filenames = os.listdir(day_path)
+                    print(filenames)
+                    folders[day] = filenames
+        else:
+            raise Http404("Expe does not exists")
+
+    return render(request, 'expe/expe_results.html', {'expe': expe, 'folders': folders})
+
+
+@login_required(login_url="login/")
+def getfiles(request):
+    
+    day = request.POST.get('day')   
+
+    # get files from a specific day
+    folder_path = os.path.join(settings.MEDIA_ROOT, cfg.model_expe_folder.format(day))
+    filenames = os.listdir(folder_path)
+
+    # Folder name in ZIP archive which contains the above files
+    # E.g [thearchive.zip]/somefiles/file2.txt
+    # FIXME: Set this to something better
+    zip_subdir = "somefiles"
+    zip_filename = "%s.zip" % zip_subdir
+
+    # Open StringIO to grab in-memory ZIP contents
+    s = StringIO.StringIO()
+
+    # The zip compressor
+    zf = zipfile.ZipFile(s, "w")
+
+    for fpath in filenames:
+        # Calculate path for file in zip
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(zip_subdir, fname)
+
+        # Add file, at correct path
+        zf.write(fpath, zip_path)
+
+    # Must close zip for all contents to be written
+    zf.close()
+
+    # Grab ZIP file from in-memory, make response with correct MIME-type
+    resp = HttpResponse(s.getvalue(), mimetype = "application/x-zip-compressed")
+    # ..and correct content-disposition
+    resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+
+    return resp
+
+
+def refresh_data(request, expe_name, scene_name):
+    '''
+    Utils method to refresh data from session
+    '''
     request.session['expe'] = expe_name
     request.session['scene'] = scene_name
 
@@ -151,3 +236,5 @@ def refresh_data(request, expe_name, scene_name):
     #ref_image = api.get_image(scene_name, 'max')
     # save ref image as list (can't save python object)
     #request.session['ref_img'] = np.array(ref_image).tolist()
+
+
