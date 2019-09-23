@@ -214,16 +214,21 @@ def download_result(request):
             zf.close()
 
             output_filename = zip_filename
+            content = s.getvalue()
 
         else:
             
+            with open(folder_path, 'rb') as f:
+                content = f.readlines()
+
             # filename only
-            output_filename = folder_path
+            fdir, fname = os.path.split(path)
+            output_filename = fname
 
         # Grab ZIP file from in-memory, make response with correct MIME-type
-        resp = HttpResponse(s.getvalue(), content_type="application/gzip")
+        resp = HttpResponse(content, content_type="application/gzip")
         # ..and correct content-disposition
-        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+        resp['Content-Disposition'] = 'attachment; filename=%s' % output_filename
 
         return resp
 
