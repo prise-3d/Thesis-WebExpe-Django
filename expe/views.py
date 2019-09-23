@@ -15,7 +15,7 @@ from datetime import datetime
 import pickle 
 import time
 import zipfile
-from io import StringIO
+from io import BytesIO
 
 
 # expe imports
@@ -157,14 +157,9 @@ def list_results(request, expe=None):
             # init folder dictionnary
             folders = {}
 
-            print(folder_path)
-
             if os.path.exists(folder_path):
             
                 days = os.listdir(folder_path)
-                print(days)
-
-                folder = {}
 
                 for day in days:
                     day_path = os.path.join(folder_path, day)
@@ -178,43 +173,63 @@ def list_results(request, expe=None):
 
 
 @login_required(login_url="login/")
-def getfiles(request):
+def download_result(request):
     
-    day = request.POST.get('day')   
+    path = request.POST.get('path')
+    folder_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder, path)
 
-    # get files from a specific day
-    folder_path = os.path.join(settings.MEDIA_ROOT, cfg.model_expe_folder.format(day))
-    filenames = os.listdir(folder_path)
+    # Folder is required
+    if os.path.exists(folder_path):
 
-    # Folder name in ZIP archive which contains the above files
-    # E.g [thearchive.zip]/somefiles/file2.txt
-    # FIXME: Set this to something better
-    zip_subdir = "somefiles"
-    zip_filename = "%s.zip" % zip_subdir
+        # Open BytesIO to grab in-memory ZIP contents
+        s = BytesIO()
 
-    # Open StringIO to grab in-memory ZIP contents
-    s = StringIO.StringIO()
+        # check if file or folder
+        if os.path.isdir(folder_path):
+            
+            # get files from a specific day
+            filenames = os.listdir(folder_path)
 
-    # The zip compressor
-    zf = zipfile.ZipFile(s, "w")
+            # Folder name in ZIP archive which contains the above files
+            # E.g [thearchive.zip]/somefiles/file2.txt
+            # FIXME: Set this to something better
+            zip_subdir = folder_path.split('/')[-1]
+            zip_filename = "%s.zip" % zip_subdir
 
-    for fpath in filenames:
-        # Calculate path for file in zip
-        fdir, fname = os.path.split(fpath)
-        zip_path = os.path.join(zip_subdir, fname)
+            # The zip compressor
+            zf = zipfile.ZipFile(s, "w")
 
-        # Add file, at correct path
-        zf.write(fpath, zip_path)
+            for fpath in filenames:
+                
+                fpath = os.path.join(folder_path, fpath)
 
-    # Must close zip for all contents to be written
-    zf.close()
+                # Calculate path for file in zip
+                fdir, fname = os.path.split(fpath)
+                zip_path = os.path.join(zip_subdir, fname)
 
-    # Grab ZIP file from in-memory, make response with correct MIME-type
-    resp = HttpResponse(s.getvalue(), mimetype = "application/x-zip-compressed")
-    # ..and correct content-disposition
-    resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+                # Add file, at correct path
+                zf.write(fpath, zip_path)
 
-    return resp
+            # Must close zip for all contents to be written
+            zf.close()
+
+            output_filename = zip_filename
+
+        else:
+            
+            # filename only
+            output_filename = folder_path
+
+        # Grab ZIP file from in-memory, make response with correct MIME-type
+        resp = HttpResponse(s.getvalue(), content_type="application/gzip")
+        # ..and correct content-disposition
+        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+
+        return resp
+
+    else:
+        return Http404("Path does not exist")
+
 
 
 def refresh_data(request, expe_name, scene_name):

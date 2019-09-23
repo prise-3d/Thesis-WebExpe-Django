@@ -22,27 +22,34 @@
                 <ul class="list-group">
 
                 {% for name, folder in folders.items %} 
-                    <a href="#" class="date-folder-list">
+                    
                         <li class="list-group-item">
                             
                             <div class="row">
-                                <div class="col-md-11">{{name}} </div>
-                                <div class="col-md-1"><i class="fas fa-arrow-circle-right"></i></div>
+                                <div class="col-md-10">{{name}} </div>
+                                <div class="col-md-1 download-list" data-download-path="{{expe}}/{{name}}"><i class="fas fa-download"></i></div>
+                                <div class="col-md-1 date-folder-list"><i class="fas fa-arrow-circle-right"></i></div>
                             </div>
                             
-
                             <ul class="list-group files-list" style="display: none">
 
                                 <hr />
-                                {% for f in folder %}
-                                    <li class="list-group-item">{{f}}</li>
+                                {% for file in folder %}
+                                    <li class="list-group-item">
+                                    
+                                        <div class="row">
+                                            <div class="col-md-11">{{file}} </div>
+                                            <div class="col-md-1 download-list" data-download-path="{{expe}}/{{name}}/{{file}}"><i class="fas fa-download"></i></div>
+                                        </div>
+                                                
+                                    </li>
                                 {% endfor %}
                             </ul>
                         </li>
-                    </a>
                 {% endfor %}
 
                 </ul>
+            {% csrf_token %}
 
             {% else %}
                 <div class="alert alert-warning" role="alert">
@@ -59,6 +66,11 @@
     </div>
 
     {% block javascripts %}
+         <script type="text/javascript"> 
+            // Utils informations
+            var expe_name = "{{expe}}"
+        </script>
         <script src="{% static "js/results.js" %}"></script>
+        <script src="{% static "js/FileSaver.js" %}"></script>
     {% endblock %}
 {% endblock %}
