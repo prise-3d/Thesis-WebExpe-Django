@@ -8,13 +8,20 @@
 
 {% block content %}
     
-    <h3>Results files of experiences</h3>
-    <br />
+    {% if not expe %}
+        <h3>Results files of experiences</h3>
+        <br />
+    {% endif %}
 
     <div class="results-expe">
 
         {% if expe %}
-            <h4>{{expe}}</h4>
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading"><strong>Experience:</strong> {{expe}}</h4>
+                <hr>
+                <p><strong>Question:</strong> {{infos.question}} </p>
+                <p class="mb-0"><strong>Indication:</strong> {{infos.indication}} </p>
+            </div>
 
             <br/>
             {% if folders %}
@@ -59,7 +66,9 @@
         {% else %}
              {% for f in folders %}
                 <ul class="list-group">
-                    <li class="list-group-item"><a href="{% url 'expe:results_expe' expe=f %}">{{f}}</a></li>
+                    <a href="{% url 'expe:results_expe' expe=f %}">
+                        <li class="list-group-item">{{f}}</li>
+                    </a>
                 </ul>
             {% endfor %}
         {% endif %}

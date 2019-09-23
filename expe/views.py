@@ -150,6 +150,9 @@ def list_results(request, expe=None):
 
     if expe is None:
         folders = cfg.expe_name_list
+
+        return render(request, 'expe/expe_results.html', {'expe': expe, 'folders': folders})
+
     else:
         if expe in cfg.expe_name_list:
             folder_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder, expe)
@@ -164,12 +167,11 @@ def list_results(request, expe=None):
                 for day in days:
                     day_path = os.path.join(folder_path, day)
                     filenames = os.listdir(day_path)
-                    print(filenames)
                     folders[day] = filenames
         else:
             raise Http404("Expe does not exists")
 
-    return render(request, 'expe/expe_results.html', {'expe': expe, 'folders': folders})
+    return render(request, 'expe/expe_results.html', {'expe': expe, 'folders': folders, 'infos': cfg.expes_configuration[expe]['text']})
 
 
 @login_required(login_url="login/")
