@@ -1,55 +1,35 @@
-function toggle(elem) {
-    if (elem.style.display === "none") {
-        elem.style.display = "block";
-      } else {
-        elem.style.display = "none";
-      }
-}
+const toggle = ele => ele.style.display = ele.style.display === 'none' ? 'block' : 'none'
+const toggleClass = (ele, class1, class2) => elem.className = elem.className === class1 ? class2 : class1
 
-function toggleClass(elem, class1, class2) {
-    if (elem.className === class1) {
-        elem.className = class2;
-      } else {
-        elem.className = class1;
-      }
-}
+// Download endpoint response as a file using a POST request
+const downloadContent = path => {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-// use for call route to dowload content (as post request)
-function downloadContent(path){
-
-    const csrfToken = document.querySelectorAll('[name=csrfmiddlewaretoken]')[0].value
-
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "/admin/download", true);
-    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.setRequestHeader("X-CSRFToken", csrfToken);
-
-    xhttp.onreadystatechange = function (){
-        if (xhttp.readyState == 4 && xhttp.status == 200) {
-
-            // Try to find out the filename from the content disposition `filename` value
-            var disposition = xhttp.getResponseHeader('content-disposition');
-
-            // expe is find from django
-            var filename = expe_name + "_" + disposition.split('=')[1]
-      
-            var blob = new Blob([xhttp.response], {type: "octet/stream"});
-            saveAs(blob, filename);
+    const res = await fetch('/admin/download', {
+        method: 'POST',
+        body: `path=${path}`,
+        headers: {
+            'Content-type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken
         }
-    };
-    xhttp.responseType = "arraybuffer";
-    xhttp.send("path=" + path); 
+    }).then(async res => {
+        if (res.status === 200) {
+            // Try to find out the filename from the content disposition `filename` value
+            const disposition = res.headers['content-disposition']
+            // expe is find from django
+            const filename = `${expe_name}_${disposition.split('=')[1]}`
+
+            const blob = await res.blob()
+            saveAs(blob, filename)
+        }
+    })
 }
 
 
-window.onload = function () {
-
+window.addEventListener('DOMContentLoaded', () => {
     // Display list of files from day folder
-    elems = document.getElementsByClassName('date-folder-list')
-    
-    for (let item of elems) {
-
-        item.onclick = function(event){
+    document.getElementsByClassName('date-folder-list').forEach(item => {
+        item.addEventListener('click', event => {
             event.preventDefault()
             currentElem = event.currentTarget
 
@@ -62,21 +42,17 @@ window.onload = function () {
             // toggle arrow class for display effect
             iconElem = currentElem.children[0]
             toggleClass(iconElem, 'fas fa-arrow-circle-right', 'fas fa-arrow-circle-down')
-        }
-    }
+        })
+    })
 
-
-    elems = document.getElementsByClassName('download-list')
-
-    for (let downloadElem of elems) {
-
-        downloadElem.onclick = function(event){
+    document.getElementsByClassName('download-list').forEach(downloadElem => {
+        downloadElem.addEventListener('click', event => {
             event.preventDefault()
 
             currentElem = event.currentTarget
             pathDownload = currentElem.getAttribute('data-download-path')
 
             downloadContent(pathDownload)
-        }
-    }
-}
+        })
+    })
+})
