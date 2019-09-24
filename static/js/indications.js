@@ -10,8 +10,6 @@ urlParams = new URLSearchParams(window.location.search);
 var scene = urlParams.get('scene')
 var expe  = urlParams.get('expe')
 
-console.log(expeUrl)
-
 function checkKey(e) {
 
    e = e || window.event;
