@@ -10,3 +10,6 @@ services:
             - "./media:/usr/src/app/media" # get access to media files
         ports:
            - "8000:8000"
+        environment:
+           WEBEXPE_PREFIX_URL: "${WEBEXPE_PREFIX_URL:-}"
+           WEB_API_PREFIX_URL: "${WEB_API_PREFIX_URL:-api}"

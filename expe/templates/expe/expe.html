@@ -17,18 +17,11 @@
 
     <!-- TODO : Load    img from bitmap with javascript `loadImg.js` -->
     {% if not request.session.expe_finished %}
-        <img id="expeImg" src="/{{img_merged_path}}" data-img="{{request.session.img_merged}}"/>
+        <img id="expeImg" src="/{{BASE_URL}}/{{img_merged_path}}" data-img="{{request.session.img_merged}}"/>
     {% endif %}
 
     {% block javascripts %}
         <script type="text/javascript"> 
-            // Utils informations
-            var host     = window.location.host
-            var pathname = window.location.pathname
-
-            var baseUrl      = location.protocol + "//" + host
-            var baseExpeUrl  = location.protocol + "//" + host + pathname
-
             // get access to django variables
             var BEGIN_EXPE = "{{request.session.expe_started}}"
             var END_EXPE   = "{{request.session.expe_finished}}"

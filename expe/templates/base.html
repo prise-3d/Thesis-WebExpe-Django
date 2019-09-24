@@ -23,6 +23,14 @@
     {% endblock %}
     </div>
 
+    <!-- Global scripts used -->
+    <script type="text/javascript"> 
+        const BASE_URL = "{{BASE_URL}}"
+        const host     = window.location.host
+        const baseUrl  = location.protocol + '//' + host + '/' + BASE_URL
+        const expeUrl  = baseUrl + '/expe'     
+        console.log(expeUrl)
+    </script>
     {% block javascripts %}
     
     {% endblock %}

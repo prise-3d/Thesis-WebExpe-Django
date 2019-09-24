@@ -1,11 +1,12 @@
-const toggle = ele => ele.style.display = ele.style.display === 'none' ? 'block' : 'none'
-const toggleClass = (ele, class1, class2) => elem.className = elem.className === class1 ? class2 : class1
+// create
+const toggleVisible = ele => ele.style.display = ele.style.display === 'none' ? 'block' : 'none'
+const toggleClass = (elem, class1, class2) => elem.className = elem.className === class1 ? class2 : class1
 
 // Download endpoint response as a file using a POST request
 const downloadContent = path => {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-    const res = await fetch('/admin/download', {
+    fetch('/' + BASE_URL + '/admin/download', {
         method: 'POST',
         body: `path=${path}`,
         headers: {
@@ -13,13 +14,15 @@ const downloadContent = path => {
             'X-CSRFToken': csrfToken
         }
     }).then(async res => {
+        console.log(res)
         if (res.status === 200) {
             // Try to find out the filename from the content disposition `filename` value
-            const disposition = res.headers['content-disposition']
+            const disposition = res.headers.get('Content-Disposition')
             // expe is find from django
             const filename = `${expe_name}_${disposition.split('=')[1]}`
 
             const blob = await res.blob()
+            // use of `FileSaver`
             saveAs(blob, filename)
         }
     })
@@ -28,7 +31,8 @@ const downloadContent = path => {
 
 window.addEventListener('DOMContentLoaded', () => {
     // Display list of files from day folder
-    document.getElementsByClassName('date-folder-list').forEach(item => {
+    // need to parse as `Array`
+    Array.from(document.getElementsByClassName('date-folder-list')).forEach(item => {
         item.addEventListener('click', event => {
             event.preventDefault()
             currentElem = event.currentTarget
@@ -37,7 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
             list = currentElem.parentElement.nextElementSibling
             
             // display or hide list elements
-            toggle(list)
+            toggleVisible(list)
 
             // toggle arrow class for display effect
             iconElem = currentElem.children[0]
@@ -45,7 +49,8 @@ window.addEventListener('DOMContentLoaded', () => {
         })
     })
 
-    document.getElementsByClassName('download-list').forEach(downloadElem => {
+    // need to parse as `Array`
+    Array.from(document.getElementsByClassName('download-list')).forEach(downloadElem => {
         downloadElem.addEventListener('click', event => {
             event.preventDefault()
 

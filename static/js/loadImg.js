@@ -21,6 +21,7 @@ window.onload = function () {
         } 
 
         setTimeout(function(){ 
+            // TODO : refresh to home app
             window.location = baseUrl
         }, 5000);
     }

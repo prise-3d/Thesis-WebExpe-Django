@@ -27,11 +27,10 @@ function checkKey(e) {
    }
    else if (e.keyCode == '13') {
 
-      console.log("Here")
       // check if experience is begin
       if (!BEGIN_EXPE){
 
-         console.log("And Here")
+         console.log(window.location.href + "&begin=true")
          // right arrow
          window.location = window.location.href + "&begin=true"
       } 
@@ -66,7 +65,8 @@ function checkKey(e) {
          
          // construct url with params for experience
          var params = "?scene=" + scene + "&expe=" + expe + "&iteration=" + iteration + "&answer=" + answer
-         window.location = baseExpeUrl + params
+         console.log(expeUrl + params)
+         window.location = expeUrl + params
       }
    }
 }
