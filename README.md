@@ -55,6 +55,15 @@ You also have `stop`, `remove`, `clean` commands:
 - `remove`: stop and remove container instance if exists
 - `clean`: remove docker image if exists
 
+## Configuration
+
+Create your own admin user:
+```
+python manage.py createsuperuser
+```
+
+You can now access `/admin/results` route with your credentials in order to download experience results.
+
 ## How to contribute ?
 
 This project uses [git-flow](https://danielkummer.github.io/git-flow-cheatsheet/) to improve cooperation during the development.
