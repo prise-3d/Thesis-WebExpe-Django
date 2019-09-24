@@ -30,7 +30,7 @@ expes_configuration         = {
             'end_text': "Experience is finished. Thanks for your participation",
         },
         'params':{
-            'iterations': 20
+            'iterations': 4
         }
     }
 }

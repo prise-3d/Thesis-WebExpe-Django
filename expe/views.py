@@ -42,7 +42,7 @@ def get_base_data():
     '''
     data = {}
 
-    data['BASE_URL'] = settings.WEBEXPE_PREFIX_URL
+    data['BASE'] = settings.WEBEXPE_PREFIX_URL
 
     return data
 

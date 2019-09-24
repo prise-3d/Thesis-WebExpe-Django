@@ -11,7 +11,12 @@
 
     <div class="row">
         <div class="col-md-4 offset-md-4">
-            <form action="/{{BASE_URL}}/indications" id="expeChoice">
+
+            {% if BASE != '' %}
+                <form action="/{{BASE}}/indications" id="expeChoice">
+            {% else %}
+                <form action="/indications" id="expeChoice">
+            {% endif %}
 
                 <div class="form-group">
                     <label for="scene">Select scene:</label>

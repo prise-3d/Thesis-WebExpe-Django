@@ -83,13 +83,13 @@ WEBEXPE_PREFIX_URL=experience make deploy
 Using custom API base URL using `WEB_API_PREFIX_URL`:
 
 ```
-WEBEXPE_PREFIX_URL=experience WEB_API_PREFIX_URL=expe/api python manage.py runserver
+WEBEXPE_PREFIX_URL=experience/ WEB_API_PREFIX_URL=expe/api python manage.py runserver
 ```
 
 or using docker:
 
 ```
-WEBEXPE_PREFIX_URL=experience WEB_API_PREFIX_URL=expe/api make deploy
+WEBEXPE_PREFIX_URL=experience/ WEB_API_PREFIX_URL=expe/api make deploy
 ```
 
 ## How to contribute ?

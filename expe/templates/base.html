@@ -25,10 +25,17 @@
 
     <!-- Global scripts used -->
     <script type="text/javascript"> 
-        const BASE_URL = "{{BASE_URL}}"
+
+        // add by default '/' into BASE
+        const BASE     = "{{BASE}}"
         const host     = window.location.host
-        const baseUrl  = location.protocol + '//' + host + '/' + BASE_URL
-        const expeUrl  = baseUrl + '/expe'     
+        var baseUrl  = location.protocol + '//' + host + '/'
+
+        if (BASE != ''){
+            baseUrl += BASE + '/'
+        }
+
+        const expeUrl  = baseUrl + 'expe'     
         console.log(expeUrl)
     </script>
     {% block javascripts %}

@@ -6,7 +6,13 @@ const toggleClass = (elem, class1, class2) => elem.className = elem.className ==
 const downloadContent = path => {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-    fetch('/' + BASE_URL + '/admin/download', {
+    if (BASE == ''){
+        var downloadUrl = '/admin/download'
+    }else{
+        var downloadUrl = '/' + BASE + '/admin/download'
+    }
+
+    fetch(downloadUrl, {
         method: 'POST',
         body: `path=${path}`,
         headers: {
