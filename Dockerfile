@@ -17,5 +17,8 @@ RUN python --version
 RUN pip install -r requirements.txt
 RUN python manage.py makemigrations
 RUN python manage.py migrate
+RUN echo $WEBEXPE_PREFIX_URL
+RUN WEBEXPE_PREFIX_URL=$WEBEXPE_PREFIX_URL
+RUN WEB_API_PREFIX_URL=$WEB_API_PREFIX_URL
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

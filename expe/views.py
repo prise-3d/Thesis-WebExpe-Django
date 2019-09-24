@@ -36,6 +36,17 @@ from .utils.processing import crop_images
 from . import config as cfg
 
 
+def get_base_data():
+    '''
+    Used to store default data to send for each view
+    '''
+    data = {}
+
+    data['BASE_URL'] = settings.WEBEXPE_PREFIX_URL
+
+    return data
+
+
 def expe_list(request):
 
     # get all scenes from dataset
@@ -47,19 +58,26 @@ def expe_list(request):
     # by default user restart expe
     request.session['expe_started'] = False
 
-    return render(request, 'expe/expe_list.html', {'scenes': scenes, 'expes': expes})
+    # get base data
+    data = get_base_data()
+    # expe data
+    data['scenes'] = scenes
+    data['expes']  = expes
+
+    return render(request, 'expe/expe_list.html', data)
+
 
 def indications(request):
 
     # get param 
     expe_name = request.GET.get('expe')
 
+    # get base data
+    data = get_base_data()
     # expe parameters
-    data = {
-        'expe_name': expe_name,
-        'question': cfg.expes_configuration[expe_name]['text']['question'],
-        'indication': cfg.expes_configuration[expe_name]['text']['indication']
-    }
+    data['expe_name']  = expe_name
+    data['question']   = cfg.expes_configuration[expe_name]['text']['question']
+    data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
 
     return render(request, 'expe/expe_indications.html', data)
 
@@ -124,20 +142,29 @@ def expe(request):
         # generate tmp merged image (pass as BytesIO was complicated..)
         # TODO : add crontab task to erase generated img
         filepath_img = os.path.join(tmp_folder, request.session.get('id') + '_' + scene_name + '' + expe_name + '.png')
-        img_merge.save(filepath_img)
+        
+        # replace img_merge if necessary (new iteration of expe)
+        if img_merge is not None:
+            img_merge.save(filepath_img)
     else:
         # reinit session as default value
         del request.session['expe']
         del request.session['scene']
         del request.session['qualities']
         del request.session['timestamp']
+        del request.session['answer_time']
+        del request.session['expe_percentage']
+        del request.session['expe_orientation']
+        del request.session['expe_position']
+        del request.session['expe_stim']
+        del request.session['expe_previous_iteration']
 
+    # get base data
+    data = get_base_data()
     # expe parameters
-    data = {
-        'expe_name': expe_name,
-        'img_merged_path': filepath_img,
-        'end_text': cfg.expes_configuration[expe_name]['text']['end_text']
-    }
+    data['expe_name']       = expe_name
+    data['img_merged_path'] = filepath_img
+    data['end_text']        = cfg.expes_configuration[expe_name]['text']['end_text']
 
     return render(request, 'expe/expe.html', data)
 
@@ -155,6 +182,7 @@ def list_results(request, expe=None):
 
     else:
         if expe in cfg.expe_name_list:
+
             folder_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder, expe)
 
             # init folder dictionnary
@@ -162,7 +190,7 @@ def list_results(request, expe=None):
 
             if os.path.exists(folder_path):
             
-                days = os.listdir(folder_path)
+                days = sorted(os.listdir(folder_path), reverse=True)
 
                 for day in days:
                     day_path = os.path.join(folder_path, day)
@@ -171,7 +199,14 @@ def list_results(request, expe=None):
         else:
             raise Http404("Expe does not exists")
 
-    return render(request, 'expe/expe_results.html', {'expe': expe, 'folders': folders, 'infos': cfg.expes_configuration[expe]['text']})
+    # get base data
+    data = get_base_data()
+    # expe parameters
+    data['expe']    = expe
+    data['folders'] = folders
+    data['infos']   = cfg.expes_configuration[expe]['text']
+
+    return render(request, 'expe/expe_results.html', data)
 
 
 @login_required(login_url="login/")

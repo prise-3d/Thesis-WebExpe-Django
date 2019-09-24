@@ -64,6 +64,34 @@ python manage.py createsuperuser
 
 You can now access `/admin/results` route with your credentials in order to download experience results.
 
+<hr />
+
+Configure your own URL prefix using `WEBEXPE_PREFIX_URL`:
+
+```
+WEBEXPE_PREFIX_URL=experience python manage.py runserver
+```
+
+or using docker:
+
+```
+WEBEXPE_PREFIX_URL=experience make deploy
+```
+
+<hr />
+
+Using custom API base URL using `WEB_API_PREFIX_URL`:
+
+```
+WEBEXPE_PREFIX_URL=experience WEB_API_PREFIX_URL=expe/api python manage.py runserver
+```
+
+or using docker:
+
+```
+WEBEXPE_PREFIX_URL=experience WEB_API_PREFIX_URL=expe/api make deploy
+```
+
 ## How to contribute ?
 
 This project uses [git-flow](https://danielkummer.github.io/git-flow-cheatsheet/) to improve cooperation during the development.

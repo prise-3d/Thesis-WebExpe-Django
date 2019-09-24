@@ -126,3 +126,8 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT = "media/"
 MEDIA_URL = "media/"
+
+# env variables
+WEBEXPE_PREFIX_URL_KEY       = 'WEBEXPE_PREFIX_URL'
+WEBEXPE_PREFIX_URL           = os.environ.get(WEBEXPE_PREFIX_URL_KEY) \
+                               if os.environ.get(WEBEXPE_PREFIX_URL_KEY) is not None else ''

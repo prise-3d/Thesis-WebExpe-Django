@@ -28,16 +28,24 @@ def run_quest_one_image(request, model_filepath, output_file):
     # used to stop when necessary
     if 'iteration' in request.GET:
         iteration = int(request.GET.get('iteration'))
+    else:
+        request.session['expe_started'] = False
 
     # first time only init `quest`
     # if experience is started we can save data
     if request.session.get('expe_started'):
-        answer = int(request.GET.get('answer'))
-        answer_time = time.time() - request.session['answer_time']
-        print("Answer time is ", answer_time)
-        previous_percentage = request.session.get('expe_percentage')
-        previous_orientation = request.session.get('expe_orientation')
-        previous_position = request.session.get('expe_position')
+
+         # does not change expe parameters
+        if request.session['expe_previous_iteration'] == iteration:
+            return None
+        else:
+            answer = int(request.GET.get('answer'))
+            answer_time = time.time() - request.session['answer_time']
+            print("Answer time is ", answer_time)
+            previous_percentage = request.session.get('expe_percentage')
+            previous_orientation = request.session.get('expe_orientation')
+            previous_position = request.session.get('expe_position')
+            previous_stim = request.session.get('expe_stim')
 
     # default params
     thresholds = np.arange(50, 10000, 50)
@@ -52,7 +60,33 @@ def run_quest_one_image(request, model_filepath, output_file):
         filehandler = open(model_filepath, 'rb') 
         qp = pickle.load(filehandler)
     
-    # construct image and update `quest` only if necessary
+    # if experience is already began
+    if request.session.get('expe_started'):
+
+        # TODO : check `i` variable 
+        # update of `quest`
+        # qp.update(qualities[i], answer)
+        qp.update(qualities[iteration], answer) 
+        entropy = qp.get_entropy()
+
+        line = str(previous_stim) 
+        line += ";" + scene_name 
+        line += ";" + str(previous_percentage)
+        line += ";" + str(previous_orientation) 
+        line += ";" + str(previous_position) 
+        line += ";" + str(answer) 
+        line += ";" + str(answer_time) 
+        line += ";" + str(entropy) 
+        line += '\n'
+
+        output_file.write(line)
+        output_file.flush()
+
+    # save `quest` model
+    file_pi = open(model_filepath, 'wb') 
+    pickle.dump(qp, file_pi)
+
+    # construct image 
     if iteration < cfg.expes_configuration[expe_name]['params']['iterations']:
         # process `quest`
         next_stim = qp.next_contrast()
@@ -67,40 +101,14 @@ def run_quest_one_image(request, model_filepath, output_file):
     else:
         request.session['expe_finished'] = True
         return None
-    
-    # if experience is already begin
-    if request.session.get('expe_started'):
-
-        # TODO : check `i` variable 
-        # update of `quest`
-        # qp.update(qualities[i], answer)
-        qp.update(qualities[iteration], answer) 
-        entropy = qp.get_entropy()
-
-        line = str(next_stim) 
-        line += ";" + scene_name 
-        line += ";" + str(previous_percentage)
-        line += ";" + str(previous_orientation) 
-        line += ";" + str(previous_position) 
-        line += ";" + str(answer) 
-        line += ";" + str(answer_time) 
-        line += ";" + str(entropy) 
-        line += '\n'
-
-        print(line)
-        # TODO : add answer time from javascript
-        output_file.write(line)
-        output_file.flush()
-
-    # save `quest` model
-    file_pi = open(model_filepath, 'wb') 
-    pickle.dump(qp, file_pi)
 
     # set current step data
     request.session['expe_percentage'] = percentage
     request.session['expe_orientation'] = orientation
     request.session['expe_position'] = position
     request.session['answer_time'] = time.time()
+    request.session['expe_previous_iteration'] = iteration
+    request.session['expe_stim'] = str(next_stim)
     
     # expe is now started
     request.session['expe_started'] = True

@@ -1,8 +1,16 @@
+# main imports
+import os
+
+# env variables
+WEB_API_PREFIX_URL_KEY       = 'WEB_API_PREFIX_URL'
+WEB_API_PREFIX_URL           = os.environ.get(WEB_API_PREFIX_URL_KEY) \
+                               if os.environ.get(WEB_API_PREFIX_URL_KEY) is not None else 'api'
+
 # api variables
 DIRAN_DOMAIN_NAME            = "https://diran.univ-littoral.fr/"
-GET_SCENE_QUALITIES_API_URL  = DIRAN_DOMAIN_NAME + "api/listSceneQualities?sceneName={0}"
-GET_SCENE_IMAGE_API_URL      = DIRAN_DOMAIN_NAME + "api/getImage?sceneName={0}&imageQuality={1}"
-GET_SCENES_API_URL           = DIRAN_DOMAIN_NAME + "api/listScenes"
+GET_SCENE_QUALITIES_API_URL  = DIRAN_DOMAIN_NAME + WEB_API_PREFIX_URL + "/listSceneQualities?sceneName={0}"
+GET_SCENE_IMAGE_API_URL      = DIRAN_DOMAIN_NAME + WEB_API_PREFIX_URL + "/getImage?sceneName={0}&imageQuality={1}"
+GET_SCENES_API_URL           = DIRAN_DOMAIN_NAME + WEB_API_PREFIX_URL + "/listScenes"
 
 # folder variables
 model_expe_folder            = "expes_models/{0}/{1}"
@@ -22,7 +30,7 @@ expes_configuration         = {
             'end_text': "Experience is finished. Thanks for your participation",
         },
         'params':{
-            'iterations': 5
+            'iterations': 20
         }
     }
 }
