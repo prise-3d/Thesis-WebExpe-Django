@@ -29,14 +29,13 @@
         // add by default '/' into BASE
         const BASE     = "{{BASE}}"
         const host     = window.location.host
-        var baseUrl  = location.protocol + '//' + host + '/'
+        var baseUrl    = location.protocol + '//' + host + '/'
 
         if (BASE != ''){
             baseUrl += BASE + '/'
         }
 
         const expeUrl  = baseUrl + 'expe'     
-        console.log(expeUrl)
     </script>
     {% block javascripts %}
     
