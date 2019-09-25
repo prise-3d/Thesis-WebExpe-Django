@@ -92,6 +92,10 @@ or using docker:
 WEBEXPE_PREFIX_URL=experience/ WEB_API_PREFIX_URL=expe/api make deploy
 ```
 
+## Create your experiences
+
+Documentation is available [here](DOCUMENTATION.md). This documentation explains how you can create your own experience.
+
 ## How to contribute ?
 
 This project uses [git-flow](https://danielkummer.github.io/git-flow-cheatsheet/) to improve cooperation during the development.
