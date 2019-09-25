@@ -17,17 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
 
-from .settings import WEBEXPE_PREFIX_URL
-
-
-if WEBEXPE_PREFIX_URL == '':
-    urlpatterns = [
-        path('', include('expe.urls', namespace='expe')),
-        path('admin/', admin.site.urls),
-    ]
-else:
-    urlpatterns = [
-        path('', RedirectView.as_view(url=WEBEXPE_PREFIX_URL)),
-        path(WEBEXPE_PREFIX_URL + '/', include('expe.urls', namespace='expe')),
-        path(WEBEXPE_PREFIX_URL + '/admin/', admin.site.urls),
-    ]
+urlpatterns = [
+    path('', include('expe.urls', namespace='expe')),
+    path('admin/', admin.site.urls),
+]

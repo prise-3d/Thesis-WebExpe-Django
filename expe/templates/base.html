@@ -26,17 +26,17 @@
     <!-- Global scripts used -->
     <script type="text/javascript"> 
 
+        // JS need to know if apache2 server use BASE_URL
         // add by default '/' into BASE
         const BASE     = "{{BASE}}"
         const host     = window.location.host
-        var baseUrl  = location.protocol + '//' + host + '/'
+        var baseUrl    = location.protocol + '//' + host + '/'
 
         if (BASE != ''){
             baseUrl += BASE + '/'
         }
 
         const expeUrl  = baseUrl + 'expe'     
-        console.log(expeUrl)
     </script>
     {% block javascripts %}
     
