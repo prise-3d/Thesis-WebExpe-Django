@@ -1,4 +1,4 @@
-# DjangoRecipes
+# Django Web expe
 
 ## Description
 
