@@ -65,7 +65,6 @@ function checkKey(e) {
          
          // construct url with params for experience
          var params = "?scene=" + scene + "&expe=" + expe + "&iteration=" + iteration + "&answer=" + answer
-         console.log(expeUrl + params)
          window.location = expeUrl + params
       }
    }

@@ -23,6 +23,8 @@ expe_name_list              = ["quest_one_image"]
 
 # configure experiences labels
 expes_configuration         = {
+
+    # First experience configuration
     'quest_one_image':{
         'text':{
             'question': "Do you see one image or a composition of more than one?",
@@ -30,7 +32,25 @@ expes_configuration         = {
             'end_text': "Experience is finished. Thanks for your participation",
         },
         'params':{
-            'iterations': 4
-        }
+            'iterations': 10
+        },
+        'session_params': [
+            'expe_percentage',
+            'expe_orientation',
+            'expe_position',
+            'expe_stim',
+            'expe_previous_iteration'
+        ],
+
+        # template file used in django `expe` route
+        'template': 'expe/expe.html',
+
+        # javascript file used
+        'js':[
+            'loadImg.js',
+            'keyEvents.js'
+        ],
+        'output_header': 
+            "stimulus;name_stimulus;cropping_percentage;orientation;image_ref_position;answer;time_reaction;entropy\n"
     }
 }

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load apptags %}
 
 {% block title %}
     Expe {{ expe_name }}
@@ -17,16 +18,10 @@
 
     <!-- TODO : Load    img from bitmap with javascript `loadImg.js` -->
     {% if not request.session.expe_finished %}
-        <img id="expeImg" src="{{img_merged_path}}" data-img="{{request.session.img_merged}}"/>
+        <img id="expeImg" src="{{expe_data|get_value_from_dict:'image_path'}}" data-img="{{request.session.img_merged}}"/>
     {% endif %}
 
     {% block javascripts %}
-        <script type="text/javascript"> 
-            // get access to django variables
-            var BEGIN_EXPE = "{{request.session.expe_started}}"
-            var END_EXPE   = "{{request.session.expe_finished}}"
-        </script>
-        <script src="{% static "js/loadImg.js" %}"></script>
-        <script src="{% static "js/keyEvents.js" %}"></script>
+ 
     {% endblock %}
 {% endblock %}

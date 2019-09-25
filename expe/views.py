@@ -19,10 +19,10 @@ from io import BytesIO
 
 
 # expe imports
-from .expes.quest_plus import QuestPlus
-from .expes.quest_plus import psychometric_fun
+from .expes.classes.quest_plus import QuestPlus
+from .expes.classes.quest_plus import psychometric_fun
 
-from .expes.run import run_quest_one_image
+from .expes import run as run_expe
 
 # image processing imports
 import io
@@ -36,13 +36,17 @@ from .utils.processing import crop_images
 from . import config as cfg
 
 
-def get_base_data():
+def get_base_data(expe_name=None):
     '''
     Used to store default data to send for each view
     '''
     data = {}
 
     data['BASE'] = settings.WEBEXPE_PREFIX_URL
+
+    # if expe name is used
+    if expe_name is not None:
+        data['js'] = cfg.expes_configuration[expe_name]['js']
 
     return data
 
@@ -89,9 +93,6 @@ def expe(request):
     expe_name = request.GET.get('expe')
     scene_name = request.GET.get('scene')
     
-    # default filepath name
-    filepath_img = ''
-
     # unique user ID during session (user can launch multiple exeperiences)
     if 'id' not in request.session:
         request.session['id'] = functions.uniqueID()
@@ -120,6 +121,7 @@ def expe(request):
     else:
         output_file = open(results_filepath, 'a')
 
+    # TODO : add crontab task to erase generated img and model data
     # create `quest` object if not exists    
     models_folder = os.path.join(settings.MEDIA_ROOT, cfg.model_expe_folder.format(expe_name, current_day))
 
@@ -129,44 +131,37 @@ def expe(request):
     model_filename = result_filename.replace('.csv', '.obj')
     model_filepath = os.path.join(models_folder, model_filename)
 
-    # run `quest` expe
-    img_merge = run_quest_one_image(request, model_filepath, output_file)
+    # run expe method using `expe_name`
+    function_name = 'run_' + expe_name
 
-    if not request.session.get('expe_finished'):
-        # create output folder for tmp files if necessary
-        tmp_folder = os.path.join(settings.MEDIA_ROOT, cfg.output_tmp_folder)
+    try:
+        run_expe_method = getattr(run_expe, function_name)
+    except AttributeError:
+        raise NotImplementedError("Run expe method `{}` not implement `{}`".format(run_expe.__name__, function_name))
 
-        if not os.path.exists(tmp_folder):
-            os.makedirs(tmp_folder)
+    expe_data = run_expe_method(request, model_filepath, output_file)
 
-        # generate tmp merged image (pass as BytesIO was complicated..)
-        # TODO : add crontab task to erase generated img
-        filepath_img = os.path.join(tmp_folder, request.session.get('id') + '_' + scene_name + '' + expe_name + '.png')
-        
-        # replace img_merge if necessary (new iteration of expe)
-        if img_merge is not None:
-            img_merge.save(filepath_img)
-    else:
+    if request.session.get('expe_finished'):
         # reinit session as default value
+        # here generic expe params
         del request.session['expe']
         del request.session['scene']
         del request.session['qualities']
         del request.session['timestamp']
         del request.session['answer_time']
-        del request.session['expe_percentage']
-        del request.session['expe_orientation']
-        del request.session['expe_position']
-        del request.session['expe_stim']
-        del request.session['expe_previous_iteration']
+
+        # specific current expe session params (see `config.py`)
+        for key in cfg.expes_configuration[expe_name]['session_params']:
+            del request.session[key]
 
     # get base data
-    data = get_base_data()
+    data = get_base_data(expe_name)
     # expe parameters
     data['expe_name']       = expe_name
-    data['img_merged_path'] = filepath_img
+    data['expe_data']       = expe_data
     data['end_text']        = cfg.expes_configuration[expe_name]['text']['end_text']
 
-    return render(request, 'expe/expe.html', data)
+    return render(request, cfg.expes_configuration[expe_name]['template'], data)
 
 
 @login_required(login_url="login/")

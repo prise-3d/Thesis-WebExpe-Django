@@ -9,6 +9,8 @@
     </title>
 
     {% load staticfiles %}
+    {% load apptags %}
+    
     {% block stylesheets %}
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="{% static "css/expe.css" %}">
@@ -36,9 +38,23 @@
             baseUrl += BASE + '/'
         }
 
-        const expeUrl  = baseUrl + 'expe'     
+        const expeUrl  = baseUrl + 'expe'  
+
+        // EXPE variables parts
+        // get access to django variables
+        var BEGIN_EXPE = "{{request.session.expe_started}}"
+        var END_EXPE   = "{{request.session.expe_finished}}"
     </script>
+
+    <!-- Custom Javascript file for experience template is placed here -->
     {% block javascripts %}
-    
+        
     {% endblock %}
+
+    <!-- Dynamically load JS file of experience -->
+    {% for file in js %}
+        {% with 'js/'|add:file as js_static %}
+            <script src="{% static js_static %}"></script>
+        {% endwith %}
+    {% endfor %}
 </body>
