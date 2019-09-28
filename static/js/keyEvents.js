@@ -50,7 +50,7 @@ const checkKey = e => {
          }
          
          // construct url with params for experience
-         const params = `?scene=${scene}&expe=${expe}&iteration${iteration}&answer=${answer}`
+         const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}`
          window.location = expeUrl + params
       }
    }
