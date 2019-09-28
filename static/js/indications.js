@@ -1,29 +1,25 @@
-// implement `key` events
-document.onkeydown = checkKey;
-
 // Utils informations
-var KEYCODE_Q           = '81'
-var KEYCODE_ENTER       = '13'
+const KEYCODE_Q     = 81
+const KEYCODE_ENTER = 13
 
-urlParams = new URLSearchParams(window.location.search);
+urlParams = new URLSearchParams(window.location.search)
 
-var scene = urlParams.get('scene')
-var expe  = urlParams.get('expe')
+const scene = urlParams.get('scene')
+const expe  = urlParams.get('expe')
 
-function checkKey(e) {
-
-   e = e || window.event;
-
-   if (e.keyCode == KEYCODE_Q) {
-        // `q` for quit expe
-        console.log('`q` key is pressed')
-        window.location = ''
-   }
-   else if (e.keyCode == KEYCODE_ENTER) {
-
-        // right arrow
-        var params = "?scene=" + scene + "&expe=" + expe + "&iteration=0"
-        console.log(expeUrl + params)
-        window.location = expeUrl + params
-   }
+const checkKey = e => {
+     if (e.keyCode === KEYCODE_Q) {
+          // `q` to quit expe
+          console.log('`q` key is pressed')
+          window.location = ''
+     }
+     else if (e.keyCode === KEYCODE_ENTER) {
+          // right arrow
+          const params = `?scene=${scene}&expe=${expe}&iteration=0`
+          console.log(expeUrl + params)
+          window.location = expeUrl + params
+     }
 }
+
+// implement `key` events
+document.addEventListener('keydown', checkKey)
