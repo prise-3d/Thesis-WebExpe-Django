@@ -1,18 +1,12 @@
-// create
 const toggleVisible = ele => ele.style.display = ele.style.display === 'none' ? 'block' : 'none'
-const toggleClass = (elem, class1, class2) => elem.className = elem.className === class1 ? class2 : class1
+const toggleClass = (ele, class1, class2) => ele.className = ele.className === class1 ? class2 : class1
 
 // Download endpoint response as a file using a POST request
 const downloadContent = path => {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
+    const downloadUrl = BASE === '' ? `/admin/download` : `/${BASE}/admin/download`
 
-    if (BASE == ''){
-        var downloadUrl = '/admin/download'
-    }else{
-        var downloadUrl = '/' + BASE + '/admin/download'
-    }
-
-    fetch(downloadUrl, {
+    return fetch(downloadUrl, {
         method: 'POST',
         body: `path=${path}`,
         headers: {
@@ -28,12 +22,11 @@ const downloadContent = path => {
             const filename = `${expe_name}_${disposition.split('=')[1]}`
 
             const blob = await res.blob()
-            // use of `FileSaver`
+            // use of `FileSaver.js` library
             saveAs(blob, filename)
         }
     })
 }
-
 
 window.addEventListener('DOMContentLoaded', () => {
     // Display list of files from day folder
