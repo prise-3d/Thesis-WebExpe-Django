@@ -34,16 +34,14 @@
         const host     = window.location.host
         var baseUrl    = location.protocol + '//' + host + '/'
 
-        if (BASE != ''){
-            baseUrl += BASE + '/'
-        }
+        if (BASE !== '') baseUrl += BASE + '/'
 
         const expeUrl  = baseUrl + 'expe'  
 
         // EXPE variables parts
         // get access to django variables
-        var BEGIN_EXPE = "{{request.session.expe_started}}"
-        var END_EXPE   = "{{request.session.expe_finished}}"
+        var BEGIN_EXPE = "{{request.session.expe_started}}" === 'True'
+        var END_EXPE   = "{{request.session.expe_finished}}" === 'True'
     </script>
 
     <!-- Custom Javascript file for experience template is placed here -->
@@ -52,7 +50,7 @@
     {% endblock %}
 
     <!-- Dynamically load JS file of experience -->
-    {% for file in js %}
+    {% for file in javascript %}
         {% with 'js/'|add:file as js_static %}
             <script src="{% static js_static %}"></script>
         {% endwith %}

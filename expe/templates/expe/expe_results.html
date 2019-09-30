@@ -73,13 +73,13 @@
             {% endfor %}
         {% endif %}
     </div>
+{% endblock %}
 
-    {% block javascripts %}
-        <script type="text/javascript"> 
-            // Utils informations
-            var expe_name = "{{expe}}"
-        </script>
-        <script src="{% static "js/results.js" %}"></script>
-        <script src="{% static "js/FileSaver.js" %}"></script>
-    {% endblock %}
+{% block javascripts %}
+    <script type="text/javascript"> 
+        // Utils informations
+        var expe_name = "{{expe}}"
+    </script>
+    <script src="{% static "js/results.js" %}"></script>
+    <script src="{% static "js/FileSaver.js" %}"></script>
 {% endblock %}

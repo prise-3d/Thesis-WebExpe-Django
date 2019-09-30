@@ -13,21 +13,27 @@ Web site which contains experiences on synthesis images (perception of noise).
 You need to have python, pip
 
 ```
-pip install -r requirementst.txt
+pip install -r requirements.txt
+```
+
+Initialize the database with the following command :
+
+```
+python manage.py migrate
 ```
 
 #### Run server
 
-And then, run the server :
+Run the server :
 
 ```
-python project/manage.py runserver
+python manage.py runserver
 ```
 
-or if you want to precise a specific port number :
+or if you want to make it listen on a specific port number :
 
 ```
-python project/manage.py runserver 8080
+python manage.py runserver 8080
 ```
 
 ### 2. Using docker (recommended)
@@ -94,7 +100,7 @@ WEBEXPE_PREFIX_URL=experience/ WEB_API_PREFIX_URL=expe/api make deploy
 
 ## Create your experiences
 
-Documentation is available [here](DOCUMENTATION.md). This documentation explains how you can create your own experience.
+See [DOCUMENTATION.md](DOCUMENTATION.md). This documentation explains how to create your own experience.
 
 ## How to contribute ?
 

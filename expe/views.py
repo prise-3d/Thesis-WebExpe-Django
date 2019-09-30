@@ -148,18 +148,21 @@ def expe(request):
         del request.session['scene']
         del request.session['qualities']
         del request.session['timestamp']
-        del request.session['answer_time']
 
         # specific current expe session params (see `config.py`)
         for key in cfg.expes_configuration[expe_name]['session_params']:
             del request.session[key]
 
-    # get base data
+    # set expe current data into session (replace only if experience data changed)
+    if expe_data is not None:
+        request.session['expe_data'] = expe_data
+
+        # get base data
     data = get_base_data(expe_name)
-    # expe parameters
-    data['expe_name']       = expe_name
-    data['expe_data']       = expe_data
-    data['end_text']        = cfg.expes_configuration[expe_name]['text']['end_text']
+
+    # other experiences information
+    data['expe_name']            = expe_name
+    data['end_text']             = cfg.expes_configuration[expe_name]['text']['end_text']
 
     return render(request, cfg.expes_configuration[expe_name]['template'], data)
 
