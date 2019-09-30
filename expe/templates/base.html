@@ -50,7 +50,7 @@
     {% endblock %}
 
     <!-- Dynamically load JS file of experience -->
-    {% for file in js %}
+    {% for file in javascript %}
         {% with 'js/'|add:file as js_static %}
             <script src="{% static js_static %}"></script>
         {% endwith %}

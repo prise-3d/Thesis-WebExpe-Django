@@ -44,7 +44,7 @@ expes_configuration         = {
         'template': 'expe/expe.html',
 
         # javascript file used
-        'js':[
+        'javascript':[
             'loadImg.js',
             'keyEvents.js'
         ],
