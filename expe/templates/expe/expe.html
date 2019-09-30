@@ -18,7 +18,7 @@
 
     <!-- TODO : Load    img from bitmap with javascript `loadImg.js` -->
     {% if not request.session.expe_finished %}
-        <img id="expeImg" src="{{expe_data|get_value_from_dict:'image_path'}}" data-img="{{request.session.img_merged}}"/>
+        <img id="expeImg" src="{{request.session.expe_data|get_value_from_dict:'image_path'}}" data-img="{{request.session.img_merged}}"/>
     {% endif %}
 
     {% block javascripts %}

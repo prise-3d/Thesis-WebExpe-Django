@@ -31,12 +31,10 @@ An example for the `quest_one_image` key experience:
     'params':{
         'iterations': 10
     },
+
+    # if others custom session param are directly set for experience
     'session_params': [
-        'expe_percentage',
-        'expe_orientation',
-        'expe_position',
-        'expe_stim',
-        'expe_previous_iteration'
+        'expe_data',
     ],
 
     # template file used in django `expe` route
@@ -118,7 +116,7 @@ line += ";" + str(previous_percentage)
 line += ";" + str(previous_orientation) 
 line += ";" + str(previous_position) 
 line += ";" + str(answer) 
-line += ";" + str(answer_time) 
+line += ";" + str(expe_answer_time) 
 line += ";" + str(entropy) 
 line += '\n'
 
@@ -143,5 +141,5 @@ If you want to create your own template, specify your template path into configu
 
 Example of way to use your experience data into template:
 ```python
-{{expe_data|get_value_from_dict:'image_path'}}
+{{request.session.expe_data|get_value_from_dict:'image_path'}}
 ```

@@ -43,18 +43,21 @@ def run_quest_one_image(request, model_filepath, output_file):
         if request.session['expe_previous_iteration'] == iteration:
             return None
         else:
+            current_expe_data = request.session['expe_data']
             answer = int(request.GET.get('answer'))
-            answer_time = time.time() - request.session['answer_time']
-            print("Answer time is ", answer_time)
-            previous_percentage = request.session.get('expe_percentage')
-            previous_orientation = request.session.get('expe_orientation')
-            previous_position = request.session.get('expe_position')
-            previous_stim = request.session.get('expe_stim')
+            expe_answer_time = time.time() - current_expe_data['expe_answer_time']
+            previous_percentage = current_expe_data['expe_percentage']
+            previous_orientation = current_expe_data['expe_orientation']
+            previous_position = current_expe_data['expe_position']
+            previous_stim = current_expe_data['expe_stim']
+
+            print("Answer time is ", expe_answer_time)
 
     # 3. Load or create Quest instance
     # default params
+    # TODO : add specific thresholds information for scene
     thresholds = np.arange(50, 10000, 50)
-    stim_space=np.asarray(qualities)
+    stim_space = np.asarray(qualities)
     slopes = np.arange(0.0001, 0.001, 0.00003)
 
     # check if necessary to construct `quest` object
@@ -81,7 +84,7 @@ def run_quest_one_image(request, model_filepath, output_file):
         line += ";" + str(previous_orientation) 
         line += ";" + str(previous_position) 
         line += ";" + str(answer) 
-        line += ";" + str(answer_time) 
+        line += ";" + str(expe_answer_time) 
         line += ";" + str(entropy) 
         line += '\n'
 
@@ -123,21 +126,20 @@ def run_quest_one_image(request, model_filepath, output_file):
     if img_merge is not None:
         img_merge.save(filepath_img)
 
-    # 6. Prepare session data for current iteration and data for view
-    # set current step data
-    request.session['expe_percentage'] = percentage
-    request.session['expe_orientation'] = orientation
-    request.session['expe_position'] = position
-    request.session['answer_time'] = time.time()
-    request.session['expe_previous_iteration'] = iteration
-    request.session['expe_stim'] = str(next_stim)
+    # 6. Prepare experience data for current iteration and data for view
+    
+    # here you can save whatever you need for you experience
+    data_expe = {
+        'image_path': filepath_img,
+        'expe_percentage': percentage,
+        'expe_orientation': orientation,
+        'expe_position': position,
+        'expe_answer_time': time.time(),
+        'expe_previous_iteration': iteration,
+        'expe_stim': str(next_stim)
+    }
     
     # expe is now started
     request.session['expe_started'] = True
-
-    # here you can save whatever you need for you experience
-    data_expe = {
-        'image_path': filepath_img
-    }
 
     return data_expe

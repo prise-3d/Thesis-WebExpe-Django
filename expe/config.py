@@ -34,12 +34,10 @@ expes_configuration         = {
         'params':{
             'iterations': 10
         },
+       
+        # if others custom session param are directly set for experience
         'session_params': [
-            'expe_percentage',
-            'expe_orientation',
-            'expe_position',
-            'expe_stim',
-            'expe_previous_iteration'
+            'expe_data',
         ],
 
         # template file used in django `expe` route
