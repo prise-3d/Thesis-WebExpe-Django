@@ -2,7 +2,7 @@
 
 ## Description
 
-Web site which contains experiences on synthesis images (perception of noise). 
+Web site which contains experimentss on synthesis images (perception of noise). 
 
 ## Installation
 
@@ -68,20 +68,20 @@ Create your own admin user:
 python manage.py createsuperuser
 ```
 
-You can now access `/admin/results` route with your credentials in order to download experience results.
+You can now access `/admin/results` route with your credentials in order to download experiments results.
 
 <hr />
 
 Configure your own URL prefix using `WEBEXPE_PREFIX_URL`:
 
 ```
-WEBEXPE_PREFIX_URL=experience python manage.py runserver
+WEBEXPE_PREFIX_URL=experiments python manage.py runserver
 ```
 
 or using docker:
 
 ```
-WEBEXPE_PREFIX_URL=experience make deploy
+WEBEXPE_PREFIX_URL=experiments make deploy
 ```
 
 <hr />
@@ -89,18 +89,18 @@ WEBEXPE_PREFIX_URL=experience make deploy
 Using custom API base URL using `WEB_API_PREFIX_URL`:
 
 ```
-WEBEXPE_PREFIX_URL=experience/ WEB_API_PREFIX_URL=expe/api python manage.py runserver
+WEBEXPE_PREFIX_URL=experiments/ WEB_API_PREFIX_URL=expe/api python manage.py runserver
 ```
 
 or using docker:
 
 ```
-WEBEXPE_PREFIX_URL=experience/ WEB_API_PREFIX_URL=expe/api make deploy
+WEBEXPE_PREFIX_URL=experiments/ WEB_API_PREFIX_URL=expe/api make deploy
 ```
 
-## Create your experiences
+## Create your experimentss
 
-See [DOCUMENTATION.md](DOCUMENTATION.md). This documentation explains how to create your own experience.
+See [DOCUMENTATION.md](DOCUMENTATION.md). This documentation explains how to create your own experiments.
 
 ## How to contribute ?
 

@@ -44,12 +44,12 @@
         var END_EXPE   = "{{request.session.expe_finished}}" === 'True'
     </script>
 
-    <!-- Custom Javascript file for experience template is placed here -->
+    <!-- Custom Javascript file for experiments template is placed here -->
     {% block javascripts %}
         
     {% endblock %}
 
-    <!-- Dynamically load JS file of experience -->
+    <!-- Dynamically load JS file of experiments -->
     {% for file in javascript %}
         {% with 'js/'|add:file as js_static %}
             <script src="{% static js_static %}"></script>

@@ -16,14 +16,14 @@ const checkKey = e => {
       window.location = baseUrl
    }
    else if (e.keyCode === KEYCODE_ENTER) {
-      // check if experience is begin
+      // check if experiments is begin
       if (!BEGIN_EXPE) {
          // right arrow
          window.location = window.location.href + '&begin=true'
       } 
    }
    else if (e.keyCode === KEYCODE_LEFT_ARROW || e.keyCode === KEYCODE_RIGHT_ARROW) {
-      // only do something is experience has begun
+      // only do something is experiments has begun
       if (BEGIN_EXPE) {
          let answer
 
@@ -49,7 +49,7 @@ const checkKey = e => {
             iteration++
          }
          
-         // construct url with params for experience
+         // construct url with params for experiments
          const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}`
          window.location = expeUrl + params
       }

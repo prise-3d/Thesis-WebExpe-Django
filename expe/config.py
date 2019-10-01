@@ -21,10 +21,10 @@ output_tmp_folder            = "tmp"
 # expes list
 expe_name_list              = ["quest_one_image"]
 
-# configure experiences labels
+# configure experimentss labels
 expes_configuration         = {
 
-    # First experience configuration
+    # First experiments configuration
     'quest_one_image':{
         'text':{
             'question': "Do you see one image or a composition of more than one?",
@@ -35,7 +35,7 @@ expes_configuration         = {
             'iterations': 10
         },
        
-        # if others custom session param are directly set for experience
+        # if others custom session param are directly set for experiments
         'session_params': [
             'expe_data',
         ],
