@@ -46,7 +46,7 @@ def get_base_data(expe_name=None):
 
     # if expe name is used
     if expe_name is not None:
-        data['js'] = cfg.expes_configuration[expe_name]['js']
+        data['javascript'] = cfg.expes_configuration[expe_name]['javascript']
 
     return data
 
@@ -56,7 +56,7 @@ def expe_list(request):
     # get all scenes from dataset
     scenes = api.get_scenes()
 
-    # get list of experiences
+    # get list of experimentss
     expes = cfg.expe_name_list
 
     # by default user restart expe
@@ -153,14 +153,14 @@ def expe(request):
         for key in cfg.expes_configuration[expe_name]['session_params']:
             del request.session[key]
 
-    # set expe current data into session (replace only if experience data changed)
+    # set expe current data into session (replace only if experiments data changed)
     if expe_data is not None:
         request.session['expe_data'] = expe_data
 
         # get base data
     data = get_base_data(expe_name)
 
-    # other experiences information
+    # other experimentss information
     data['expe_name']            = expe_name
     data['end_text']             = cfg.expes_configuration[expe_name]['text']['end_text']
 
@@ -170,7 +170,7 @@ def expe(request):
 @login_required(login_url="login/")
 def list_results(request, expe=None):
     """
-    Return all results obtained from experiences
+    Return all results obtained from experimentss
     """
 
     if expe is None:
@@ -283,7 +283,7 @@ def refresh_data(request, expe_name, scene_name):
     request.session['expe_finished'] = False
 
     request.session['qualities'] = api.get_scene_qualities(scene_name)
-    # update unique timestamp each time new experience is launched
+    # update unique timestamp each time new experiments is launched
     request.session['timestamp'] = datetime.strftime(datetime.utcnow(), "%Y-%m-%d_%Hh%Mm%Ss")
 
     # TODO : add in cache ref_image

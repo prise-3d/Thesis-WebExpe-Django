@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-    <h2>Choose your experience and dataset</h2>
+    <h2>Choose your experiments and dataset</h2>
 
     <div class="row">
         <div class="col-md-4 offset-md-4">
@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="expe" style="position:static">Select experience:</label>
+                    <label for="expe" style="position:static">Select experiments:</label>
                     <select class="form-control " name="expe">
                         {% for expe in expes %}
                             <option value="{{expe}}">{{expe}}</option>

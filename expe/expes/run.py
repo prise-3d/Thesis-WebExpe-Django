@@ -36,7 +36,7 @@ def run_quest_one_image(request, model_filepath, output_file):
 
     # 2. Get expe information if started
     # first time only init `quest`
-    # if experience is started we can save data
+    # if experiments is started we can save data
     if request.session.get('expe_started'):
 
          # does not change expe parameters
@@ -68,8 +68,8 @@ def run_quest_one_image(request, model_filepath, output_file):
         filehandler = open(model_filepath, 'rb') 
         qp = pickle.load(filehandler)
     
-    # 4. If expe started update and save experience information and model
-    # if experience is already began
+    # 4. If expe started update and save experiments information and model
+    # if experiments is already began
     if request.session.get('expe_started'):
 
         # TODO : check `i` variable 
@@ -126,9 +126,9 @@ def run_quest_one_image(request, model_filepath, output_file):
     if img_merge is not None:
         img_merge.save(filepath_img)
 
-    # 6. Prepare experience data for current iteration and data for view
+    # 6. Prepare experiments data for current iteration and data for view
     
-    # here you can save whatever you need for you experience
+    # here you can save whatever you need for you experiments
     data_expe = {
         'image_path': filepath_img,
         'expe_percentage': percentage,
