@@ -40,7 +40,7 @@ def run_quest_one_image(request, model_filepath, output_file):
     if request.session.get('expe_started'):
 
          # does not change expe parameters
-        if request.session['expe_previous_iteration'] == iteration:
+        if request.session['expe_data']['expe_previous_iteration'] == iteration:
             return None
         else:
             current_expe_data = request.session['expe_data']
