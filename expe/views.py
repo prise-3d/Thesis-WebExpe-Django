@@ -75,11 +75,13 @@ def indications(request):
 
     # get param 
     expe_name = request.GET.get('expe')
+    scene_name = request.GET.get('scene')
 
     # get base data
     data = get_base_data()
     # expe parameters
     data['expe_name']  = expe_name
+    data['scene_name'] = scene_name
     data['question']   = cfg.expes_configuration[expe_name]['text']['question']
     data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
 
