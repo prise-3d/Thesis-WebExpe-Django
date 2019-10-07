@@ -93,6 +93,7 @@ def expe(request):
     
     # get param 
     expe_name = request.GET.get('expe')
+    expe_id = request.GET.get('expeId')
     scene_name = request.GET.get('scene')
     
     # unique user ID during session (user can launch multiple exeperiences)
@@ -101,11 +102,11 @@ def expe(request):
 
     # first time expe is launched add expe information
     if 'expe' not in request.session or expe_name != request.session.get('expe'):
-        refresh_data(request, expe_name, scene_name)
+        refresh_data(request, expe_name, expe_id, scene_name)
 
     # refresh if scene_name changed
     if 'scene' not in request.session or scene_name != request.session.get('scene'):
-        refresh_data(request, expe_name, scene_name)
+        refresh_data(request, expe_name, expe_id, scene_name)
 
     # create output folder for expe_result
     current_day = datetime.strftime(datetime.utcnow(), "%Y-%m-%d")
@@ -148,6 +149,7 @@ def expe(request):
         # here generic expe params
         del request.session['expe']
         del request.session['scene']
+        del request.session['expeId']
         del request.session['qualities']
         del request.session['timestamp']
 
@@ -274,11 +276,12 @@ def download_result(request):
 
 
 
-def refresh_data(request, expe_name, scene_name):
+def refresh_data(request, expe_name, expe_id, scene_name):
     '''
     Utils method to refresh data from session
     '''
     request.session['expe'] = expe_name
+    request.session['expeId'] = expe_id
     request.session['scene'] = scene_name
 
     request.session['expe_started'] = False

@@ -13,6 +13,7 @@ GET_SCENE_IMAGE_API_URL      = DIRAN_DOMAIN_NAME + WEB_API_PREFIX_URL + "/getIma
 GET_SCENES_API_URL           = DIRAN_DOMAIN_NAME + WEB_API_PREFIX_URL + "/listScenes"
 
 # folder variables
+# TODO : dispatch into day and experiment ID
 model_expe_folder            = "expes_models/{0}/{1}"
 output_expe_folder           = "expes_results"
 output_expe_folder_name_day  = "expes_results/{0}/{1}"
