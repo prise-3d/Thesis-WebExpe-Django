@@ -15,7 +15,8 @@ const checkKey = e => {
      }
      else if (e.keyCode === KEYCODE_ENTER) {
           // right arrow
-          const params = `?scene=${scene}&expe=${expe}&iteration=0`
+          const experimentId = document.getElementsByName('experimentId')[0].value
+          const params = `?scene=${scene}&expe=${expe}&experimentId=${experimentId}&iteration=0`
           console.log(expeUrl + params)
           window.location = expeUrl + params
      }

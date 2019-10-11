@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load apptags %}
 
 {% block title %}
     Expe {{ expe_name }}
@@ -26,36 +27,135 @@
             <br/>
             {% if folders %}
 
+                <!-- List of items which has identifier when user pass experiment -->
+                <h3>By experiment identifier</h3>
                 <ul class="list-group">
+                    {% with folders|get_value_from_dict:'expeId' as id_folder %}
 
-                {% for name, folder in folders.items %} 
-                    
-                        <li class="list-group-item">
-                            
-                            <div class="row">
-                                <div class="col-md-10">{{name}} </div>
-                                <div class="col-md-1 download-list" data-download-path="{{expe}}/{{name}}"><i class="fas fa-download"></i></div>
-                                <div class="col-md-1 date-folder-list"><i class="fas fa-arrow-circle-right"></i></div>
-                            </div>
-                            
-                            <ul class="list-group files-list" style="display: none">
+                        {% for id_name, id in id_folder.items %} 
+                                            
+                            <li class="list-group-item">
+                                
+                                <div class="row">
+                                    <div class="col-md-10">{{id_name}} </div>
+                                    <div class="col-md-1 download-list" data-download-path="expeId/{{expe}}/{{id_name}}"><i class="fas fa-download"></i></div>
+                                    <div class="col-md-1 date-folder-list"><i class="fas fa-arrow-circle-right"></i></div>
+                                </div>
+                                
+                                <ul class="list-group files-list" style="display: none">
 
-                                <hr />
-                                {% for file in folder %}
-                                    <li class="list-group-item">
+                                    <hr />
                                     
-                                        <div class="row">
-                                            <div class="col-md-11">{{file}} </div>
-                                            <div class="col-md-1 download-list" data-download-path="{{expe}}/{{name}}/{{file}}"><i class="fas fa-download"></i></div>
-                                        </div>
+                                    {% for day_name, day in id.items %} 
+                                        
+                                        <li class="list-group-item">
+                                            
+                                            <div class="row">
+                                                <div class="col-md-10">{{day_name}} </div>
+                                                <div class="col-md-1 download-list" data-download-path="expeId/{{expe}}/{{id_name}}/{{day_name}}"><i class="fas fa-download"></i></div>
+                                                <div class="col-md-1 date-folder-list"><i class="fas fa-arrow-circle-right"></i></div>
+                                            </div>
+                                            
+                                            <ul class="list-group files-list" style="display: none">
+
+                                                <hr />
+                                                <li class="list-group-item">
                                                 
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                {% endfor %}
+                                                {% for user_name, user in day.items %}
+
+
+                                                        <div class="row">
+                                                            <div class="col-md-10"><strong>User: </strong>{{user_name}} </div>
+                                                            <div class="col-md-1 download-list" data-download-path="expeId/{{expe}}/{{id_name}}/{{day_name}}/{{user_name}}"><i class="fas fa-download"></i></div>
+                                                            <div class="col-md-1 date-folder-list"><i class="fas fa-arrow-circle-right"></i></div>
+                                                        </div>
+                                                        
+
+                                                        <ul class="list-group files-list" style="display: none">
+
+                                                            <hr />
+                                                            {% for file in user %}
+
+                                                                <li class="list-group-item">
+                                                                
+                                                                    <div class="row">
+                                                                        <div class="col-md-11">{{file}}</div>
+                                                                        <div class="col-md-1 download-list" data-download-path="expeId/{{expe}}/{{id_name}}/{{day_name}}/{{user_name}}/{{file}}"><i class="fas fa-download"></i></div>
+                                                                    </div>
+                                                                            
+                                                                </li>
+                                                            {% endfor %}
+                                                        
+                                                        </ul>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    {% endfor %} 
+
+                                    </ul>
+                                </li>
+                            {% endfor %} 
+                    {% endwith %}
+                </ul>
+
+
+                <!-- List of items which does not have identifier when user pass experiment -->
+                <h3>By date</h3>
+                <ul class="list-group">
+                
+                    {% with folders|get_value_from_dict:'date' as date_folder %}
+                        {% for day_name, day in date_folder.items %} 
+                            
+                                <li class="list-group-item">
+                                    
+                                    <div class="row">
+                                        <div class="col-md-10">{{day_name}} </div>
+                                        <div class="col-md-1 download-list" data-download-path="date/{{expe}}/{{day_name}}"><i class="fas fa-download"></i></div>
+                                        <div class="col-md-1 date-folder-list"><i class="fas fa-arrow-circle-right"></i></div>
+                                    </div>
+                                    
+                                    <ul class="list-group files-list" style="display: none">
+
+                                        <hr />
+                                        <li class="list-group-item">
+                                        
+                                        {% for user_name, user in day.items %}
+
+
+                                                <div class="row">
+                                                    <div class="col-md-10"><strong>User: </strong>{{user_name}} </div>
+                                                    <div class="col-md-1 download-list" data-download-path="date/{{expe}}/{{day_name}}/{{user_name}}"><i class="fas fa-download"></i></div>
+                                                    <div class="col-md-1 date-folder-list"><i class="fas fa-arrow-circle-right"></i></div>
+                                                </div>
+                                                
+
+                                                <ul class="list-group files-list" style="display: none">
+
+                                                    <hr />
+                                                    {% for file in user %}
+
+                                                        <li class="list-group-item">
+                                                        
+                                                            <div class="row">
+                                                                <div class="col-md-11">{{file}}</div>
+                                                                <div class="col-md-1 download-list" data-download-path="date/{{expe}}/{{day_name}}/{{user_name}}/{{file}}"><i class="fas fa-download"></i></div>
+                                                            </div>
+                                                                    
+                                                        </li>
+                                                    {% endfor %}
+                                                
+                                                </ul>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                        {% endfor %} 
+                    {% endwith %}
+
 
                 </ul>
+
             {% csrf_token %}
 
             {% else %}

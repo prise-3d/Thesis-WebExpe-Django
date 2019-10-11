@@ -12,6 +12,24 @@
     <br />
     <h5>{{indication}}</h5>
 
+    <br />
+    <br />
+
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <form method="GET" action="/expe">
+                <div class="form-group">
+                    <input type="hidden" name="scene" value="{{scene_name}}"/>
+                    <input type="hidden" name="expe" value="{{expe_name}}"/>
+                    <input type="hidden" name="iteration" value="0"/>
+
+                    <label for="experimentId">Select experiment identifier:</label>
+                    <input type="text" class="form-control" name="experimentId" placeholder="Enter your experiment identifier"/>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <p id="expeIndication"><strong>Press enter to begin experiments</strong></p>
 
 {% endblock %}

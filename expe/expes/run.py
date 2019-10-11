@@ -75,6 +75,7 @@ def run_quest_one_image(request, model_filepath, output_file):
         # TODO : check `i` variable 
         # update of `quest`
         # qp.update(qualities[i], answer)
+        # Use of previous stim
         qp.update(qualities[iteration], answer) 
         entropy = qp.get_entropy()
 

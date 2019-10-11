@@ -75,11 +75,13 @@ def indications(request):
 
     # get param 
     expe_name = request.GET.get('expe')
+    scene_name = request.GET.get('scene')
 
     # get base data
     data = get_base_data()
     # expe parameters
     data['expe_name']  = expe_name
+    data['scene_name'] = scene_name
     data['question']   = cfg.expes_configuration[expe_name]['text']['question']
     data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
 
@@ -107,12 +109,23 @@ def expe(request):
 
     # create output folder for expe_result
     current_day = datetime.strftime(datetime.utcnow(), "%Y-%m-%d")
-    results_folder = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder_name_day.format(expe_name, current_day))
 
+    user_identifier = request.session.get('id')
+    experiment_id = request.session.get('experimentId')
+
+    print("ExperimentId is : " + experiment_id)
+
+    # check if experimentId is used or not
+    if len(experiment_id) == 0:
+        output_expe_folder = cfg.output_expe_folder_name_day.format(expe_name, current_day, user_identifier)
+    else:
+        output_expe_folder = cfg.output_expe_folder_name_id_day.format(expe_name, experiment_id, current_day, user_identifier)
+
+    results_folder = os.path.join(settings.MEDIA_ROOT, output_expe_folder)
     if not os.path.exists(results_folder):
         os.makedirs(results_folder)
 
-    result_filename = scene_name + '_' + request.session.get('id') + '_' + request.session.get('timestamp') +".csv"
+    result_filename = scene_name + '_' + request.session.get('timestamp') +".csv"
     results_filepath = os.path.join(results_folder, result_filename)
 
     if not os.path.exists(results_filepath):
@@ -146,6 +159,7 @@ def expe(request):
         # here generic expe params
         del request.session['expe']
         del request.session['scene']
+        del request.session['experimentId']
         del request.session['qualities']
         del request.session['timestamp']
 
@@ -181,19 +195,62 @@ def list_results(request, expe=None):
     else:
         if expe in cfg.expe_name_list:
 
-            folder_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder, expe)
+            folder_date_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder_date, expe)
+            folder_id_path   = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder_id, expe)
 
-            # init folder dictionnary
-            folders = {}
+            # extract date files
+            folders_date = {}
 
-            if os.path.exists(folder_path):
+            if os.path.exists(folder_date_path):
             
-                days = sorted(os.listdir(folder_path), reverse=True)
+                days = sorted(os.listdir(folder_date_path), reverse=True)
 
+                # get all days
                 for day in days:
-                    day_path = os.path.join(folder_path, day)
-                    filenames = os.listdir(day_path)
-                    folders[day] = filenames
+                    day_path = os.path.join(folder_date_path, day)
+                    users = os.listdir(day_path)
+
+                    folders_user = {}
+                    # get all users files
+                    for user in users:
+                        user_path = os.path.join(day_path, user)
+                        filenames = os.listdir(user_path)
+                        folders_user[user] = filenames
+                    
+                    # attach users to this day
+                    folders_date[day] = folders_user
+
+            # extract expe id files
+            folders_id = {}
+
+            if os.path.exists(folder_id_path):
+                
+                ids = sorted(os.listdir(folder_id_path), reverse=True)
+
+                # get all days
+                for identifier in ids:
+                    id_path = os.path.join(folder_id_path, identifier)
+                    days = sorted(os.listdir(id_path), reverse=True)
+
+                    folder_days = {}
+                    # get all days
+                    for day in days:
+                        day_path = os.path.join(id_path, day)
+                        users = os.listdir(day_path)
+
+                        folders_user = {}
+                        # get all users files
+                        for user in users:
+                            user_path = os.path.join(day_path, user)
+                            filenames = os.listdir(user_path)
+                            folders_user[user] = filenames
+                        
+                        # attach users to this day
+                        folder_days[day] = folders_user
+
+                    folders_id[identifier] = folder_days
+
+            folders = { 'date': folders_date, 'expeId': folders_id}
         else:
             raise Http404("Expe does not exists")
 
@@ -285,6 +342,10 @@ def refresh_data(request, expe_name, scene_name):
     request.session['qualities'] = api.get_scene_qualities(scene_name)
     # update unique timestamp each time new experiments is launched
     request.session['timestamp'] = datetime.strftime(datetime.utcnow(), "%Y-%m-%d_%Hh%Mm%Ss")
+
+    # retrieve and store experimentId
+    expe_id = request.GET.get('experimentId')
+    request.session['experimentId'] = expe_id
 
     # TODO : add in cache ref_image
     # get reference image
