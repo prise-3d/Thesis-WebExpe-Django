@@ -21,4 +21,7 @@ RUN echo $WEBEXPE_PREFIX_URL
 RUN WEBEXPE_PREFIX_URL=$WEBEXPE_PREFIX_URL
 RUN WEB_API_PREFIX_URL=$WEB_API_PREFIX_URL
 
+# create super user admin automatically
+RUN bash create_admin.sh
+
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
