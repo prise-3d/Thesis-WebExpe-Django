@@ -27,6 +27,13 @@ Add your own super user admin credentials:
 cp credentials.example.json credentials.json
 ```
 
+```json
+{
+    "username":"username",
+    "email":"",
+    "password":"pass"
+}
+```
 #### Run server
 
 Run the server :
