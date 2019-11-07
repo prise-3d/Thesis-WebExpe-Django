@@ -22,6 +22,11 @@ Initialize the database with the following command :
 python manage.py migrate
 ```
 
+Add your own super user admin credentials:
+```
+cp credentials.example.json credentials.json
+```
+
 #### Run server
 
 Run the server :
@@ -37,6 +42,11 @@ python manage.py runserver 8080
 ```
 
 ### 2. Using docker (recommended)
+
+First, you need to add your own user admin credentials if you wished:
+```
+cp credentials.example.json credentials.json
+```
 
 You can use make commands:
 
