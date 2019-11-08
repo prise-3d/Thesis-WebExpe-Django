@@ -51,7 +51,9 @@ expes_configuration            = {
         'params':{
             'iterations': 10
         },
-       
+        'slopes':{
+
+        },
         # if others custom session param are directly set for experiments
         'session_params': [
             'expe_data',

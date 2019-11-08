@@ -74,6 +74,8 @@ def expe_list(request):
 
 def indications(request):
 
+    random.seed(10)
+
     # get param 
     expe_name = request.GET.get('expe')
     scene_name = request.GET.get('scene')

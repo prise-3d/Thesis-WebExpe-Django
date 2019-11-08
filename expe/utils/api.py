@@ -23,6 +23,7 @@ def get_image(scene, img_quality):
     # Make a get request to get information of scene image with quality of 200
     response = requests.get(url)
     # Print the content of the response formatted into JSON
+
     content_json = json.loads(response.content)
     
     # Access to link of image using 'key' (data & link) from json data
