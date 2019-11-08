@@ -58,6 +58,7 @@ def expe_list(request):
 
     # get list of experimentss
     expes = cfg.expe_name_list
+    data = get_base_data()
 
     # by default user restart expe
     request.session['expe_started'] = False
@@ -76,6 +77,9 @@ def indications(request):
     # get param 
     expe_name = request.GET.get('expe')
     scene_name = request.GET.get('scene')
+    example_number = request.GET.get('example')
+
+    print(example_number)
 
     # get base data
     data = get_base_data()
@@ -84,6 +88,59 @@ def indications(request):
     data['scene_name'] = scene_name
     data['question']   = cfg.expes_configuration[expe_name]['text']['question']
     data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
+
+    number_of_examples = len(cfg.expes_configuration[expe_name]['text']['examples']['images'])
+
+    start_experiment = False
+    if (int(example_number) >= number_of_examples):
+        start_experiment = True
+    else:
+        # get expected image qualities indices (load noisy and ref image)
+        params_image = cfg.expes_configuration[expe_name]['text']['examples']['images'][int(example_number)]
+        qualities = api.get_scene_qualities(scene_name)
+
+        noisy_quality = qualities[params_image[0]]
+        ref_quality = qualities[params_image[1]]
+
+        noisy_image = api.get_image(scene_name, noisy_quality)
+        ref_image = api.get_image(scene_name, ref_quality)
+
+        # get crop params from configuration
+        crop_params = cfg.expes_configuration[expe_name]['text']['examples']['crop_params'][int(example_number)]
+
+        img_merge, percentage, orientation, position = crop_images(noisy_image,     
+                                                                    ref_image, 
+                                                                    per=crop_params[0], 
+                                                                    orien=crop_params[1], 
+                                                                    swap_img=crop_params[2])
+
+        example_sentence = cfg.expes_configuration[expe_name]['text']['examples']['sentence']
+
+        if orientation == 0:
+            example_sentence = example_sentence.format('vertically', str(percentage*100))
+        else:
+            example_sentence = example_sentence.format('horizontally', str(percentage*100))
+
+        data['example_sentence'] = example_sentence
+
+
+        # Temporary save of image
+        tmp_folder = os.path.join(settings.MEDIA_ROOT, cfg.output_tmp_folder)
+
+        if not os.path.exists(tmp_folder):
+            os.makedirs(tmp_folder)
+
+        # generate tmp merged image (pass as BytesIO was complicated..)
+        filepath_img = os.path.join(tmp_folder, 'example_' + scene_name + '' + expe_name + '.png')
+        
+        # replace img_merge if necessary (new iteration of expe)
+        if img_merge is not None:
+            img_merge.save(filepath_img)
+
+        print(filepath_img)
+        data['example'] = filepath_img
+
+    data['start'] = start_experiment
 
     return render(request, 'expe/expe_indications.html', data)
 
