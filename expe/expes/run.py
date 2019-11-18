@@ -3,6 +3,7 @@ import os
 import time
 import numpy as np
 import pickle
+import sys
 
 # django imports
 from django.conf import settings
@@ -16,6 +17,10 @@ from .. import config as cfg
 # expe imports
 from .classes.quest_plus import QuestPlus
 from .classes.quest_plus import psychometric_fun
+
+# other imports 
+from ipfml import utils
+from pprint import pprint
 
 
 def run_quest_one_image(request, model_filepath, output_file):
@@ -56,28 +61,45 @@ def run_quest_one_image(request, model_filepath, output_file):
     # 3. Load or create Quest instance
     # default params
     # TODO : add specific thresholds information for scene
-    thresholds = np.arange(50, 10000, 50)
+    #thresholds = np.arange(50, 10000, 50)
     stim_space = np.asarray(qualities)
-    slopes = np.arange(0.0001, 0.001, 0.00003)
+    #slopes = np.arange(0.0001, 0.001, 0.00003) # contemporary
+    slopes = np.arange(0.0005, 0.01, 0.0003) # bathroom
+
+    # TODO : update norm slopes
+    # stim_space = np.asarray(qualities)
+    # slopes = np.arange(0.0001, 0.001, 0.00003)
+
+    # # normalize stim_space and slopes for this current scene
+    # stim_space_norm = np.array(utils.normalize_arr_with_range(stim_space, stim_space.min(), stim_space.max()))
+    # slopes_norm = slopes * (slopes.max() - slopes.min()) 
 
     # check if necessary to construct `quest` object
     if not os.path.exists(model_filepath):
-        qp = QuestPlus(stim_space, [thresholds, slopes], function=psychometric_fun)
+        print('Creation of `qp` model')
+        #print(slopes_norm)
+        #qp = QuestPlus(stim_space_norm, [stim_space_norm, slopes_norm], function=psychometric_fun)
+        qp = QuestPlus(stim_space, [stim_space, slopes], function=psychometric_fun)
+
     else:
         print('Load `qp` model')
         filehandler = open(model_filepath, 'rb') 
         qp = pickle.load(filehandler)
+        pprint(qp)
     
     # 4. If expe started update and save experiments information and model
     # if experiments is already began
     if request.session.get('expe_started'):
 
-        # TODO : check `i` variable 
-        # update of `quest`
-        # qp.update(qualities[i], answer)
-        # Use of previous stim
-        qp.update(qualities[iteration], answer) 
+        # TODO : update norm slopes
+        #previous_stim_norm = (int(previous_stim) - stim_space.min()) / (stim_space.max() - stim_space.min() + sys.float_info.epsilon)
+
+        print(previous_stim)
+        #print(previous_stim_norm)
+
+        qp.update(int(previous_stim), answer) 
         entropy = qp.get_entropy()
+        print('chosen entropy', entropy)
 
         line = str(previous_stim) 
         line += ";" + scene_name 
@@ -92,19 +114,24 @@ def run_quest_one_image(request, model_filepath, output_file):
         output_file.write(line)
         output_file.flush()
 
-    # save `quest` model
-    file_pi = open(model_filepath, 'wb') 
-    pickle.dump(qp, file_pi)
-
     # 5. Contruct new image and save it
     # construct image 
     if iteration < cfg.expes_configuration[expe_name]['params']['iterations']:
         # process `quest`
-        next_stim = qp.next_contrast()
-        print("Next quality ", next_stim)
 
-        # construct new image
+        next_stim = qp.next_contrast()
+        print(next_stim)
+        #next_stim_img = int(next_stim*(stim_space.max()-stim_space.min())+stim_space.min())
+    
+        print('-------------------------------------------------')
+        print('Iteration', iteration)
+        print(next_stim)
+        #print('denorm', next_stim_img)
+        print('-------------------------------------------------')
+
+        #noisy_image = api.get_image(scene_name, next_stim_img)
         noisy_image = api.get_image(scene_name, next_stim)
+
 
         # reconstruct reference image from list stored into session
         ref_image = api.get_image(scene_name, 'max')
@@ -126,6 +153,10 @@ def run_quest_one_image(request, model_filepath, output_file):
     # replace img_merge if necessary (new iteration of expe)
     if img_merge is not None:
         img_merge.save(filepath_img)
+
+    # save qp model at each iteration
+    file_pi = open(model_filepath, 'wb') 
+    pickle.dump(qp, file_pi)
 
     # 6. Prepare experiments data for current iteration and data for view
     

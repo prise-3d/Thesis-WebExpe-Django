@@ -11,7 +11,7 @@ def crop_images(img1, img2, per=None, orien=None, swap_img=None):
     crop and gather reference image and a noisy one randomly
     '''
     if per is None:
-        per = random.choice([0.25, 0.5, 0.75])
+        per = random.random() * 0.7 + 0.15
     if orien is None:
         orien = random.choice([0, 1])
     if swap_img is None:

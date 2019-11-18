@@ -94,7 +94,7 @@ Example of loading or saving Python object (need of pickle):
 ```python
 # check if necessary to construct `quest` object or if backup exists
 if not os.path.exists(model_filepath):
-    qp = QuestPlus(stim_space, [thresholds, slopes], function=psychometric_fun)
+    qp = QuestPlus(stim_space, [stime_space, slopes], function=psychometric_fun)
 else:
     print('Load `qp` model')
     filehandler = open(model_filepath, 'rb') 

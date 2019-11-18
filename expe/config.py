@@ -34,11 +34,26 @@ expes_configuration            = {
             'question': "Do you see one image or a composition of more than one?",
             'indication': "press left if you see one image, right if not",
             'end_text': "Experience is finished. Thanks for your participation",
+            'examples': {
+                'sentence': "This images is cropped {0} with {1}%",
+                'crop_params': [
+                    [0.3, 0, 0],
+                    [0.3, 0, 0],
+                    [0.7, 1, 0]
+                ],
+                'images': [
+                    [2, -1],
+                    [-3, -1],
+                    [7, -1]
+                ]
+            }
         },
         'params':{
             'iterations': 10
         },
-       
+        'slopes':{
+
+        },
         # if others custom session param are directly set for experiments
         'session_params': [
             'expe_data',
