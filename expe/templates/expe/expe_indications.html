@@ -33,9 +33,9 @@
 
         <p id="expeIndication"><strong>Press enter to begin experiments</strong></p>
     {% else %}
+        <input type="hidden" name="scene_name" value="{{scene_name}}"/>
         <br/>
-        <h5>{{example_sentence}}</h5>
-        <br/>
+        <h5>{{example_sentence|linebreaks}}</h5>
         <img src="{{example}}" />
     {% endif %}
 
