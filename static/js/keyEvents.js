@@ -58,3 +58,9 @@ const checkKey = e => {
 
 // implement `key` events
 document.addEventListener('keydown', checkKey)
+
+
+// avoid back button return 30 times... (Need to improve this..)
+for (var i = 0; i < 30; i++){
+   window.history.pushState({isBackPage: false, }, document.title, location.href)
+}
