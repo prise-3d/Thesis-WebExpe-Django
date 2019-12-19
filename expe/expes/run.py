@@ -63,9 +63,13 @@ def run_quest_one_image(request, model_filepath, output_file):
     # TODO : add specific thresholds information for scene
     #thresholds = np.arange(50, 10000, 50)
     stim_space = np.asarray(qualities)
+    
+    slope_range = cfg.expes_configuration[expe_name]['params']['slopes'][scene_name]
+    slopes = np.arange(slope_range[0], slope_range[1], slope_range[2]) 
     #slopes = np.arange(0.0001, 0.001, 0.00003) # contemporary
-    slopes = np.arange(0.0005, 0.01, 0.0003) # bathroom
-
+    #slopes = np.arange(0.0005, 0.01, 0.0003) # bathroom
+    #slopes = np.arange(1.995,19.95,0.5985)
+    
     # TODO : update norm slopes
     # stim_space = np.asarray(qualities)
     # slopes = np.arange(0.0001, 0.001, 0.00003)
@@ -113,6 +117,10 @@ def run_quest_one_image(request, model_filepath, output_file):
 
         output_file.write(line)
         output_file.flush()
+        
+        if entropy < cfg.expes_configuration[expe_name]['params']['entropy']:
+            request.session['expe_finished'] = True
+            return None
 
     # 5. Contruct new image and save it
     # construct image 
@@ -139,6 +147,8 @@ def run_quest_one_image(request, model_filepath, output_file):
     else:
         request.session['expe_finished'] = True
         return None
+    
+    
 
     # save image using user information
     # create output folder for tmp files if necessary

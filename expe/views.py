@@ -68,17 +68,31 @@ def expe_list(request):
     # expe data
     data['scenes'] = scenes
     data['expes']  = expes
-
+    
+    #data['scenes'] = {}
+    #for expe in expes:
+    #    if 'scene' in cfg.expes_configuration[expe]:
+    #        data['scenes'][expe] = cfg.expes_configuration[expe]['scenes']
+    #    else:
+    #        data['scenes'][expe] = scenes
+            
     return render(request, 'expe/expe_list.html', data)
 
 
 def indications(request):
 
-    random.seed(10)
+    #random.seed(10)
 
     # get param 
     expe_name = request.GET.get('expe')
-    scene_name = request.GET.get('scene')
+    
+    scene_name = None
+    if 'scene' in request.GET:
+        scene_name = request.GET.get('scene')
+    
+    if scene_name is None or scene_name == 'null':
+        scene_name = random.choice(cfg.expes_configuration[expe_name]['scenes'])
+        
     example_number = request.GET.get('example')
 
     print(example_number)
@@ -116,7 +130,7 @@ def indications(request):
                                                                     orien=crop_params[1], 
                                                                     swap_img=crop_params[2])
 
-        example_sentence = cfg.expes_configuration[expe_name]['text']['examples']['sentence']
+        example_sentence = cfg.expes_configuration[expe_name]['text']['examples']['sentence'][int(example_number)]
 
         if orientation == 0:
             example_sentence = example_sentence.format('vertically', str(percentage*100))

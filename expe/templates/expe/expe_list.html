@@ -17,15 +17,6 @@
                 <input type="hidden" name="example" value="0"/>
 
                 <div class="form-group">
-                    <label for="scene">Select scene:</label>
-                    <select class="form-control" name="scene">
-                        {% for scene in scenes %}
-                            <option value="{{scene}}">{{scene}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form-group">
                     <label for="expe" style="position:static">Select experiments:</label>
                     <select class="form-control " name="expe">
                         {% for expe in expes %}
@@ -33,6 +24,16 @@
                         {% endfor %}
                     </select>
                 </div>
+                
+                <!-- <div class="form-group">
+                    <label for="scene">Select scene:</label>
+                    <select class="form-control" name="scene">
+                        {% for scene in scenes. %}
+                            <option value="{{scene}}">{{scene}}</option>
+                        {% endfor %}
+                    </select>
+                </div> -->
+
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
