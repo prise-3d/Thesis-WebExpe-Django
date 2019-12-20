@@ -30,12 +30,15 @@ expes_configuration            = {
 
     # First experiments configuration
     'quest_one_image':{
+        'scenes':['contemporary', 'bathroom'],
         'text':{
             'question': "Do you see one image or a composition of more than one?",
-            'indication': "press left if you see one image, right if not",
+            'indication': "press RIGHT if you see 2 images, LEFT if not",
             'end_text': "Experience is finished. Thanks for your participation",
             'examples': {
-                'sentence': "This images is cropped {0} with {1}%",
+                'sentence': ["First example of 2 images:\n This image is cropped {0}.\n {1}% on the left originating from a low-quality image and on the right originating from high quality. \n So, press RIGHT.", 
+                             "Second example of 1 image: \n This image is cropped {0}. \n {1}% on the left originating from a high-quality image and on the right originating from high quality, too.\n So, press LEFT", 
+                             "Third example of 2 images: \n This image is cropped {0}. \n {1}% on the upper part originating from a low-quality image and on the bottom originating from high quality. \n So, press RIGHT."],
                 'crop_params': [
                     [0.3, 0, 0],
                     [0.3, 0, 0],
@@ -49,11 +52,14 @@ expes_configuration            = {
             }
         },
         'params':{
-            'iterations': 10
+            'iterations': 100,
+            'entropy': 5,
+            'slopes':{
+                'contemporary' : [0.0001, 0.001, 0.00003], #start, stop, step
+                'bathroom' : [0.0005, 0.01, 0.0003], #start, stop, step
+            },
         },
-        'slopes':{
-
-        },
+        
         # if others custom session param are directly set for experiments
         'session_params': [
             'expe_data',
