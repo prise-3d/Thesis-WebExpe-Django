@@ -36,18 +36,46 @@ expes_configuration            = {
             'indication': "press RIGHT if you see 2 images, LEFT if not",
             'end_text': "Experience is finished. Thanks for your participation",
             'examples': {
-                'sentence': ["First example of 2 images:\n This image is cropped {0}.\n {1}% on the left originating from a low-quality image and on the right originating from high quality. \n So, press RIGHT.", 
-                             "Second example of 1 image: \n This image is cropped {0}. \n {1}% on the left originating from a high-quality image and on the right originating from high quality, too.\n So, press LEFT", 
-                             "Third example of 2 images: \n This image is cropped {0}. \n {1}% on the upper part originating from a low-quality image and on the bottom originating from high quality. \n So, press RIGHT."],
+                'sentence': ["1st example : ", 
+                             "The answer is 2 images! \n This image is cropped {0}.\n {1}% on the left originating from a low-quality image and on the right originating from high quality. \n So, press RIGHT.",
+                             "2nd example : ",
+                             "The answer is 1 image! \n This image is cropped {0} but \n {1}% on the left originating from a high-quality image and on the right originating from high quality, too.\n So, press LEFT.", 
+                             "3rd example: ",
+                             "The answer is 2 images! \n This image is cropped {0}. \n {1}% on the upper part originating from a low-quality image and on the bottom originating from high quality. \n So, press RIGHT.",
+                             "4th example: ",
+                             "The answer is 2 images! \n This image is cropped {0}. \n {1}% on the upper part originating from a low-quality image and on the bottom originating from high quality. \n So, press RIGHT.",
+                             "5th example: ",
+                             "The answer is 1 image! \n This image is cropped {0}. \n {1}% on the upper part originating from a high-quality image and on the bottom originating from a low-quality quality.\n So, press LEFT.",
+                             "6th example: ",
+                             "The answer is 2 images! \n This image is cropped {0}. \n {1}% on the left originating from a low-quality image and on the right originating from high quality. \n So, press RIGHT.",
+                             ],
                 'crop_params': [
                     [0.3, 0, 0],
                     [0.3, 0, 0],
-                    [0.7, 1, 0]
+                    [0.3, 0, 0],
+                    [0.3, 0, 0],
+                    [0.7, 1, 0],
+                    [0.7, 1, 0],
+                    [0.2, 1, 0],
+                    [0.2, 1, 0],
+                    [0.8, 1, 1],
+                    [0.8, 1, 1],
+                    [0.2, 0, 0],
+                    [0.2, 0, 0]
                 ],
                 'images': [
-                    [2, -1],
-                    [-3, -1],
-                    [7, -1]
+                    [1, -1],
+                    [1, -1],
+                    [-1, -1],
+                    [-1, -1],
+                    [7, -1],
+                    [7, -1],
+                    [15, -1],
+                    [15, -1],
+                    [20, -1],
+                    [20, -1],
+                    [30, -1],
+                    [30, -1]
                 ]
             }
         },

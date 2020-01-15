@@ -22,6 +22,69 @@ from .classes.quest_plus import psychometric_fun
 from ipfml import utils
 from pprint import pprint
 
+from PIL import Image, ImageDraw
+
+def example_quest_one_image(request, expe_name, scene_name):
+    
+    example_number = request.GET.get('example')
+
+    
+    # get expected image qualities indices (load noisy and ref image)
+    params_image = cfg.expes_configuration[expe_name]['text']['examples']['images'][int(example_number)]
+    qualities = api.get_scene_qualities(scene_name)
+
+    noisy_quality = qualities[params_image[0]]
+    ref_quality = qualities[params_image[1]]
+
+    noisy_image = api.get_image(scene_name, noisy_quality)
+    ref_image = api.get_image(scene_name, ref_quality)
+
+    # get crop params from configuration
+    crop_params = cfg.expes_configuration[expe_name]['text']['examples']['crop_params'][int(example_number)]
+
+    img_merge, percentage, orientation, position = crop_images(noisy_image,     
+                                                                ref_image, 
+                                                                per=crop_params[0], 
+                                                                orien=crop_params[1], 
+                                                                swap_img=crop_params[2])
+    width, height = img_merge.size
+    if orientation==0:
+        left, top, right, bottom = percentage*width, 0, percentage*width, height   #vertical
+    else:
+        left, top, right, bottom = 0, percentage*height, width, percentage*height   #horizontal
+    if  int(example_number) % 2 != 0 :
+        if noisy_quality != qualities[-1]:#-noisy_quality > qualities[-1]-(10*qualities[-1])/100 :
+            draw = ImageDraw.Draw(img_merge) 
+            draw.line((left, top, right, bottom), fill='black', width=5)
+    example_sentence = cfg.expes_configuration[expe_name]['text']['examples']['sentence'][int(example_number)]
+
+    if orientation == 0:
+        example_sentence = example_sentence.format('vertically', str(percentage*100))
+    else:
+        example_sentence = example_sentence.format('horizontally', str(percentage*100))
+    
+    
+    # Temporary save of image
+    tmp_folder = os.path.join(settings.MEDIA_ROOT, cfg.output_tmp_folder)
+
+    if not os.path.exists(tmp_folder):
+        os.makedirs(tmp_folder)
+
+    # generate tmp merged image (pass as BytesIO was complicated..)
+    filepath_img = os.path.join(tmp_folder, 'example_' + scene_name + '' + expe_name + '.png')
+    
+    # replace img_merge if necessary (new iteration of expe)
+    if img_merge is not None:
+        img_merge.save(filepath_img)
+
+    data_example = {
+        'example_sentence': example_sentence,
+        'example': filepath_img
+    }
+
+    return data_example
+
+    
 
 def run_quest_one_image(request, model_filepath, output_file):
 
