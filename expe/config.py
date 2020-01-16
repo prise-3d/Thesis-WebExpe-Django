@@ -45,7 +45,7 @@ expes_configuration            = {
                              "4th example: ",
                              "The answer is 2 images! \n This image is cropped {0}. \n {1}% on the upper part originating from a low-quality image and on the bottom originating from high quality. \n So, press RIGHT.",
                              "5th example: ",
-                             "The answer is 1 image! \n This image is cropped {0}. \n {1}% on the upper part originating from a high-quality image and on the bottom originating from a low-quality quality.\n So, press LEFT.",
+                             "The answer is 1 image! \n This image is cropped {0}. \n {1}% on the upper part originating from a high-quality image and on the bottom originating from a low-quality quality.\n So, press RIGHT.",
                              "6th example: ",
                              "The answer is 2 images! \n This image is cropped {0}. \n {1}% on the left originating from a low-quality image and on the right originating from high quality. \n So, press RIGHT.",
                              ],

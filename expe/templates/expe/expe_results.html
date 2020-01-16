@@ -10,7 +10,7 @@
 {% block content %}
     
     {% if not expe %}
-        <h3>Results files of experimentss</h3>
+        <h3>Results files of experiments</h3>
         <br />
     {% endif %}
 
@@ -59,10 +59,10 @@
                                             <ul class="list-group files-list" style="display: none">
 
                                                 <hr />
-                                                <li class="list-group-item">
                                                 
                                                 {% for user_name, user in day.items %}
 
+                                                <li class="list-group-item">
 
                                                         <div class="row">
                                                             <div class="col-md-10"><strong>User: </strong>{{user_name}} </div>
@@ -118,10 +118,10 @@
                                     <ul class="list-group files-list" style="display: none">
 
                                         <hr />
-                                        <li class="list-group-item">
                                         
                                         {% for user_name, user in day.items %}
 
+                                        <li class="list-group-item">
 
                                                 <div class="row">
                                                     <div class="col-md-10"><strong>User: </strong>{{user_name}} </div>
