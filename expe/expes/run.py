@@ -5,6 +5,8 @@ import numpy as np
 import pickle
 import sys
 
+from datetime import datetime
+
 # django imports
 from django.conf import settings
 
@@ -154,6 +156,15 @@ def run_quest_one_image(request, model_filepath, output_file):
         qp = pickle.load(filehandler)
         pprint(qp)
     
+    #initialize entropy
+    entropy = np.inf
+    last_entropy = 0
+    crit_entropy = cfg.expes_configuration[expe_name]['params']['entropy']
+    min_iter = cfg.expes_configuration[expe_name]['params']['min_iterations']
+    max_iter = cfg.expes_configuration[expe_name]['params']['max_iterations']
+    
+    threshold = None
+    
     # 4. If expe started update and save experiments information and model
     # if experiments is already began
     if request.session.get('expe_started'):
@@ -165,6 +176,8 @@ def run_quest_one_image(request, model_filepath, output_file):
         #print(previous_stim_norm)
 
         qp.update(int(previous_stim), answer) 
+        threshold = qp.get_fit_params(select='mode')[0]
+        
         entropy = qp.get_entropy()
         print('chosen entropy', entropy)
 
@@ -181,13 +194,26 @@ def run_quest_one_image(request, model_filepath, output_file):
         output_file.write(line)
         output_file.flush()
         
-        if entropy < cfg.expes_configuration[expe_name]['params']['entropy']:
-            request.session['expe_finished'] = True
-            return None
+        entropies = np.loadtxt(output_file.name, delimiter=";", usecols=7, skiprows=1)
 
+        if len(entropies.shape) > 0 and entropies.shape[0] >= 11:
+            last_entropy = entropies[-11]
+        else:
+            last_entropy = np.nan
+
+    # check time
+    current_time = datetime.utcnow()
+    current_time = time.mktime(current_time.timetuple())
+    started_time = request.session.get('timestamp')
+    started_time = time.mktime(datetime.strptime(started_time, "%Y-%m-%d_%Hh%Mm%Ss").timetuple())
+    max_time = cfg.expes_configuration[expe_name]['params']['max_time'] * 60
+    if current_time - started_time >= max_time:
+        request.session['expe_finished'] = True
+        return None
+    
     # 5. Contruct new image and save it
     # construct image 
-    if iteration < cfg.expes_configuration[expe_name]['params']['iterations']:
+    if iteration < min_iter or ((last_entropy is np.nan or np.abs(entropy - last_entropy) >= crit_entropy) and iteration < max_iter):
         # process `quest`
 
         next_stim = qp.next_contrast()
@@ -209,7 +235,17 @@ def run_quest_one_image(request, model_filepath, output_file):
         img_merge, percentage, orientation, position = crop_images(noisy_image, ref_image)
     else:
         request.session['expe_finished'] = True
-        return None
+        if threshold < stim_space[-1]/3:
+            end_message = { 'end_message' : "You are part of the 25% of the population for whom the perception of details and aberrations is a difficult task.\n" +
+                           "In your eyes, the images always look perfect!"}
+        elif threshold < 2*stim_space[-1]/3:
+            end_message = { 'end_message' : "Bravo, you are part of the average population.\n" + 
+                           "Most people see as you do and you can detect details in a scene and perceive aberrations in an image."}
+        else:
+            end_message = { 'end_message' : "Congratulations, you are part of the 25% of the population that can detect all the details " +
+                           "in a scene and perceive perfectly the aberrations!"}
+            
+        return end_message
     
     
 

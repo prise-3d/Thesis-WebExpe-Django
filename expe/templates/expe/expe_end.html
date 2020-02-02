@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    Expe {{ expe_name }}
+{% endblock %}
+
+{% block content %}
+         <br/>
+        <h2>To receive your reward, please make sure to note the following identifier : {{userId}}</h2>
+        <br/>
+        <br/>
+        <h3>{{end_text|linebreaks}}</h3>
+        
+
+
+{% endblock %}
+
+{% block javascripts %} 
+{% endblock %}
+

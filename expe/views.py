@@ -79,19 +79,24 @@ def expe_list(request):
     return render(request, 'expe/expe_list.html', data)
 
 
-def indications(request):
-
-    #random.seed(10)
-
+def presentation(request):
     # get param 
     expe_name = request.GET.get('expe')
+    # get base data
+    data = get_base_data()
+    data['expe_name'] = expe_name
+    data['pres_text'] = cfg.expes_configuration[expe_name]['text']['presentation']
     
+    return render(request, 'expe/expe_presentation.html', data)
+    
+    
+def indications(request):
+    expe_name = request.GET.get('expe')
 
-    
     scene_name = None
     if 'scene' in request.GET:
         scene_name = request.GET.get('scene')
-    
+
     if scene_name is None or scene_name == 'null':
         scene_name = random.choice(cfg.expes_configuration[expe_name]['scenes'])
         
@@ -106,12 +111,15 @@ def indications(request):
     data['scene_name'] = scene_name
     data['question']   = cfg.expes_configuration[expe_name]['text']['question']
     data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
-
+    data['expected_duration'] = cfg.expes_configuration[expe_name]['expected_duration']
+    
     number_of_examples = len(cfg.expes_configuration[expe_name]['text']['examples']['images'])
 
     start_experiment = False
     if (int(example_number) >= number_of_examples):
         start_experiment = True
+        ystart = datetime.now().year
+        data["years"] = range(ystart-18, ystart - 80, -1)
     else:
          # run expe method using `expe_name`
         function_name = 'example_' + expe_name
@@ -120,67 +128,14 @@ def indications(request):
             run_example_method = getattr(run_expe, function_name)
         except AttributeError:
             raise NotImplementedError("Run expe method `{}` not implement `{}`".format(run_expe.__name__, function_name))
-    
+
         data_example = run_example_method(request, expe_name, scene_name)
         data.update(data_example)
-         
-        # get expected image qualities indices (load noisy and ref image)
-#        params_image = cfg.expes_configuration[expe_name]['text']['examples']['images'][int(example_number)]
-#        qualities = api.get_scene_qualities(scene_name)
-#
-#        noisy_quality = qualities[params_image[0]]
-#        ref_quality = qualities[params_image[1]]
-#
-#        noisy_image = api.get_image(scene_name, noisy_quality)
-#        ref_image = api.get_image(scene_name, ref_quality)
-#
-#        # get crop params from configuration
-#        crop_params = cfg.expes_configuration[expe_name]['text']['examples']['crop_params'][int(example_number)]
-#
-#        img_merge, percentage, orientation, position = crop_images(noisy_image,     
-#                                                                    ref_image, 
-#                                                                    per=crop_params[0], 
-#                                                                    orien=crop_params[1], 
-#                                                                    swap_img=crop_params[2])
-#        width, height = img_merge.size
-#        if orientation==0:
-#            left, top, right, bottom = percentage*width, 0, percentage*width, height   #vertical
-#        else:
-#            left, top, right, bottom = 0, percentage*height, width, percentage*height   #horizontal
-#        if  int(example_number) % 2 != 0 :
-#            if noisy_quality != qualities[-1]:#-noisy_quality > qualities[-1]-(10*qualities[-1])/100 :
-#                draw = ImageDraw.Draw(img_merge) 
-#                draw.line((left, top, right, bottom), fill='black', width=5)
-#        example_sentence = cfg.expes_configuration[expe_name]['text']['examples']['sentence'][int(example_number)]
-#
-#        if orientation == 0:
-#            example_sentence = example_sentence.format('vertically', str(percentage*100))
-#        else:
-#            example_sentence = example_sentence.format('horizontally', str(percentage*100))
-#
-#        data['example_sentence'] = example_sentence
-#
-#
-#        # Temporary save of image
-#        tmp_folder = os.path.join(settings.MEDIA_ROOT, cfg.output_tmp_folder)
-#
-#        if not os.path.exists(tmp_folder):
-#            os.makedirs(tmp_folder)
-#
-#        # generate tmp merged image (pass as BytesIO was complicated..)
-#        filepath_img = os.path.join(tmp_folder, 'example_' + scene_name + '' + expe_name + '.png')
-#        
-#        # replace img_merge if necessary (new iteration of expe)
-#        if img_merge is not None:
-#            img_merge.save(filepath_img)
-#
-#        print(filepath_img)
-#        data['example'] = filepath_img
 
     data['start'] = start_experiment
 
     return render(request, 'expe/expe_indications.html', data)
-
+    
 
 # Create your views here.
 def expe(request):
@@ -206,9 +161,15 @@ def expe(request):
 
     user_identifier = request.session.get('id')
     experiment_id = request.session.get('experimentId')
-
-    print("ExperimentId is : " + experiment_id)
-
+    user_gender = request.GET.get('gender')
+    user_year= request.GET.get('birth')
+    user_nationality = request.GET.get('nationality')
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[-1].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    
     # check if experimentId is used or not
     if len(experiment_id) == 0:
         output_expe_folder = cfg.output_expe_folder_name_day.format(expe_name, current_day, user_identifier)
@@ -221,12 +182,40 @@ def expe(request):
 
     result_filename = scene_name + '_' + request.session.get('timestamp') +".csv"
     results_filepath = os.path.join(results_folder, result_filename)
+    
+    result_structure = scene_name + '_' + request.session.get('timestamp') +".json"
+    result_structure = os.path.join(results_folder, result_structure)
+    
+    request.session['result_structure'] = result_structure
 
     if not os.path.exists(results_filepath):
         output_file = open(results_filepath, 'w')
         functions.write_header_expe(output_file, expe_name)
     else:
         output_file = open(results_filepath, 'a')
+        
+    if not os.path.exists(result_structure):
+        metadata = {
+        "user_identifier": user_identifier,
+        "experiment_id": experiment_id,
+        "gender": user_gender,
+        "birth" : user_year,
+        "nationality" : user_nationality,
+        "ip" : ip,
+        "height_screen" : request.GET.get('height'),
+        "width_screen" : request.GET.get('width'),
+        "navigator": request.META['HTTP_USER_AGENT'],#request.headers['User-Agent'],
+        "os": request.GET.get('os'),
+        "scene" : scene_name,
+        "slopes" : cfg.expes_configuration[expe_name]['params']['slopes'][scene_name],
+        "min_iter" : cfg.expes_configuration[expe_name]['params']['min_iterations'],
+        "max_iter" : cfg.expes_configuration[expe_name]['params']['max_iterations'],
+        "max_time" : cfg.expes_configuration[expe_name]['params']['max_time'],
+        "crit_entropy" : cfg.expes_configuration[expe_name]['params']['entropy']
+    }
+        with open(result_structure, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=4)
+    
 
     # TODO : add crontab task to erase generated img and model data
     # create `quest` object if not exists    
@@ -248,19 +237,6 @@ def expe(request):
 
     expe_data = run_expe_method(request, model_filepath, output_file)
 
-    if request.session.get('expe_finished'):
-        # reinit session as default value
-        # here generic expe params
-        del request.session['expe']
-        del request.session['scene']
-        del request.session['experimentId']
-        del request.session['qualities']
-        del request.session['timestamp']
-
-        # specific current expe session params (see `config.py`)
-        for key in cfg.expes_configuration[expe_name]['session_params']:
-            del request.session[key]
-
     # set expe current data into session (replace only if experiments data changed)
     if expe_data is not None:
         request.session['expe_data'] = expe_data
@@ -269,16 +245,60 @@ def expe(request):
     data = get_base_data(expe_name)
 
     # other experimentss information
-    data['expe_name']            = expe_name
-    data['end_text']             = cfg.expes_configuration[expe_name]['text']['end_text']
+    data['expe_name']  = expe_name
+    data['end_text']   = cfg.expes_configuration[expe_name]['text']['end_text']
+    data['userId'] = user_identifier
+    data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
+    
+    if expe_data is not None and 'end_message' in expe_data:
+        data['end_text'] += "\n" + expe_data['end_message']
+    
+    request.session['end_text'] = data['end_text']
 
     return render(request, cfg.expes_configuration[expe_name]['template'], data)
+
+
+def expe_end(request):
+    
+    
+    result_structure = request.session.get('result_structure')
+    metadata = {}
+    with open(result_structure, 'r', encoding='utf-8') as f:
+        metadata = json.load(f)
+    
+    metadata['condition'] = request.GET.get('condition')
+    metadata['dark'] = request.GET.get('dark')
+    metadata['glasses'] = request.GET.get('glasses')
+    metadata['trust'] = request.GET.get('trust')
+    
+    with open(result_structure, 'w', encoding='utf-8') as f:
+        json.dump(metadata, f, ensure_ascii=False, indent=4)
+    
+    data = get_base_data()
+    data['userId'] = request.session.get('id')    
+    data['end_text'] = request.session.get('end_text')
+    expe_name = request.session.get('expe')
+    data['expe_name'] = expe_name
+    # reinit session as default value
+    # here generic expe params
+    del request.session['expe']
+    del request.session['scene']
+    del request.session['experimentId']
+    del request.session['qualities']
+    del request.session['timestamp']
+    del request.session['end_text']
+
+    # specific current expe session params (see `config.py`)
+    for key in cfg.expes_configuration[expe_name]['session_params']:
+        del request.session[key]
+
+    return render(request, 'expe/expe_end.html', data)
 
 
 @login_required(login_url="login/")
 def list_results(request, expe=None):
     """
-    Return all results obtained from experimentss
+    Return all results obtained from experiments
     """
 
     if expe is None:

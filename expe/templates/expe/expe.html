@@ -10,14 +10,41 @@
 {% block content %}
     
     {% if request.session.expe_finished %}
-        <h3>{{end_text}}</h3>
 
-        <br />
-        <p>You will be redirected in <span id="refreshTime">5</span> sec to home page</p>
+        <form action="/expe_end">
+                <div class="form-group">
+                    <label for="condition" style="position:static">Did you carry out this experiment under good conditions? </label>
+                    <br/>
+                    <input type="radio" class="form-control" name="condition" value="Yes"> Yes
+					<input type="radio" class="form-control" name="condition" value="No"> No
+                    <br/>
+
+                    <label for="dark" style="position:static">Did you perform this experiment in the dark?</label>
+                    <br/>
+                    <input type="radio" class="form-control" name="dark" value="Yes"> Yes
+					<input type="radio" class="form-control" name="dark" value="No"> No
+                    <br/>
+
+                    <label for="glasses" style="position:static">If you wear glasses/lenses, did you have them during the experiment? </label>
+                    <br/>
+                    <input type="radio" class="form-control" name="glasses" value="Yes"> Yes
+					<input type="radio" class="form-control" name="glasses" value="No"> No
+                    <br/>
+
+                    <label for="trust" style="position:static"> Is there a reason why we don't trust your answers? </label>
+                    <br/>
+                    <input type="radio" class="form-control" name="trust" value="Yes"> Yes
+					<input type="radio" class="form-control" name="trust" value="No"> No
+                    <br/>
+
+                    <button type="submit" class="btn btn-primary">Next</button>
+                </div>
+            </form>
     {% endif %}
 
     <!-- TODO : Load    img from bitmap with javascript `loadImg.js` -->
     {% if not request.session.expe_finished %}
+        <p>{{indication}}</p>
         <img id="expeImg" src="{{request.session.expe_data|get_value_from_dict:'image_path'}}" data-img="{{request.session.img_merged}}"/>
     {% endif %}
 
