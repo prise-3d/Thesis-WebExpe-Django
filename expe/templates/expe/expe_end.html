@@ -7,13 +7,17 @@
 {% endblock %}
 
 {% block content %}
-         <br/>
+
+    <div id="parent-vertical">
+        <br/>
         <h2>To receive your reward, please make sure to note the following identifier : {{userId}}</h2>
         <br/>
         <br/>
-        <h3>{{end_text|linebreaks}}</h3>
-        
 
+        <div id="child-vertical">
+            <h3>{{end_text|linebreaks}}</h3>
+        </div>
+    </div>
 
 {% endblock %}
 

@@ -13,28 +13,65 @@
 
         <form action="/expe_end">
                 <div class="form-group">
+
+                    <!-- Condition part form -->
                     <label for="condition" style="position:static">Did you carry out this experiment under good conditions? </label>
                     <br/>
-                    <input type="radio" class="form-control" name="condition" value="Yes"> Yes
-					<input type="radio" class="form-control" name="condition" value="No"> No
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="condition" id="inlineCheckboxCondition1" value="Yes" checked>
+                        <label class="form-check-label" for="inlineCheckboxCondition1">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="condition" id="inlineCheckboxCondition2" value="No">
+                        <label class="form-check-label" for="inlineCheckboxCondition2">No</label>
+                    </div>
+                    
                     <br/>
 
+                    <!-- Visibility part form -->
                     <label for="dark" style="position:static">Did you perform this experiment in the dark?</label>
                     <br/>
-                    <input type="radio" class="form-control" name="dark" value="Yes"> Yes
-					<input type="radio" class="form-control" name="dark" value="No"> No
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="dark" id="inlineCheckboxDark1" value="Yes" checked>
+                        <label class="form-check-label" for="inlineCheckboxDark1">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="dark" id="inlineCheckboxDark2" value="No">
+                        <label class="form-check-label" for="inlineCheckboxDark2">No</label>
+                    </div>
+                    
                     <br/>
 
+                    <!-- Glasses part form -->
                     <label for="glasses" style="position:static">If you wear glasses/lenses, did you have them during the experiment? </label>
                     <br/>
-                    <input type="radio" class="form-control" name="glasses" value="Yes"> Yes
-					<input type="radio" class="form-control" name="glasses" value="No"> No
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="glasses" id="inlineCheckboxGlasses1" value="Yes" checked>
+                        <label class="form-check-label" for="inlineCheckboxGlasses1">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="glasses" id="inlineCheckboxGlasses2" value="No">
+                        <label class="form-check-label" for="inlineCheckboxGlasses2">No</label>
+                    </div>
+
                     <br/>
 
+                    <!-- Reliability part form -->
                     <label for="trust" style="position:static"> Is there a reason why we don't trust your answers? </label>
                     <br/>
-                    <input type="radio" class="form-control" name="trust" value="Yes"> Yes
-					<input type="radio" class="form-control" name="trust" value="No"> No
+                    
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="trust" id="inlineCheckboxTrust1" value="Yes" checked>
+                        <label class="form-check-label" for="inlineCheckboxTrust1">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="trust" id="inlineCheckboxTrust2" value="No">
+                        <label class="form-check-label" for="inlineCheckboxTrust2">No</label>
+                    </div>
+
                     <br/>
 
                     <button type="submit" class="btn btn-primary">Next</button>
