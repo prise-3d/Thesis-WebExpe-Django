@@ -30,24 +30,26 @@ expes_configuration            = {
 
     # First experiments configuration
     'quest_one_image':{
-        'scenes':['contemporary', 'bathroom'],
+        'scenes':['contemporary', 'bathroom', 'p3d_lamp'],
+        'expected_duration': 20,
         'text':{
-            'question': "Do you see one image or a composition of more than one?",
-            'indication': "press RIGHT if you see 2 images, LEFT if not",
-            'end_text': "Experience is finished. Thanks for your participation",
+            'presentation' : "The computer generated images are widely used nowadays. \n We have designed an experiment which will allow you to find out at which level you are capable of detecting the aberration in a scene.",
+            'question': "Do you see one image with the same quality everywhere or a composition of more than one with different qualities?",
+            'indication': "press LEFT is you see the same quality, RIGHT if not",
+            'end_text': "Experience is finished. Thanks for your participation!",
             'examples': {
-                'sentence': ["1st example : ", 
+                'sentence': ["Let's see some examples! \n Example 1 from 6 : ", 
                              "The answer is 2 images! \n This image is cropped {0}.\n {1}% on the left originating from a low-quality image and on the right originating from high quality. \n So, press RIGHT.",
-                             "2nd example : ",
-                             "The answer is 1 image! \n This image is cropped {0} but \n {1}% on the left originating from a high-quality image and on the right originating from high quality, too.\n So, press LEFT.", 
-                             "3rd example: ",
+                             "Example 2 from 6 : ",
+                             "The answer is 1 image! \n This image is cropped {0} but there is not any difference in the quality because \n {1}% on the left originating from a high-quality image and on the right originating from the same quality.\n So, press LEFT.", 
+                             "Example 3 from 6: ",
                              "The answer is 2 images! \n This image is cropped {0}. \n {1}% on the upper part originating from a low-quality image and on the bottom originating from high quality. \n So, press RIGHT.",
-                             "4th example: ",
+                             "Example 4 from 6: ",
                              "The answer is 2 images! \n This image is cropped {0}. \n {1}% on the upper part originating from a low-quality image and on the bottom originating from high quality. \n So, press RIGHT.",
-                             "5th example: ",
+                             "Example 5 from 6: ",
                              "The answer is 1 image! \n This image is cropped {0}. \n {1}% on the upper part originating from a high-quality image and on the bottom originating from a low-quality quality.\n So, press RIGHT.",
-                             "6th example: ",
-                             "The answer is 2 images! \n This image is cropped {0}. \n {1}% on the left originating from a low-quality image and on the right originating from high quality. \n So, press RIGHT.",
+                             "Example 6 from 6: ",
+                             "Even if it is more difficult to detect the difference the answer is 2 images! \n This image is cropped {0}. \n {1}% on the left originating from a low-quality image and on the right originating from high quality. \n So, press RIGHT.",
                              ],
                 'crop_params': [
                     [0.3, 0, 0],
@@ -80,8 +82,10 @@ expes_configuration            = {
             }
         },
         'params':{
-            'iterations': 100,
-            'entropy': 5,
+            'min_iterations': 5,
+            'max_iterations': 10,
+            'max_time': 60, #minutes
+            'entropy': 0.2,
             'slopes':{
                 'contemporary' : [0.0001, 0.001, 0.00003], #start, stop, step
                 'bathroom' : [0.0005, 0.01, 0.0003], #start, stop, step
@@ -92,6 +96,13 @@ expes_configuration            = {
         'session_params': [
             'expe_data',
         ],
+
+        'checkbox': {
+            # display checkbox every `n` iterations
+            'frequency': 2, 
+             # expected text to be develop
+            'text': 'check the box and continue the experiment'
+        },
 
         # template file used in django `expe` route
         'template': 'expe/expe.html',
