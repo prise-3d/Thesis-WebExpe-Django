@@ -43,8 +43,8 @@ function updateData() {
     // contains user advancement
     var finalJson = {}
 
-    if (localStorage.getItem('user_expes')){
-        expes = JSON.parse(localStorage.getItem('user_expes'))
+    if (localStorage.getItem('p3d-user-expes')){
+        expes = JSON.parse(localStorage.getItem('p3d-user-expes'))
         
         // fusion of data
         for(var expe in contructed_json) {
@@ -76,13 +76,13 @@ function updateData() {
     }
     
     // update storage data
-    localStorage.setItem('user_expes', JSON.stringify(finalJson))
+    localStorage.setItem('p3d-user-expes', JSON.stringify(finalJson))
 
     // now store into session data information
-    if(localStorage.getItem('id')){
+    if(localStorage.getItem('p3d-user-id')){
         
         // update data into request.session object
-        updateSession('update_session_user_id', localStorage.getItem('id'))
+        updateSession('update_session_user_id', localStorage.getItem('p3d-user-id'))
     }
 
     // update data into request.session object
