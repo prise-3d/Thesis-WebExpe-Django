@@ -10,18 +10,109 @@
 {% block content %}
     
     {% if request.session.expe_finished %}
-        <h3>{{end_text}}</h3>
 
-        <br />
-        <p>You will be redirected in <span id="refreshTime">5</span> sec to home page</p>
+        <form action="/expe_end">
+                <div class="form-group">
+
+                    <!-- Condition part form -->
+                    <label for="condition" style="position:static">Did you carry out this experiment under good conditions? </label>
+                    <br/>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="condition" id="inlineCheckboxCondition1" value="Yes" checked>
+                        <label class="form-check-label" for="inlineCheckboxCondition1">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="condition" id="inlineCheckboxCondition2" value="No">
+                        <label class="form-check-label" for="inlineCheckboxCondition2">No</label>
+                    </div>
+                    
+                    <br/>
+
+                    <!-- Visibility part form -->
+                    <label for="dark" style="position:static">Did you perform this experiment in the dark?</label>
+                    <br/>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="dark" id="inlineCheckboxDark1" value="Yes" checked>
+                        <label class="form-check-label" for="inlineCheckboxDark1">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="dark" id="inlineCheckboxDark2" value="No">
+                        <label class="form-check-label" for="inlineCheckboxDark2">No</label>
+                    </div>
+                    
+                    <br/>
+
+                    <!-- Glasses part form -->
+                    <label for="glasses" style="position:static">If you wear glasses/lenses, did you have them during the experiment? </label>
+                    <br/>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="glasses" id="inlineCheckboxGlasses1" value="Yes" checked>
+                        <label class="form-check-label" for="inlineCheckboxGlasses1">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="glasses" id="inlineCheckboxGlasses2" value="No">
+                        <label class="form-check-label" for="inlineCheckboxGlasses2">No</label>
+                    </div>
+
+                    <br/>
+
+                    <!-- Reliability part form -->
+                    <label for="trust" style="position:static"> Is there a reason why we don't trust your answers? </label>
+                    <br/>
+                    
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="trust" id="inlineCheckboxTrust1" value="Yes" checked>
+                        <label class="form-check-label" for="inlineCheckboxTrust1">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="trust" id="inlineCheckboxTrust2" value="No">
+                        <label class="form-check-label" for="inlineCheckboxTrust2">No</label>
+                    </div>
+
+                    <br/>
+
+                    
+                    {% csrf_token %}
+
+                    <button type="submit" class="btn btn-primary">Next</button>
+                </div>
+            </form>
+
+      
     {% endif %}
 
-    <!-- TODO : Load    img from bitmap with javascript `loadImg.js` -->
+    <!-- TODO : Load img from bitmap with javascript `loadImg.js` -->
     {% if not request.session.expe_finished %}
+        <p>{{indication}}</p>
         <img id="expeImg" src="{{request.session.expe_data|get_value_from_dict:'image_path'}}" data-img="{{request.session.img_merged}}"/>
+        
+        {% if checkbox %}
+            <div class="form-group">
+
+                <br/>
+
+                <div class="form-check form-check-inline">
+                    <input id="validation_checkbox" class="form-check-input" type="checkbox" value="Yes">
+                    <label class="form-check-label" for="inlineCheckbox">{{checkbox_text}}</label>
+                </div>
+            </div>
+        {% endif %}
+            
     {% endif %}
 
-    {% block javascripts %}
- 
-    {% endblock %}
+{% endblock %}
+
+{% block javascripts %}
+    <!-- Global scripts used -->
+    <script type="text/javascript"> 
+        var currentId = "{{request.session.id}}"
+        var expeFinished = "{{request.session.expe_finished}}"
+        var expeName = "{{expe_name}}"
+        var sceneName = "{{scene_name}}"
+    </script>
+
+    <script src="{% static "js/updateData.js" %}"></script>
 {% endblock %}

@@ -10,10 +10,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     // redirect after 5s if end of expe
     else if (END_EXPE) {
-        for (let i = 0; i <= 5; i++) {
+        /*for (let i = 0; i <= 5; i++) {
             document.getElementById('refreshTime').textContent = 5 - i
             if (i <= 4) await delay(1000)
-        }
+        }*/
         window.location = baseUrl
     }
 })

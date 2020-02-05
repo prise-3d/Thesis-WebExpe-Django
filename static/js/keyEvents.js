@@ -49,9 +49,27 @@ const checkKey = e => {
             iteration++
          }
          
-         // construct url with params for experiments
          const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}`
-         window.location = expeUrl + params
+       
+         // check if checkbox is present
+         var validation_checkbox =  document.getElementById('validation_checkbox')
+
+         if (typeof(validation_checkbox) != 'undefined' && validation_checkbox != null)
+         {
+            if(validation_checkbox.checked)
+            {
+               // construct url with params for experiments
+               window.location = expeUrl + params
+            }
+            else{
+               alert('You need to check the box before continuing')
+            }
+         }
+         else
+         {
+            // construct url with params for experiments
+            window.location = expeUrl + params
+         }
       }
    }
 }

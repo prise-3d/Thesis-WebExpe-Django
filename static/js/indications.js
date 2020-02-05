@@ -34,8 +34,6 @@ const checkKey = e => {
      else if (e.keyCode === KEYCODE_LEFT_ARROW || e.keyCode === KEYCODE_RIGHT_ARROW) {
           // increment number of example
           example = parseInt(example) + 1
-
-          console.log("I'm here")
           
           // construct url with params for experiments
           const params = `?scene=${scene}&expe=${expe}&example=${example}`
