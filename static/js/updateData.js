@@ -27,11 +27,11 @@ function updateData() {
         localStorage.setItem('id', currentId)
     }
 
-    console.log('expe is finished ? ', expeFinished)
+    console.log('expe is finished ? ', END_EXPE)
     console.log('expe ', expeName)
     console.log('expe ', sceneName)
 
-    if(expeFinished.toLowerCase() == 'true'){
+    if(END_EXPE){
 
         console.log('Update of user data...')
         // update storage data

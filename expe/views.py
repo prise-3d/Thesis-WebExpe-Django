@@ -131,11 +131,8 @@ def indications(request):
         if len(available_scenes) == 0:
             data = get_base_data()
             data['userId'] = request.session.get('id')    
-            data['end_text'] = request.session.get('end_text')
-            expe_name = request.session.get('expe') # if available
-            data['expe_name'] = expe_name
             
-            return render(request, 'expe/expe_end.html')
+            return render(request, 'expe/expe_finished.html', data)
 
         scene_name = random.choice(available_scenes)
         
