@@ -62,7 +62,7 @@ function updateData() {
                     }
                     else
                     {
-                        finalJson[expe][scene] = contructed_json[expe]
+                        finalJson[expe][scene] = contructed_json[expe][scene]
                     }
                 }
             }
@@ -70,7 +70,9 @@ function updateData() {
                 finalJson[expe] = contructed_json[expe]
             }
         }
-
+    }
+    else{
+        finalJson = contructed_json
     }
     
     // update storage data

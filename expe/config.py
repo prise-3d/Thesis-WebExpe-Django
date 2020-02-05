@@ -30,7 +30,7 @@ expes_configuration            = {
 
     # First experiments configuration
     'quest_one_image':{
-        'scenes':['contemporary', 'bathroom'],
+        'scenes':['contemporary', 'bathroom', 'p3d_lamp'],
         'expected_duration': 20,
         'text':{
             'presentation' : "The computer generated images are widely used nowadays. \n We have designed an experiment which will allow you to find out at which level you are capable of detecting the aberration in a scene.",
@@ -96,6 +96,13 @@ expes_configuration            = {
         'session_params': [
             'expe_data',
         ],
+
+        'checkbox': {
+            # display checkbox every `n` iterations
+            'frequency': 2, 
+             # expected text to be develop
+            'text': 'check the box and continue the experiment'
+        },
 
         # template file used in django `expe` route
         'template': 'expe/expe.html',

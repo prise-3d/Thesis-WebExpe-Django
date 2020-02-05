@@ -294,6 +294,18 @@ def expe(request):
     
     request.session['end_text'] = data['end_text']
 
+    # check if necessary to use checkbox or not
+    frequency = cfg.expes_configuration[expe_name]['checkbox']['frequency']
+    checkbox_text = cfg.expes_configuration[expe_name]['checkbox']['text']
+
+    # check current iteration
+    if (int(request.GET.get('iteration')) % frequency) == 0:
+        data['checkbox'] = True
+        data['checkbox_text'] = checkbox_text
+    else:
+        data['checkbox'] = False
+
+
     return render(request, cfg.expes_configuration[expe_name]['template'], data)
 
 
