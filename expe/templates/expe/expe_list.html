@@ -22,21 +22,31 @@
                     </select>
                 </div>
                 
-                <!-- <div class="form-group">
+                <!-- <div class="form-group" style="visibility:hidden">
                     <label for="scene">Select scene:</label>
                     <select class="form-control" name="scene">
-                        {% for scene in scenes. %}
+                        {% for scene in scenes %}
                             <option value="{{scene}}">{{scene}}</option>
                         {% endfor %}
                     </select>
                 </div> -->
 
+                {% csrf_token %}
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>
-    {% block javascripts %}
+{% endblock %}
 
-    {% endblock %}
+{% block javascripts %}
+
+    <script type="text/javascript"> 
+
+        var scenes = "{{scenes}}"
+    </script>
+
+    <!-- Here add check of user ID -->
+    <script src="{% static "js/checkId.js" %}"></script>
+
 {% endblock %}

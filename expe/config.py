@@ -102,7 +102,7 @@ expes_configuration            = {
 
         # javascript file used
         'javascript':[
-            'loadImg.js',
+            #'loadImg.js',
             'keyEvents.js'
         ],
         'output_header': 

@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
+from django.http import HttpResponseNotAllowed
 
 # main imports
 import os
@@ -51,6 +52,22 @@ def get_base_data(expe_name=None):
     return data
 
 
+def update_session_user_id(request):
+    if not request.method =='POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    request.session['id'] = request.POST.get('value')
+    return HttpResponse('`user_id` session update done')
+
+
+def update_session_user_expes(request):
+    if not request.method =='POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    request.session['user_expes'] = request.POST.get('value')
+    return HttpResponse('`user_expes` session update done')
+
+
 def expe_list(request):
 
     # get all scenes from dataset
@@ -66,16 +83,17 @@ def expe_list(request):
     # get base data
     data = get_base_data()
     # expe data
-    data['scenes'] = scenes
     data['expes']  = expes
     
-    #data['scenes'] = {}
-    #for expe in expes:
-    #    if 'scene' in cfg.expes_configuration[expe]:
-    #        data['scenes'][expe] = cfg.expes_configuration[expe]['scenes']
-    #    else:
-    #        data['scenes'][expe] = scenes
-            
+    data['scenes'] = {}
+    for expe in expes:
+       if 'scenes' in cfg.expes_configuration[expe]:
+           data['scenes'][expe] = cfg.expes_configuration[expe]['scenes']
+       else:
+           data['scenes'][expe] = scenes
+    
+    data['scenes'] = json.dumps(data['scenes'])
+
     return render(request, 'expe/expe_list.html', data)
 
 
@@ -98,7 +116,28 @@ def indications(request):
         scene_name = request.GET.get('scene')
 
     if scene_name is None or scene_name == 'null':
-        scene_name = random.choice(cfg.expes_configuration[expe_name]['scenes'])
+
+        # only let access to scene of expe not already done by user
+        available_scenes = []
+        # load string
+        expes_user_info = json.loads(request.session['user_expes'])
+
+        for scene in expes_user_info[expe_name]:
+            if not expes_user_info[expe_name][scene]['done']:
+                available_scenes.append(scene)
+        
+
+        # if empty.. redirect to default page
+        if len(available_scenes) == 0:
+            data = get_base_data()
+            data['userId'] = request.session.get('id')    
+            data['end_text'] = request.session.get('end_text')
+            expe_name = request.session.get('expe') # if available
+            data['expe_name'] = expe_name
+            
+            return render(request, 'expe/expe_end.html')
+
+        scene_name = random.choice(available_scenes)
         
     example_number = request.GET.get('example')
 
@@ -147,6 +186,8 @@ def expe(request):
     # unique user ID during session (user can launch multiple exeperiences)
     if 'id' not in request.session:
         request.session['id'] = functions.uniqueID()
+
+    print(request.session['id'])
 
     # first time expe is launched add expe information
     if 'expe' not in request.session or expe_name != request.session.get('expe'):
@@ -246,8 +287,9 @@ def expe(request):
 
     # other experimentss information
     data['expe_name']  = expe_name
+    data['scene_name'] = scene_name
     data['end_text']   = cfg.expes_configuration[expe_name]['text']['end_text']
-    data['userId'] = user_identifier
+    data['userId']     = user_identifier
     data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
     
     if expe_data is not None and 'end_message' in expe_data:
@@ -466,5 +508,3 @@ def refresh_data(request, expe_name, scene_name):
     #ref_image = api.get_image(scene_name, 'max')
     # save ref image as list (can't save python object)
     #request.session['ref_img'] = np.array(ref_image).tolist()
-
-

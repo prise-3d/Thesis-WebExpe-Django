@@ -256,6 +256,7 @@ def run_quest_one_image(request, model_filepath, output_file):
     if not os.path.exists(tmp_folder):
         os.makedirs(tmp_folder)
 
+    print(request.session.get('id'))
     # generate tmp merged image (pass as BytesIO was complicated..)
     filepath_img = os.path.join(tmp_folder, request.session.get('id') + '_' + scene_name + '' + expe_name + '.png')
     

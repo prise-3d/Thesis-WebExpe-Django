@@ -74,18 +74,32 @@
 
                     <br/>
 
+                    
+                    {% csrf_token %}
+
                     <button type="submit" class="btn btn-primary">Next</button>
                 </div>
             </form>
+
+      
     {% endif %}
 
-    <!-- TODO : Load    img from bitmap with javascript `loadImg.js` -->
+    <!-- TODO : Load img from bitmap with javascript `loadImg.js` -->
     {% if not request.session.expe_finished %}
         <p>{{indication}}</p>
         <img id="expeImg" src="{{request.session.expe_data|get_value_from_dict:'image_path'}}" data-img="{{request.session.img_merged}}"/>
     {% endif %}
 
-    {% block javascripts %}
- 
-    {% endblock %}
+{% endblock %}
+
+{% block javascripts %}
+    <!-- Global scripts used -->
+    <script type="text/javascript"> 
+        var currentId = "{{request.session.id}}"
+        var expeFinished = "{{request.session.expe_finished}}"
+        var expeName = "{{expe_name}}"
+        var sceneName = "{{scene_name}}"
+    </script>
+
+    <script src="{% static "js/updateData.js" %}"></script>
 {% endblock %}
