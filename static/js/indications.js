@@ -25,11 +25,21 @@ const checkKey = e => {
           window.location = ''
      }
      else if (e.keyCode === KEYCODE_ENTER) {
-          // right arrow
-          const experimentId = document.getElementsByName('experimentId')[0].value
-          const params = `?scene=${scene}&expe=${expe}&experimentId=${experimentId}&iteration=0`
-          console.log(expeUrl + params)
-          window.location = expeUrl + params
+          // enter key
+
+          // check if form is used for this generated page
+          // TODO : check filled data when submit ('-- select --')
+          submit = document.getElementsByName('submit-indication')
+          if (submit.length > 0){
+               e.preventDefault()
+               alert('Please fill and submit indications form')
+          }
+          else{
+               const experimentId = document.getElementsByName('experimentId')[0].value
+               const params = `?scene=${scene}&expe=${expe}&experimentId=${experimentId}&iteration=0`
+               console.log(expeUrl + params)
+               window.location = expeUrl + params
+          }
      }
      else if (e.keyCode === KEYCODE_LEFT_ARROW || e.keyCode === KEYCODE_RIGHT_ARROW) {
           // increment number of example
@@ -43,4 +53,31 @@ const checkKey = e => {
 
 // implement `key` events
 document.addEventListener('keydown', checkKey)
+
+if (document.forms.length > 0){
+
+     form = document.forms['form-indications']
+
+     form.addEventListener('submit', function(e){
+          
+          e.preventDefault()
+
+          // check field we want
+          names = ['gender', 'birth', 'nationality']
+          formError = false
+
+          for (let name in names){     
+               if (form[name].value == ""){
+                    formError = true
+               }
+          }
+          
+          if (formError){
+               alert('Please fill the required fields correctly')
+          }
+          else{
+               form.submit()
+          }
+     })
+}
 

@@ -34,6 +34,12 @@ cp credentials.example.json credentials.json
     "password":"pass"
 }
 ```
+
+Add your own configuration application:
+```
+cp expe/config.example.py expe/config.py
+```
+
 #### Run server
 
 Run the server :
