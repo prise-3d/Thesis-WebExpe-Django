@@ -20,7 +20,7 @@
     <h5>At the end of the experience, you will be given an identifier. This identifier will allow you to receive your reward.</h5>
         <div class="row">
             <div class="col-md-4 offset-md-4">
-                <form method="GET" action="/expe">
+                <form method="GET" action="/expe" name="form-indications">
                     <div class="form-group">
                         <input type="hidden" name="scene" value="{{scene_name}}"/>
                         <input type="hidden" name="expe" value="{{expe_name}}"/>
@@ -252,9 +252,7 @@
                         <label for="experimentId">Code (optional):</label>
                         <input type="text" class="form-control" name="experimentId" placeholder="Enter your code"/>
                         <br/>
-                        <button type="submit" class="btn btn-primary">Start</button>
-
-
+                        <button type="submit" name="submit-indication" class="btn btn-primary">Start</button>
                     </div>
                 </form>
             </div>

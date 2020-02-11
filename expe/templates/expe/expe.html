@@ -74,9 +74,6 @@
 
                     <br/>
 
-                    
-                    {% csrf_token %}
-
                     <button type="submit" class="btn btn-primary">Next</button>
                 </div>
             </form>
@@ -108,11 +105,7 @@
 {% block javascripts %}
     <!-- Global scripts used -->
     <script type="text/javascript"> 
-        var currentId = "{{request.session.id}}"
-        var expeFinished = "{{request.session.expe_finished}}"
         var expeName = "{{expe_name}}"
         var sceneName = "{{scene_name}}"
     </script>
-
-    <script src="{% static "js/updateData.js" %}"></script>
 {% endblock %}

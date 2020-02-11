@@ -49,6 +49,24 @@ def get_base_data(expe_name=None):
     if expe_name is not None:
         data['javascript'] = cfg.expes_configuration[expe_name]['javascript']
 
+    # always send all scenes data of all expes
+    # get all scenes from dataset
+    scenes = api.get_scenes()
+
+    expes = cfg.expe_name_list
+
+    # expe data
+    data['expes']  = expes
+    data['scenes'] = {}
+
+    for expe in expes:
+       if 'scenes' in cfg.expes_configuration[expe]:
+           data['scenes'][expe] = cfg.expes_configuration[expe]['scenes']
+       else:
+           data['scenes'][expe] = scenes
+    
+    data['scenes'] = json.dumps(data['scenes'])
+
     return data
 
 
@@ -70,29 +88,11 @@ def update_session_user_expes(request):
 
 def expe_list(request):
 
-    # get all scenes from dataset
-    scenes = api.get_scenes()
-
-    # get list of experimentss
-    expes = cfg.expe_name_list
-    data = get_base_data()
-
     # by default user restart expe
     request.session['expe_started'] = False
 
     # get base data
     data = get_base_data()
-    # expe data
-    data['expes']  = expes
-    
-    data['scenes'] = {}
-    for expe in expes:
-       if 'scenes' in cfg.expes_configuration[expe]:
-           data['scenes'][expe] = cfg.expes_configuration[expe]['scenes']
-       else:
-           data['scenes'][expe] = scenes
-    
-    data['scenes'] = json.dumps(data['scenes'])
 
     return render(request, 'expe/expe_list.html', data)
 
