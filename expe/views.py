@@ -90,7 +90,8 @@ def expe_list(request):
 
     # by default user restart expe
     request.session['expe_started'] = False
-
+    request.session['expe_finished'] = False
+    
     # get base data
     data = get_base_data()
 
@@ -299,7 +300,7 @@ def expe(request):
     checkbox_text = cfg.expes_configuration[expe_name]['checkbox']['text']
 
     # check current iteration
-    if (int(request.GET.get('iteration')) % frequency) == 0:
+    if ((int(request.GET.get('iteration')) + 1) % frequency) == 0:
         data['checkbox'] = True
         data['checkbox_text'] = checkbox_text
     else:
@@ -311,7 +312,10 @@ def expe(request):
 
 def expe_end(request):
     
-    
+    # expe is ended before we can now reinit experiment
+    request.session['expe_finished'] = False
+    request.session['expe_started'] = False
+
     result_structure = request.session.get('result_structure')
     metadata = {}
     with open(result_structure, 'r', encoding='utf-8') as f:
@@ -330,18 +334,20 @@ def expe_end(request):
     data['end_text'] = request.session.get('end_text')
     expe_name = request.session.get('expe')
     data['expe_name'] = expe_name
+
     # reinit session as default value
     # here generic expe params
-    del request.session['expe']
-    del request.session['scene']
-    del request.session['experimentId']
-    del request.session['qualities']
-    del request.session['timestamp']
-    del request.session['end_text']
+    if 'expe' in request.session:
+        del request.session['expe']
+        del request.session['scene']
+        del request.session['experimentId']
+        del request.session['qualities']
+        del request.session['timestamp']
+        del request.session['end_text']
 
-    # specific current expe session params (see `config.py`)
-    for key in cfg.expes_configuration[expe_name]['session_params']:
-        del request.session[key]
+        # specific current expe session params (see `config.py`)
+        for key in cfg.expes_configuration[expe_name]['session_params']:
+            del request.session[key]
 
     return render(request, 'expe/expe_end.html', data)
 
