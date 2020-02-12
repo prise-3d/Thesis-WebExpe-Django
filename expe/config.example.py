@@ -31,7 +31,7 @@ expes_configuration            = {
     # First experiments configuration
     'quest_one_image':{
         # do not forget to add slopes and new scenes is added for this experiment
-        'scenes':['contemporary', 'bathroom', 'p3d_lamp'], 
+        'scenes':['contemporary', 'bathroom'], 
         'expected_duration': 20,
         'text':{
             'presentation' : "The computer generated images are widely used nowadays. \n We have designed an experiment which will allow you to find out at which level you are capable of detecting the aberration in a scene.",
@@ -90,7 +90,6 @@ expes_configuration            = {
             'slopes':{
                 'contemporary' : [0.0001, 0.001, 0.00003], #start, stop, step
                 'bathroom' : [0.0005, 0.01, 0.0003], #start, stop, step
-                'p3d_lamp' : [0.0005, 0.01, 0.0003], #start, stop, step
             },
         },
         

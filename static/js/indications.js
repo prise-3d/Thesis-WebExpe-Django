@@ -28,11 +28,26 @@ const checkKey = e => {
           // enter key
 
           // check if form is used for this generated page
-          // TODO : check filled data when submit ('-- select --')
-          submit = document.getElementsByName('submit-indication')
-          if (submit.length > 0){
+          if (document.forms.length > 0){
                e.preventDefault()
-               alert('Please fill and submit indications form')
+               form = document.forms['form-indications']
+
+               // check field we want
+               names = ['gender', 'birth', 'nationality']
+               formError = false
+
+               for (name of names){     
+                    if (form[name].value == ""){
+                         formError = true
+                    }
+               }
+               
+               if (formError){
+                    alert('Please fill the required fields correctly')
+               }
+               else{
+                    form.submit()
+               }
           }
           else{
                const experimentId = document.getElementsByName('experimentId')[0].value
@@ -66,7 +81,7 @@ if (document.forms.length > 0){
           names = ['gender', 'birth', 'nationality']
           formError = false
 
-          for (let name in names){     
+          for (name of names){     
                if (form[name].value == ""){
                     formError = true
                }
