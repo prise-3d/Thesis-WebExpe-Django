@@ -138,6 +138,20 @@ class QuestPlus(object):
         return self.stim_domain[self.entropy.argmin()]
 
     def get_entropy(self):
+        '''Update entropy 
+        
+        Returns 
+        -------
+        entropy : the entropy.'''
+        
+        full_posterior = self.likelihoods * self.posterior[
+                np.newaxis, :, np.newaxis]
+        norm = full_posterior.sum(axis=1, keepdims=True)
+        full_posterior /= norm
+
+        H = -np.nansum(full_posterior * np.log(full_posterior), axis=1)
+        self.entropy = (norm[:, 0, :] * H).sum(axis=1)
+        
         return self.entropy.min()
     
     def get_posterior(self):

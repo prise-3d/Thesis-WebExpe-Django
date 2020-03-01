@@ -49,8 +49,6 @@ const checkKey = e => {
             iteration++
          }
          
-         const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}`
-       
          // check if checkbox is present
          var validation_checkbox =  document.getElementById('validation_checkbox')
 
@@ -59,6 +57,7 @@ const checkKey = e => {
             if(validation_checkbox.checked)
             {
                // construct url with params for experiments
+               const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}&check=true`
                window.location = expeUrl + params
             }
             else{
@@ -68,6 +67,7 @@ const checkKey = e => {
          else
          {
             // construct url with params for experiments
+            const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}&check=false`
             window.location = expeUrl + params
          }
       }

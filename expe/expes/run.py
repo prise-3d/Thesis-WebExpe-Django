@@ -95,6 +95,8 @@ def run_quest_one_image(request, model_filepath, output_file):
     scene_name = request.session.get('scene')
     expe_name = request.session.get('expe')
 
+    checked = request.GET.get('check')
+
     # by default
     iteration = 0
 
@@ -189,6 +191,7 @@ def run_quest_one_image(request, model_filepath, output_file):
         line += ";" + str(answer) 
         line += ";" + str(expe_answer_time) 
         line += ";" + str(entropy) 
+        line += ";" + str(checked)
         line += '\n'
 
         output_file.write(line)
@@ -215,8 +218,11 @@ def run_quest_one_image(request, model_filepath, output_file):
     # construct image 
     if iteration < min_iter or ((last_entropy is np.nan or np.abs(entropy - last_entropy) >= crit_entropy) and iteration < max_iter):
         # process `quest`
-
-        next_stim = qp.next_contrast()
+        if iteration <= 4:
+            next_stim_id = int(iteration * len(stim_space)/10)
+            next_stim = stim_space[next_stim_id]
+        else:
+            next_stim = qp.next_contrast()
         print(next_stim)
         #next_stim_img = int(next_stim*(stim_space.max()-stim_space.min())+stim_space.min())
     
@@ -236,8 +242,7 @@ def run_quest_one_image(request, model_filepath, output_file):
     else:
         request.session['expe_finished'] = True
         if threshold < stim_space[-1]/3:
-            end_message = { 'end_message' : "You are part of the 25% of the population for whom the perception of details and aberrations is a difficult task.\n" +
-                           "In your eyes, the images always look perfect!"}
+            end_message = { 'end_message' : "You are part of the 25% of the population for whom the images always look perfect for you!"}
         elif threshold < 2*stim_space[-1]/3:
             end_message = { 'end_message' : "Bravo, you are part of the average population.\n" + 
                            "Most people see as you do and you can detect details in a scene and perceive aberrations in an image."}
