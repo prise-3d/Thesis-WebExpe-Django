@@ -83,8 +83,8 @@ expes_configuration            = {
             }
         },
         'params':{
-            'min_iterations': 5,
-            'max_iterations': 10,
+            'min_iterations': 150,
+            'max_iterations': 250,
             'max_time': 60, #minutes
             'entropy': 0.2,
             'slopes':{
@@ -100,7 +100,7 @@ expes_configuration            = {
 
         'checkbox': {
             # display checkbox every `n` iterations
-            'frequency': 2, 
+            'frequency': 20, 
              # expected text to be develop
             'text': 'check the box and continue the experiment'
         },
