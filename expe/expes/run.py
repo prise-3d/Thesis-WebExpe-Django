@@ -132,6 +132,7 @@ def run_quest_one_image(request, model_filepath, output_file):
     #stim_space = np.asarray(qualities)
     threshold_range = cfg.expes_configuration[expe_name]['params']['thresholds'][scene_name]
     stim_space = np.arange(threshold_range[0], threshold_range[1], threshold_range[2]) 
+    stim_space = np.append(stim_space, threshold_range[1])
     
     slope_range = cfg.expes_configuration[expe_name]['params']['slopes'][scene_name]
     slopes = np.arange(slope_range[0], slope_range[1], slope_range[2]) 

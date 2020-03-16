@@ -31,8 +31,8 @@ expes_configuration            = {
     # First experiments configuration
     'quest_one_image':{
         # do not forget to add slopes and new scenes is added for this experiment
-        'scenes':['contemporary', 'bathroom'], 
-        'expected_duration': 30,
+        'scenes':['contemporary', 'bathroom', 'p3d_kitchen_800_800'], 
+        'expected_duration': 40,
         'text':{
             'presentation' : "The computer generated images are widely used nowadays. \n We have designed an experiment that will allow you to find out at which level you are capable of detecting the aberration in a scene. \n \n The question that you have to answer is if you see one image with the same quality everywhere or  composition of more than one image with different qualities. \n \n The images were cut horizontally or vertically (always side to side) and merged with an image from a different or same quality.\n It can't be a square in the middle of the image, it is always from one end to the other.",
             'question': "Do you see one image with the same quality everywhere or composition of more than one image with different qualities? \n \n Please be aware that we do not ask you to detect if the image is blurred. All the images are blurred more or less and this is part of the difficulty of the task.",
@@ -42,7 +42,7 @@ expes_configuration            = {
                 'sentence': ["Let's see some examples! \n Example 1 from 6 : ", 
                              "The answer is composition with different qualities! \n This image is cropped {0}.\n {1}% on the left originating from a low-quality image and on the right originating from high quality. \n So, press RIGHT.",
                              "Example 2 from 6 : ",
-                             "The answer is the same quality! \n This image is cropped {0} but there is not any difference in the quality because \n {1}% on the left originating from a high-quality image and on the right originating from the same quality.\n Please be aware that even if the image is blurred, there is not a difference in the blur level! \n So, press LEFT.", 
+                             "The answer is the same quality! \n This image is not cropped, there is the same quality. \n Please be aware that even if the image is blurred, there is not a difference in the blur level! Pay attention to the details !\n So, press LEFT.", 
                              "Example 3 from 6 : ",
                              "The answer is composition with different qualities! \n This image is cropped {0}. \n {1}% on the upper part originating from a low-quality image and on the bottom originating from high quality. \n So, press RIGHT.",
                              "Example 4 from 6 : ",
@@ -83,17 +83,19 @@ expes_configuration            = {
             }
         },
         'params':{
-            'min_iterations': 15,
-            'max_iterations': 20,
+            'min_iterations': 5,
+            'max_iterations': 10,
             'max_time': 90, #minutes
-            'entropy': 0.2,
+            'entropy': 0.1,
             'thresholds':{
-                'contemporary' : [50, 20050, 50], #start, stop (non inclusive), step
-                'bathroom' : [10, 2010, 10], #start, stop, step
+                'contemporary' : [50, 20000, 100], #start, stop (non inclusive), step
+                'bathroom' : [10, 2000, 20], #start, stop, step
+                'p3d_kitchen_800_800' : [20,10000,40],
             },
             'slopes':{
                 'contemporary' : [0.0001, 0.001, 0.00003], #start, stop, step
                 'bathroom' : [0.0005, 0.01, 0.0003], #start, stop, step
+                'p3d_kitchen_800_800' : [0.00001, 0.001, 0.00003], #start, stop, step
             },
         },
         
