@@ -149,6 +149,7 @@ def indications(request):
     data['question']   = cfg.expes_configuration[expe_name]['text']['question']
     data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
     data['expected_duration'] = cfg.expes_configuration[expe_name]['expected_duration']
+    data['max_time'] = cfg.expes_configuration[expe_name]['params']['max_time']
     
     number_of_examples = len(cfg.expes_configuration[expe_name]['text']['examples']['images'])
 
