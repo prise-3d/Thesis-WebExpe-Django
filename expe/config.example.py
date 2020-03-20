@@ -86,7 +86,7 @@ expes_configuration            = {
             'min_iterations': 5,
             'max_iterations': 10,
             'max_time': 90, #minutes
-            'entropy': 0.1,
+            'entropy': 0.05,
             'thresholds':{
                 'contemporary' : [50, 20000, 100], #start, stop (non inclusive), step
                 'bathroom' : [10, 2000, 20], #start, stop, step
