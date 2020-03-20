@@ -369,6 +369,9 @@ def list_results(request, expe=None):
             folder_date_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder_date, expe)
             folder_id_path   = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder_id, expe)
 
+            # extract folder for user ID
+            folder_user_id = {}
+
             # extract date files
             folders_date = {}
 
@@ -384,10 +387,23 @@ def list_results(request, expe=None):
                     folders_user = {}
                     # get all users files
                     for user in users:
+                        
+                        # add to date
                         user_path = os.path.join(day_path, user)
                         filenames = os.listdir(user_path)
                         folders_user[user] = filenames
-                    
+
+                        # add to userId
+                        if user not in folder_user_id:
+                            folder_user_id[user] = {}
+                            
+                        if 'date' not in folder_user_id[user]:
+                            folder_user_id[user]['date'] = {}
+
+                        if day not in folder_user_id[user]['date']:
+                            folder_user_id[user]['date'][day] = filenames
+
+                             
                     # attach users to this day
                     folders_date[day] = folders_user
 
@@ -412,16 +428,30 @@ def list_results(request, expe=None):
                         folders_user = {}
                         # get all users files
                         for user in users:
+
                             user_path = os.path.join(day_path, user)
                             filenames = os.listdir(user_path)
                             folders_user[user] = filenames
+
+                            # add filepaths to user id
+                            if user not in folder_user_id:
+                                folder_user_id[user] = {}
+                            
+                            if 'expeid' not in folder_user_id[user]:
+                                folder_user_id[user]['expeid'] = {}
+
+                            if identifier not in folder_user_id[user]['expeid']:
+                                folder_user_id[user]['expeid'][identifier] = {}
+
+                            if day not in folder_user_id[user]['expeid'][identifier]:
+                                folder_user_id[user]['expeid'][identifier][day] = filenames
                         
                         # attach users to this day
                         folder_days[day] = folders_user
 
                     folders_id[identifier] = folder_days
 
-            folders = { 'date': folders_date, 'expeId': folders_id}
+            folders = { 'date': folders_date, 'expeId': folders_id, 'users': folder_user_id}
         else:
             raise Http404("Expe does not exists")
 
