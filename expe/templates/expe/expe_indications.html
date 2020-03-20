@@ -10,14 +10,14 @@
     
     <h3>{{question}}</h3>
     <br />
-    <h5>{{indication}}</h5>
+    <h5>{{indication | safe}}</h5>
 
     {% if start %}
         <br />
         <br />
-     <h5>This is the beginning of this study. The expected duration is around {{ expected_duration }} minutes. </h5>
+     <h5>This is the beginning of this study. The expected duration is about {{ expected_duration }} minutes. The maximum duration to conclude the experiment is {{ max_time}} minutes. </h5>
     <h5>Please enter the following information before starting the experiment.  </h5>
-    <h5>At the end of the experience, you will be given an identifier. This identifier will allow you to receive your reward.</h5>
+    <h5>At the end of the experiment, you will be given an identifier. This identifier will allow you to receive your reward.</h5>
         <div class="row">
             <div class="col-md-4 offset-md-4">
                 <form method="GET" action="/expe" name="form-indications">
@@ -258,7 +258,7 @@
             </div>
         </div>
     <br/>
-        <p>Note: All information you provide during this experience is strictly anonymous. It will only be used for scientific reasons.</p>
+        <p>Note: The information you provide during this experiment is strictly anonymous. It will only be used for this particular research.</p>
 
     {% else %}
         <input type="hidden" name="scene_name" value="{{scene_name}}"/>

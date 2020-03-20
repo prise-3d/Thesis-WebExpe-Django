@@ -149,6 +149,7 @@ def indications(request):
     data['question']   = cfg.expes_configuration[expe_name]['text']['question']
     data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
     data['expected_duration'] = cfg.expes_configuration[expe_name]['expected_duration']
+    data['max_time'] = cfg.expes_configuration[expe_name]['params']['max_time']
     
     number_of_examples = len(cfg.expes_configuration[expe_name]['text']['examples']['images'])
 
@@ -203,11 +204,11 @@ def expe(request):
     user_gender = request.GET.get('gender')
     user_year= request.GET.get('birth')
     user_nationality = request.GET.get('nationality')
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[-1].strip()
-    else:
-        ip = request.META.get('REMOTE_ADDR')
+    #x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+#    if x_forwarded_for:
+#        ip = x_forwarded_for.split(',')[-1].strip()
+#    else:
+#        ip = request.META.get('REMOTE_ADDR')
     
     # check if experimentId is used or not
     if len(experiment_id) == 0:
@@ -240,12 +241,13 @@ def expe(request):
         "gender": user_gender,
         "birth" : user_year,
         "nationality" : user_nationality,
-        "ip" : ip,
+        #"ip" : ip,
         "height_screen" : request.GET.get('height'),
         "width_screen" : request.GET.get('width'),
         "navigator": request.META['HTTP_USER_AGENT'],#request.headers['User-Agent'],
         "os": request.GET.get('os'),
         "scene" : scene_name,
+        "thresholds" : cfg.expes_configuration[expe_name]['params']['thresholds'][scene_name],
         "slopes" : cfg.expes_configuration[expe_name]['params']['slopes'][scene_name],
         "min_iter" : cfg.expes_configuration[expe_name]['params']['min_iterations'],
         "max_iter" : cfg.expes_configuration[expe_name]['params']['max_iterations'],
@@ -325,6 +327,7 @@ def expe_end(request):
     metadata['dark'] = request.GET.get('dark')
     metadata['glasses'] = request.GET.get('glasses')
     metadata['trust'] = request.GET.get('trust')
+    metadata['attention'] = request.GET.get('attention')
     
     with open(result_structure, 'w', encoding='utf-8') as f:
         json.dump(metadata, f, ensure_ascii=False, indent=4)

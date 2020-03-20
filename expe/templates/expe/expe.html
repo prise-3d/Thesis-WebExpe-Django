@@ -77,6 +77,21 @@
                     </div>
 
                     <br/>
+                    
+                    <!-- Attention test -->
+                    <label for="trust" style="position:static"> What is the answer when you see one image with the same quality everywhere? </label>
+                    <br/>
+                    
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="attention" id="inlineCheckboxTrust1" value="Left" checked>
+                        <label class="form-check-label" for="inlineCheckboxTrust1">Left</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="attention" id="inlineCheckboxTrust2" value="Right">
+                        <label class="form-check-label" for="inlineCheckboxTrust2">Right</label>
+                    </div>
+
+                    <br/>
 
                     <button type="submit" class="btn btn-primary">Next</button>
                 </div>
@@ -87,7 +102,7 @@
 
     <!-- TODO : Load img from bitmap with javascript `loadImg.js` -->
     {% if not request.session.expe_finished %}
-        <p>{{indication}}</p>
+        <p>{{indication | safe}}</p>
         <img id="expeImg" src="{{request.session.expe_data|get_value_from_dict:'image_path'}}" data-img="{{request.session.img_merged}}"/>
         
         {% if checkbox %}
