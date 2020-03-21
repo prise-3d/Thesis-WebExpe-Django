@@ -14,6 +14,11 @@ import os
 
 from django.utils.translation import ugettext_lazy as _
 
+# set language used
+WEBEXPE_LANG_KEY         = 'WEBEXPE_LANG'
+WEBEXPE_LANG             = os.environ.get(WEBEXPE_LANG_KEY) \
+                                 if os.environ.get(WEBEXPE_LANG_KEY) is not None else 'en'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -111,7 +116,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     #'django.core.context_processors.request',
 )
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = WEBEXPE_LANG
 
 TIME_ZONE = 'UTC'
 

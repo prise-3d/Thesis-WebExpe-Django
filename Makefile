@@ -11,7 +11,7 @@ run:
 	@echo "----------------------------------------------------------------"
 	@echo "Process to run new instance"
 	@echo "----------------------------------------------------------------"
-	docker-compose up
+	docker-compose up webexpe_$(WEBEXPE_LANG)
 	@echo "----------------------------------------------------------------"
 	@echo "Your docker instance is now launched with name 'webexpeinstance'"
 	@echo "Your website is now accessible at http://localhost:8000"
@@ -21,7 +21,7 @@ stop:
 	@echo "----------------------------------------------------------------"
 	@echo "Process to stop current instance"
 	@echo "----------------------------------------------------------------"
-	docker stop webexpeinstance
+	docker stop webexpeinstance_$(WEBEXPE_LANG)
 	@echo "----------------------------------------------------------------"
 	@echo "App is now stopped"
 	@echo "----------------------------------------------------------------"
@@ -30,8 +30,8 @@ remove:
 	@echo "----------------------------------------------------------------"
 	@echo "Process to stop current instance"
 	@echo "----------------------------------------------------------------"
-	docker stop webexpeinstance
-	docker rm webexpeinstance
+	docker stop webexpeinstance_$(WEBEXPE_LANG)
+	docker stop webexpeinstance_$(WEBEXPE_LANG)
 	@echo "----------------------------------------------------------------"
 	@echo "App is now stopped and removed"
 	@echo "----------------------------------------------------------------"
@@ -44,5 +44,3 @@ clean:
 	@echo "----------------------------------------------------------------"
 	@echo "djangowebexpe image is now deleted"
 	@echo "----------------------------------------------------------------"
-
-deploy: build run
