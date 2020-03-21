@@ -30,8 +30,7 @@ remove:
 	@echo "----------------------------------------------------------------"
 	@echo "Process to stop current instance"
 	@echo "----------------------------------------------------------------"
-	docker stop webexpeinstance_$(WEBEXPE_LANG)
-	docker stop webexpeinstance_$(WEBEXPE_LANG)
+	docker rm webexpeinstance_$(WEBEXPE_LANG)
 	@echo "----------------------------------------------------------------"
 	@echo "App is now stopped and removed"
 	@echo "----------------------------------------------------------------"
