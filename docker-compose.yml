@@ -2,14 +2,28 @@ version: '3'
 
 services:
 
-    webexpe:
-        container_name: webexpeinstance
+    webexpe_en:
+        container_name: webexpeinstance_en
         image: djangowebexpe
         restart: always
         volumes:
             - "./media:/usr/src/app/media" # get access to media files
         ports:
-           - "8000:8000"
+           - "${PORT:-8000}:8000"
         environment:
            WEBEXPE_PREFIX_URL: "${WEBEXPE_PREFIX_URL:-}"
            WEB_API_PREFIX_URL: "${WEB_API_PREFIX_URL:-api}"
+           WEBEXPE_LANG: "en"
+
+    webexpe_fr:
+        container_name: webexpeinstance_fr
+        image: djangowebexpe
+        restart: always
+        volumes:
+            - "./media:/usr/src/app/media" # get access to media files
+        ports:
+           - "${PORT:-8000}:8000"
+        environment:
+           WEBEXPE_PREFIX_URL: "${WEBEXPE_PREFIX_URL:-}"
+           WEB_API_PREFIX_URL: "${WEB_API_PREFIX_URL:-api}"
+           WEBEXPE_LANG: "fr"
