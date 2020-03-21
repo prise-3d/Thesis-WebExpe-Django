@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.http import HttpResponseNotAllowed
+from django.conf import settings
 
 # main imports
 import os
@@ -36,6 +37,7 @@ from .utils import functions
 from .utils.processing import crop_images
 from . import config as cfg
 
+lang = settings.LANGUAGE_CODE
 
 def get_base_data(expe_name=None):
     '''
@@ -101,10 +103,11 @@ def expe_list(request):
 def presentation(request):
     # get param 
     expe_name = request.GET.get('expe')
+
     # get base data
     data = get_base_data()
     data['expe_name'] = expe_name
-    data['pres_text'] = cfg.expes_configuration[expe_name]['text']['presentation']
+    data['pres_text'] = cfg.expes_configuration[expe_name]['text']['presentation'][lang]
     
     return render(request, 'expe/expe_presentation.html', data)
     
@@ -146,10 +149,14 @@ def indications(request):
     # expe parameters
     data['expe_name']  = expe_name
     data['scene_name'] = scene_name
-    data['question']   = cfg.expes_configuration[expe_name]['text']['question']
-    data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
-    data['expected_duration'] = cfg.expes_configuration[expe_name]['expected_duration']
-    data['max_time'] = cfg.expes_configuration[expe_name]['params']['max_time']
+    data['question']   = cfg.expes_configuration[expe_name]['text']['question'][lang]
+    data['indication'] = cfg.expes_configuration[expe_name]['text']['indication'][lang]
+    data['beginning'] = cfg.expes_configuration[expe_name]['text']['beginning'][lang]
+    data['end_indication_note'] = cfg.expes_configuration[expe_name]['text']['end_indication_note'][lang]
+
+    # format sentence using information
+    data['beginning'][0] = data['beginning'][0].format(cfg.expes_configuration[expe_name]['expected_duration'], 
+                                                cfg.expes_configuration[expe_name]['params']['max_time'])
     
     number_of_examples = len(cfg.expes_configuration[expe_name]['text']['examples']['images'])
 
@@ -288,9 +295,10 @@ def expe(request):
     # other experimentss information
     data['expe_name']  = expe_name
     data['scene_name'] = scene_name
-    data['end_text']   = cfg.expes_configuration[expe_name]['text']['end_text']
+    data['end_text']   = cfg.expes_configuration[expe_name]['text']['end_text'][lang]
     data['userId']     = user_identifier
-    data['indication'] = cfg.expes_configuration[expe_name]['text']['indication']
+    data['indication'] = cfg.expes_configuration[expe_name]['text']['indication'][lang]
+    data['end_form']   = cfg.expes_configuration[expe_name]['forms']['end_form'][lang]
     
     if expe_data is not None and 'end_message' in expe_data:
         data['end_text'] += "\n" + expe_data['end_message']
@@ -299,7 +307,7 @@ def expe(request):
 
     # check if necessary to use checkbox or not
     frequency = cfg.expes_configuration[expe_name]['checkbox']['frequency']
-    checkbox_text = cfg.expes_configuration[expe_name]['checkbox']['text']
+    checkbox_text = cfg.expes_configuration[expe_name]['checkbox']['text'][lang]
 
     # check current iteration
     if ((int(request.GET.get('iteration')) + 1) % frequency) == 0:
@@ -463,7 +471,7 @@ def list_results(request, expe=None):
     # expe parameters
     data['expe']    = expe
     data['folders'] = folders
-    data['infos']   = cfg.expes_configuration[expe]['text']
+    data['infos']   = cfg.expes_configuration[expe]['text'][lang]
 
     return render(request, 'expe/expe_results.html', data)
 

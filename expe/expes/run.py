@@ -26,10 +26,11 @@ from pprint import pprint
 
 from PIL import Image, ImageDraw
 
+lang = settings.LANGUAGE_CODE
+
 def example_quest_one_image(request, expe_name, scene_name):
     
     example_number = request.GET.get('example')
-
     
     # get expected image qualities indices (load noisy and ref image)
     params_image = cfg.expes_configuration[expe_name]['text']['examples']['images'][int(example_number)]
@@ -58,7 +59,7 @@ def example_quest_one_image(request, expe_name, scene_name):
         if noisy_quality != qualities[-1]:#-noisy_quality > qualities[-1]-(10*qualities[-1])/100 :
             draw = ImageDraw.Draw(img_merge) 
             draw.line((left, top, right, bottom), fill='black', width=5)
-    example_sentence = cfg.expes_configuration[expe_name]['text']['examples']['sentence'][int(example_number)]
+    example_sentence = cfg.expes_configuration[expe_name]['text']['examples']['sentence'][lang][int(example_number)]
 
     if orientation == 0:
         example_sentence = example_sentence.format('vertically', str(percentage*100))
