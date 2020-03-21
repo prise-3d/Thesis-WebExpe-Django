@@ -14,90 +14,47 @@
         <form action="/expe_end">
                 <div class="form-group">
 
-                    <!-- Condition part form -->
-                    <label for="condition" style="position:static">Did you carry out this experiment under good conditions? </label>
-                    <br/>
+                    {% with end_form|get_value_from_dict:'questions' as form_questions %}
 
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="condition" id="inlineCheckboxCondition1" value="Yes" checked>
-                        <label class="form-check-label" for="inlineCheckboxCondition1">Yes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="condition" id="inlineCheckboxCondition2" value="No">
-                        <label class="form-check-label" for="inlineCheckboxCondition2">No</label>
-                    </div>
+                        {% for question_obj in form_questions %}
+
+                            {% with question_obj|get_value_from_dict:'question' as label_question %}
+                                <label for="condition" style="position:static">{{label_question}}</label>
+                                <br/>
+                            {% endwith %}
+
+                            {% with question_obj|get_value_from_dict:'name' as name_question %}
+                                {% with question_obj|get_value_from_dict:'answers' as form_answers %}
+
+                                    {% for answer_obj in form_answers %}
+                                        
+                                        <div class="form-check form-check-inline">
+                                        
+                                        {% with answer_obj|get_value_from_dict:'label' as answer_value %}
+                                            <input class="form-check-input" type="radio" name="{{name_question}}" id="inlineCheckbox{{name_question}}{{forloop.counter}}" value="{{answer_value}}" checked>
+                                        {% endwith %}
+
+                                        {% with answer_obj|get_value_from_dict:'label' as answer_label %}
+                                            <label class="form-check-label" for="inlineCheckbox{{name_question}}{{forloop.counter}}">{{answer_label}}</label>
+                                        {% endwith %}
+
+                                        </div>
+                                        
+                                    {% endfor %}
+
+
+                                    <br/>
+                                {% endwith %}
+                            {% endwith %}
+                            
+                        {% endfor %}
+                    {% endwith %}
                     
-                    <br/>
-
-                    <!-- Visibility part form -->
-                    <label for="dark" style="position:static">Did you perform this experiment with daylight?</label>
-                    <br/>
-
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="dark" id="inlineCheckboxDark1" value="Yes" checked>
-                        <label class="form-check-label" for="inlineCheckboxDark1">Yes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="dark" id="inlineCheckboxDark2" value="No">
-                        <label class="form-check-label" for="inlineCheckboxDark2">No</label>
-                    </div>
-                    
-                    <br/>
-
-                    <!-- Glasses part form -->
-                    <label for="glasses" style="position:static">If you wear glasses/lenses, did you have them during the experiment? </label>
-                    <br/>
-
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="glasses" id="inlineCheckboxGlasses1" value="Yes" checked>
-                        <label class="form-check-label" for="inlineCheckboxGlasses1">Yes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="glasses" id="inlineCheckboxGlasses2" value="No">
-                        <label class="form-check-label" for="inlineCheckboxGlasses2">No</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="glasses" id="inlineCheckboxGlasses3" value="Good">
-                        <label class="form-check-label" for="inlineCheckboxGlasses2">I do not wear glasses/lenses</label>
-                    </div>
-
-                    <br/>
-
-                    <!-- Reliability part form -->
-                    <label for="trust" style="position:static"> Should we trust your answers? </label>
-                    <br/>
-                    
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="trust" id="inlineCheckboxTrust1" value="Yes" checked>
-                        <label class="form-check-label" for="inlineCheckboxTrust1">Yes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="trust" id="inlineCheckboxTrust2" value="No">
-                        <label class="form-check-label" for="inlineCheckboxTrust2">No</label>
-                    </div>
-
-                    <br/>
-                    
-                    <!-- Attention test -->
-                    <label for="trust" style="position:static"> What is the answer when you see one image with the same quality everywhere? </label>
-                    <br/>
-                    
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="attention" id="inlineCheckboxTrust1" value="Left" checked>
-                        <label class="form-check-label" for="inlineCheckboxTrust1">Left</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="attention" id="inlineCheckboxTrust2" value="Right">
-                        <label class="form-check-label" for="inlineCheckboxTrust2">Right</label>
-                    </div>
-
-                    <br/>
-
-                    <button type="submit" class="btn btn-primary">Next</button>
+                    {% with end_form|get_value_from_dict:'button' as button_end_form %}
+                        <button type="submit" class="btn btn-primary">{{button_end_form}}</button>
+                    {% endwith %}
                 </div>
             </form>
-
-      
     {% endif %}
 
     <!-- TODO : Load img from bitmap with javascript `loadImg.js` -->
