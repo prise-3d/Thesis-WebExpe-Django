@@ -10,7 +10,19 @@
 
     <div id="parent-vertical">
         <br/>
-        <h2>To receive your reward, please make sure to note the following identifier : {{userId}}</h2>
+        {% if prolific %}
+            <script type="text/javascript">
+                var r = "{{redirect}}";
+                setTimeout(function () {
+                   window.location = r; //will redirect to your blog page (an ex: blog.html)
+                }, 2000);
+                
+            </script>
+        {% else %}
+           <h2>To receive your reward, please make sure to note the following identifier : {{userId}}</h2>
+
+        {% endif %}
+
         <br/>
         <br/>
 

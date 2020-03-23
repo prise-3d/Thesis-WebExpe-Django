@@ -103,7 +103,8 @@ def expe_list(request):
 def presentation(request):
     # get param 
     expe_name = request.GET.get('expe')
-
+    prolific = request.GET.get('p')
+    request.session['prolific'] = prolific
     # get base data
     data = get_base_data()
     data['expe_name'] = expe_name
@@ -259,7 +260,8 @@ def expe(request):
         "min_iter" : cfg.expes_configuration[expe_name]['params']['min_iterations'],
         "max_iter" : cfg.expes_configuration[expe_name]['params']['max_iterations'],
         "max_time" : cfg.expes_configuration[expe_name]['params']['max_time'],
-        "crit_entropy" : cfg.expes_configuration[expe_name]['params']['entropy']
+        "crit_entropy" : cfg.expes_configuration[expe_name]['params']['entropy'],
+        "prolific" : request.session.get('prolific')
     }
         with open(result_structure, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=4)
@@ -345,7 +347,8 @@ def expe_end(request):
     data['end_text'] = request.session.get('end_text')
     expe_name = request.session.get('expe')
     data['expe_name'] = expe_name
-
+    data['prolific'] = request.session.get('prolific')
+    data['redirect']=cfg.expes_configuration[expe_name]['redirect']
     # reinit session as default value
     # here generic expe params
     if 'expe' in request.session:
@@ -355,6 +358,7 @@ def expe_end(request):
         del request.session['qualities']
         del request.session['timestamp']
         del request.session['end_text']
+        del request.session['prolific']
 
         # specific current expe session params (see `config.py`)
         for key in cfg.expes_configuration[expe_name]['session_params']:

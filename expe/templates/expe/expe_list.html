@@ -31,6 +31,20 @@
                     </select>
                 </div> -->
 
+                <input type="hidden" name="p" id="p" value=""/>
+                <script type="text/javascript">
+                    var vars = {};
+                    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                    vars[key] = value;
+                    });
+
+                    if("p" in vars){
+                        document.getElementById('p').value = vars["p"];
+                    }
+                    else{
+                        document.getElementById('p').value = 0;
+                    }
+                </script>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
