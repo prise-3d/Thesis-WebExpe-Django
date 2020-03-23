@@ -471,7 +471,8 @@ def list_results(request, expe=None):
     # expe parameters
     data['expe']    = expe
     data['folders'] = folders
-    data['infos']   = cfg.expes_configuration[expe]['text'][lang]
+    data['infos_question']   = cfg.expes_configuration[expe]['text']['question'][lang]
+    data['infos_indication']   = cfg.expes_configuration[expe]['text']['indication'][lang]
 
     return render(request, 'expe/expe_results.html', data)
 
