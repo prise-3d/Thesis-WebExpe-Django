@@ -9,9 +9,9 @@
 {% block content %}
     
     <h3>{{pres_text|linebreaks}}</h3>
-  
+
     <br/>
-    <h3>Please press enter to continue</h3>
+    <h3>{{next}}</h3>
     
     <form id="form01" method="GET" action="/indications">
         <input type="hidden" name="example" value="0"/>

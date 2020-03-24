@@ -24,7 +24,7 @@ const checkKey = e => {
    }
    else if (e.keyCode === KEYCODE_LEFT_ARROW || e.keyCode === KEYCODE_RIGHT_ARROW) {
       // only do something is experiments has begun
-      if (BEGIN_EXPE) {
+      if (BEGIN_EXPE && !END_EXPE) {
          let answer
 
          // left arrow key

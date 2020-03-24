@@ -96,6 +96,8 @@ def expe_list(request):
     
     # get base data
     data = get_base_data()
+    data['choice']   = cfg.label_expe_list[lang]
+    data['submit']  = cfg.submit_button[lang]
 
     return render(request, 'expe/expe_list.html', data)
 
@@ -103,12 +105,16 @@ def expe_list(request):
 def presentation(request):
     # get param 
     expe_name = request.GET.get('expe')
-    prolific = request.GET.get('p')
+    try:
+        prolific = int( request.GET.get('p'))
+    except:
+        prolific = 0
     request.session['prolific'] = prolific
     # get base data
     data = get_base_data()
     data['expe_name'] = expe_name
     data['pres_text'] = cfg.expes_configuration[expe_name]['text']['presentation'][lang]
+    data['next'] = cfg.expes_configuration[expe_name]['text']['next'][lang]
     
     return render(request, 'expe/expe_presentation.html', data)
     
@@ -135,7 +141,8 @@ def indications(request):
         # if empty.. redirect to default page
         if len(available_scenes) == 0:
             data = get_base_data()
-            data['userId'] = request.session.get('id')    
+            data['userId'] = request.session.get('id')   
+            data['finished'] = cfg.expes_configuration[expe_name]['text']['finished'][lang]
             
             return render(request, 'expe/expe_finished.html', data)
 
@@ -154,6 +161,11 @@ def indications(request):
     data['indication'] = cfg.expes_configuration[expe_name]['text']['indication'][lang]
     data['beginning'] = cfg.expes_configuration[expe_name]['text']['beginning'][lang]
     data['end_indication_note'] = cfg.expes_configuration[expe_name]['text']['end_indication_note'][lang]
+    data['gender']      = cfg.expes_configuration[expe_name]['text']['info_participant']['gender'][lang]
+    data['birth_year']  = cfg.expes_configuration[expe_name]['text']['info_participant']['birth_year'][lang]
+    data['nationality'] = cfg.expes_configuration[expe_name]['text']['info_participant']['nationality'][lang]
+    data['code']        = cfg.expes_configuration[expe_name]['text']['info_participant']['code'][lang]
+    data['submit']  = cfg.submit_button[lang]
 
     # format sentence using information
     data['beginning'][0] = data['beginning'][0].format(cfg.expes_configuration[expe_name]['expected_duration'], 
@@ -295,17 +307,16 @@ def expe(request):
     data = get_base_data(expe_name)
 
     # other experimentss information
-    data['expe_name']  = expe_name
-    data['scene_name'] = scene_name
-    data['end_text']   = cfg.expes_configuration[expe_name]['text']['end_text'][lang]
-    data['userId']     = user_identifier
-    data['indication'] = cfg.expes_configuration[expe_name]['text']['indication'][lang]
-    data['end_form']   = cfg.expes_configuration[expe_name]['forms']['end_form'][lang]
+    data['expe_name']   = expe_name
+    data['scene_name']  = scene_name
+    data['userId']      = user_identifier
+    data['indication']  = cfg.expes_configuration[expe_name]['text']['indication'][lang]
+    data['end_form']    = cfg.expes_configuration[expe_name]['forms']['end_form'][lang]
     
     if expe_data is not None and 'end_message' in expe_data:
-        data['end_text'] += "\n" + expe_data['end_message']
-    
-    request.session['end_text'] = data['end_text']
+        data['end_text']  = cfg.expes_configuration[expe_name]['text']['end_text']['thanks'][lang]
+        data['end_text'] += "\n" + expe_data['end_message']        
+        request.session['end_text'] = data['end_text']
 
     # check if necessary to use checkbox or not
     frequency = cfg.expes_configuration[expe_name]['checkbox']['frequency']
@@ -348,7 +359,15 @@ def expe_end(request):
     expe_name = request.session.get('expe')
     data['expe_name'] = expe_name
     data['prolific'] = request.session.get('prolific')
-    data['redirect']=cfg.expes_configuration[expe_name]['redirect']
+    if data['prolific'] == 1:
+        data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['prolific'][lang]
+        data['redirect']=cfg.expes_configuration[expe_name]['redirect']
+    else:
+        data['prolific'] = None
+        data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['default'][lang]
+
+        
+    data['next'] = cfg.expes_configuration[expe_name]['text']['next'][lang]
     # reinit session as default value
     # here generic expe params
     if 'expe' in request.session:

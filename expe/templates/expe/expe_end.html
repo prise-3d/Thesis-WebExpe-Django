@@ -11,15 +11,9 @@
     <div id="parent-vertical">
         <br/>
         {% if prolific %}
-            <script type="text/javascript">
-                var r = "{{redirect}}";
-                setTimeout(function () {
-                   window.location = r; //will redirect to your blog page (an ex: blog.html)
-                }, 2000);
-                
-            </script>
+            <h2> {{reward}} <span id="refreshTime">5</span></h2>
         {% else %}
-           <h2>To receive your reward, please make sure to note the following identifier : {{userId}}</h2>
+           <h2> {{reward}} {{userId}}</h2>
 
         {% endif %}
 
@@ -34,5 +28,23 @@
 {% endblock %}
 
 {% block javascripts %} 
+        {% if prolific %}
+            <script type="text/javascript">
+                var url = "{{redirect}}";
+        
+                function sleep(ms) {
+                    return new Promise(res => setTimeout(res, ms));
+                }
+        
+                async function redirect(sec, r) {
+                    for (let i = sec; i > 0; i--) {
+                        document.getElementById('refreshTime').textContent = i;
+                        await sleep(1000);      
+                    }
+                    window.location = r;  
+                }
+                redirect(10, url);
+            </script>
+        {% endif %}
 {% endblock %}
 

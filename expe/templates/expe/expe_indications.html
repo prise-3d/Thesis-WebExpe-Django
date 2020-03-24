@@ -34,8 +34,11 @@
                             document.getElementById('width').value = window.screen.width;
                             document.getElementById('os').value = window.navigator.platform;
                         </script>
-
-                        <label for="gender">Gender:</label>
+                        
+                       
+                        
+                            
+                        <label for="gender">{{gender}}</label>
                         <select name="gender" size="1" class="form-control" required>
                             <option value="">-- select --</option>
                             <option value="m">man</option>
@@ -43,7 +46,7 @@
                             <option value="o">other</option>
                         </select>
                         <br />
-                        <label for="birth">Birth year:</label>
+                        <label for="birth">{{birth_year}}</label>
                         <select name="birth" class="form-control" required>
                             <option value="">-- select --</option>
                             {% for y in years %}
@@ -51,8 +54,8 @@
                             {% endfor %}
                         </select>
 
-                        <br/>
-                        Nationality:<br />
+                        <label for="nationality">{{nationality}}</label>
+                        <br />
                         <select name="nationality" class="form-control" required>
                           <option value="">-- select --</option>
                           <option value="afghan">Afghan</option>
@@ -249,10 +252,12 @@
                           <option value="zimbabwean">Zimbabwean</option>
                         </select><br />
                         <br/>
-                        <label for="experimentId">Code (optional):</label>
+                        <label for="experimentId">{{code}}</label>
                         <input type="text" class="form-control" name="experimentId" placeholder="Enter your code"/>
                         <br/>
-                        <button type="submit" name="submit-indication" class="btn btn-primary">Start</button>
+                      
+
+                        <button type="submit" name="submit-indication" class="btn btn-primary">{{submit}}</button>
                     </div>
                 </form>
             </div>
@@ -263,7 +268,7 @@
     {% else %}
         <input type="hidden" name="scene_name" value="{{scene_name}}"/>
         <br/>
-        <h5>{{example_sentence|linebreaks}}</h5>
+        <h5>{{example_sentence|safe|linebreaks}}</h5>
         <img src="{{example}}" />
     {% endif %}
 

@@ -61,10 +61,7 @@ def example_quest_one_image(request, expe_name, scene_name):
             draw.line((left, top, right, bottom), fill='black', width=5)
     example_sentence = cfg.expes_configuration[expe_name]['text']['examples']['sentence'][lang][int(example_number)]
 
-    if orientation == 0:
-        example_sentence = example_sentence.format('vertically', str(percentage*100))
-    else:
-        example_sentence = example_sentence.format('horizontally', str(percentage*100))
+    example_sentence = example_sentence.format(cfg.expes_configuration[expe_name]['text']['examples']['cut_name'][lang][orientation], str(percentage*100))
     
     
     # Temporary save of image
@@ -92,7 +89,7 @@ def example_quest_one_image(request, expe_name, scene_name):
 def run_quest_one_image(request, model_filepath, output_file):
 
     # 1. get session parameters
-    qualities = request.session.get('qualities')
+    #qualities = request.session.get('qualities')
     scene_name = request.session.get('scene')
     expe_name = request.session.get('expe')
 
@@ -114,6 +111,8 @@ def run_quest_one_image(request, model_filepath, output_file):
 
          # does not change expe parameters
         if request.session['expe_data']['expe_previous_iteration'] == iteration:
+            return None
+        elif iteration > cfg.expes_configuration[expe_name]['params']['max_iterations']:
             return None
         else:
             current_expe_data = request.session['expe_data']
@@ -246,13 +245,11 @@ def run_quest_one_image(request, model_filepath, output_file):
     else:
         request.session['expe_finished'] = True
         if threshold < stim_space[-1]/3:
-            end_message = { 'end_message' : "You are part of the 25% of the population for whom the images always look perfect for you!"}
+            end_message = { 'end_message' : cfg.expes_configuration[expe_name]['text']['end_text']['results'][lang][0]}
         elif threshold < 2*stim_space[-1]/3:
-            end_message = { 'end_message' : "Bravo, you are part of the average population.\n" + 
-                           "Most people see as you do and you can detect details in a scene and perceive aberrations in an image."}
+            end_message = { 'end_message' : cfg.expes_configuration[expe_name]['text']['end_text']['results'][lang][1]}
         else:
-            end_message = { 'end_message' : "Congratulations, you are part of the 25% of the population that can detect all the details " +
-                           "in a scene and perceive perfectly the aberrations!"}
+            end_message = { 'end_message' : cfg.expes_configuration[expe_name]['text']['end_text']['results'][lang][2]}
             
         return end_message
     
