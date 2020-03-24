@@ -212,8 +212,10 @@ expes_configuration            = {
             },
             'presentation' : {
                 'fr': "De nos jours, nous utilisons de plus en plus souvent des images générées par ordinateur. " +
-                      "Mais ces images ne sont pas toujours parfaites. \n" +
-                      "Nous avons conçu une expérience pour savoir si vous êtes capable de détecter des différences de qualité dans une image.",
+                      "Mais ces images ne sont pas toujours parfaites. \n\n" +
+                      "Nous avons conçu une expérience pour savoir si vous êtes capable de détecter des différences de qualité dans une image.\n\n"+
+                      "Chaque image a été coupée en deux, horizontalement ou verticalement, puis collée à une autre partie d’image qui a soit la même qualité soit une qualité différente.\n\n "+
+                      "Dans cette expérience vous devez nous dire si l’image que vous voyez a la même qualité partout, ou si elle provient de la combinaison de deux images de qualité différentes.",
                 'en': "The computer generated images are widely used nowadays." +
                       "\n We have designed an experiment that will allow you to find out whether you are capable of detecting aberrations in computer generated images. " +
                       "\n \n We will show you some computer generated images." +
@@ -346,7 +348,7 @@ expes_configuration            = {
                            
                            "Ici la différence entre les deux parties de l’image est plus difficile à détecter mais il y a bien deux parties de qualité différentes ! \n " +
                            "Il faut faire attention aux détails. \n L’image est coupée {0}. La bande de gauche est de basse qualité, " +
-                           "la partie droite a une meilleure qualité. \n \n Il faut donc presser la flèche DROITE (&#8594;)",
+                           "la partie droite a une meilleure qualité. \n Il faut donc presser la flèche DROITE (&#8594;)",
                            ],
     
                     'en': ["Let's see some examples to illustrate the task! \n Example 1 from 6 : ", 
