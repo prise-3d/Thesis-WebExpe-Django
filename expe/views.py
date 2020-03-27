@@ -305,18 +305,26 @@ def expe(request):
 
         # get base data
     data = get_base_data(expe_name)
-
+    
     # other experimentss information
     data['expe_name']   = expe_name
     data['scene_name']  = scene_name
     data['userId']      = user_identifier
-    data['indication']  = cfg.expes_configuration[expe_name]['text']['indication'][lang]
-    data['end_form']    = cfg.expes_configuration[expe_name]['forms']['end_form'][lang]
-    
-    if expe_data is not None and 'end_message' in expe_data:
+    if expe_data is not None and 'timeout' in expe_data and expe_data['timeout']==True:
+        data['timeout'] = True
+        data['end_text']  = cfg.expes_configuration[expe_name]['text']['end_text']['timeout'][lang]
+        clear_session(request)
+        return render(request, 'expe/expe_end.html', data)
+
+    else:
+        data['indication']  = cfg.expes_configuration[expe_name]['text']['indication'][lang]
+        data['end_form']    = cfg.expes_configuration[expe_name]['forms']['end_form'][lang]
         data['end_text']  = cfg.expes_configuration[expe_name]['text']['end_text']['thanks'][lang]
-        data['end_text'] += "\n" + expe_data['end_message']        
-        request.session['end_text'] = data['end_text']
+
+        if expe_data is not None and 'end_message' in expe_data:
+            data['end_text'] += "\n" + expe_data['end_message']  
+            
+    request.session['end_text'] = data['end_text']
 
     # check if necessary to use checkbox or not
     frequency = cfg.expes_configuration[expe_name]['checkbox']['frequency']
@@ -332,6 +340,20 @@ def expe(request):
 
     return render(request, cfg.expes_configuration[expe_name]['template'], data)
 
+def clear_session(request):
+    expe_name = request.session.get('expe')
+
+    del request.session['expe']
+    del request.session['scene']
+    del request.session['experimentId']
+    del request.session['qualities']
+    del request.session['timestamp']
+    del request.session['end_text']
+    del request.session['prolific']
+
+    # specific current expe session params (see `config.py`)
+    for key in cfg.expes_configuration[expe_name]['session_params']:
+        del request.session[key]
 
 def expe_end(request):
     
@@ -360,8 +382,9 @@ def expe_end(request):
     data['expe_name'] = expe_name
     data['prolific'] = request.session.get('prolific')
     if data['prolific'] == 1:
-        data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['prolific'][lang]
         data['redirect']=cfg.expes_configuration[expe_name]['redirect']
+        data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['prolific'][lang]
+
     else:
         data['prolific'] = None
         data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['default'][lang]
@@ -371,17 +394,7 @@ def expe_end(request):
     # reinit session as default value
     # here generic expe params
     if 'expe' in request.session:
-        del request.session['expe']
-        del request.session['scene']
-        del request.session['experimentId']
-        del request.session['qualities']
-        del request.session['timestamp']
-        del request.session['end_text']
-        del request.session['prolific']
-
-        # specific current expe session params (see `config.py`)
-        for key in cfg.expes_configuration[expe_name]['session_params']:
-            del request.session[key]
+        clear_session(request)
 
     return render(request, 'expe/expe_end.html', data)
 

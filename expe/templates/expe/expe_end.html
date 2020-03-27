@@ -9,20 +9,26 @@
 {% block content %}
 
     <div id="parent-vertical">
-        <br/>
-        {% if prolific %}
-            <h2> {{reward}} <span id="refreshTime">5</span></h2>
-        {% else %}
-           <h2> {{reward}} {{userId}}</h2>
+         {% if timeout %}
+             <h2> {{end_text | linebreaks}} {{userId}} </h2>
+         {% else %}
 
+            <br/>
+            {% if prolific %}
+                <h2> {{reward}} <span id="refreshTime">15</span></h2>
+                <a href={{redirect}} >{{redirect}}</a>
+            {% else %}
+               <h2> {{reward}} {{userId}}</h2>
+    
+            {% endif %}
+    
+            <br/>
+            <br/>
+    
+            <div id="child-vertical">
+                <h3>{{end_text|linebreaks}}</h3>
+            </div>
         {% endif %}
-
-        <br/>
-        <br/>
-
-        <div id="child-vertical">
-            <h3>{{end_text|linebreaks}}</h3>
-        </div>
     </div>
 
 {% endblock %}
@@ -43,7 +49,7 @@
                     }
                     window.location = r;  
                 }
-                redirect(10, url);
+                redirect(15, url);
             </script>
         {% endif %}
 {% endblock %}

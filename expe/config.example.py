@@ -221,7 +221,7 @@ expes_configuration            = {
                       "\n \n We will show you some computer generated images." +
                       "For each one we will ask you to report whether you think it comes from a single image, " +
                       "with the same quality everywhere, or whether you think it is in fact composed of two images " +
-                      "with different qualities. \n \n " +
+                      "with different qualities. \n  " +
                       "The images were cut either horizontally or vertically (always side to side) " +
                       "and merged with a portion of another image that has either a different or the same quality. " +
                       "It is important to note that images are always cut from one side to the next.\n "
@@ -237,8 +237,8 @@ expes_configuration            = {
                      "None of the images you will see are perfect, and this is part of the difficulty of this task."
             },
             'indication': {
-                'fr': "Il faut appuyer sur la flèche de gauche (&#8592;) si vous pensez qu’il n’y a qu’une seule image " + 
-                      "et sur la flèche de droite (&#8594;) si vous pensez que l’image est composée de deux parties de qualité différentes.",
+                'fr': "Il faut appuyer sur la flèche de GAUCHE (&#8592;) si vous pensez qu’il n’y a qu’une seule image " + 
+                      "et sur la flèche de DROITE (&#8594;) si vous pensez que l’image est composée de deux parties de qualité différentes.",
                 'en': "Press the LEFT key (&#8592;) if you think the image comes from a single one, or the RIGHT key (&#8594;) " +
                       "if you think the image is composed of two subparts with different qualities."
             },
@@ -261,6 +261,10 @@ expes_configuration            = {
                         'fr': "L’expérience est terminée. Merci pour votre participation.",
                         'en':"Experience is finished. Thanks for your participation!",
                         },
+                'timeout' : {
+                        'fr' : "Malheureusement, le temps maximum pour réaliser l'expérience est dépassé. \n Si vous avez des remarques, merci de nous contacter en précisant bien votre identifiant :  ", 
+                        'en' : "Unfortunately, the maximum duration to conclude the experiment has been reached. \n If you have any remarks, please contact us by specifying your identifier : "
+                        },
                 'results': {
                         'fr': ["Félicitations, vous faites partie des 25% de la population qui peut parfaitement voir les détails d’une image !",
                                "Bravo, vous êtes dans la moyenne de la population. La plupart des gens sont comme vous et peuvent voir les détails d’une image !",
@@ -273,8 +277,8 @@ expes_configuration            = {
                 },
                 'reward':{
                         'prolific' : {
-                                'fr' : "Ne quittez pas cette page, vous allez être redirigé vers Prolific dans : ",
-                                'en' : "Please don't leave this page, you will be automatically redirect in : "
+                                'fr' : "Ne quittez pas cette page, vous allez être redirigé automatiquement vers Prolific dans : ",
+                                'en' : "Please don't leave this page, you will be automatically redirect to Prolific in : "
                                 },
                         'default':
                             {
@@ -315,7 +319,7 @@ expes_configuration            = {
                            
                            "La réponse est : deux parties de qualité différentes !  \n" +
                            "L’image est coupée {0}. La bande de gauche vient d’une image de basse qualité, " +
-                           "la partie droite à une meilleure qualité. Il faut donc presser la flèche DROITE (&#8594;)",
+                           "la partie droite à une meilleure qualité. \n Il faut donc presser la flèche DROITE (&#8594;)",
 
                            "Exemple 2 (sur 6) : ",
                            

@@ -215,7 +215,8 @@ def run_quest_one_image(request, model_filepath, output_file):
     max_time = cfg.expes_configuration[expe_name]['params']['max_time'] * 60
     if current_time - started_time >= max_time:
         request.session['expe_finished'] = True
-        return None
+        timeout = { 'timeout' : True }
+        return timeout
     
     # 5. Contruct new image and save it
     # construct image 
