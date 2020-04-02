@@ -93,6 +93,10 @@ def expe_list(request):
     # by default user restart expe
     request.session['expe_started'] = False
     request.session['expe_finished'] = False
+    if 'experimentId' in request.session:
+        del request.session['experimentId']
+    if 'results_folder' in request.session:
+        del request.session['results_folder']
     
     # get base data
     data = get_base_data()
@@ -230,13 +234,20 @@ def expe(request):
 #    else:
 #        ip = request.META.get('REMOTE_ADDR')
     
-    # check if experimentId is used or not
-    if len(experiment_id) == 0:
-        output_expe_folder = cfg.output_expe_folder_name_day.format(expe_name, current_day, user_identifier)
+    #check if it's the beginning
+    if 'results_folder' not in request.session:
+        # check if experimentId is used or not
+        if len(experiment_id) == 0:
+            output_expe_folder = cfg.output_expe_folder_name_day.format(expe_name, current_day, user_identifier)
+        else:
+            output_expe_folder = cfg.output_expe_folder_name_id_day.format(expe_name, experiment_id, current_day, user_identifier)
+                
+        results_folder = os.path.join(settings.MEDIA_ROOT, output_expe_folder)
+        request.session['results_folder'] = results_folder
     else:
-        output_expe_folder = cfg.output_expe_folder_name_id_day.format(expe_name, experiment_id, current_day, user_identifier)
-
-    results_folder = os.path.join(settings.MEDIA_ROOT, output_expe_folder)
+        results_folder = request.session.get('results_folder')
+    
+    print(results_folder)
     if not os.path.exists(results_folder):
         os.makedirs(results_folder)
 
@@ -350,12 +361,15 @@ def clear_session(request):
     del request.session['timestamp']
     del request.session['end_text']
     del request.session['prolific']
+    del request.session['results_folder']
 
     # specific current expe session params (see `config.py`)
     for key in cfg.expes_configuration[expe_name]['session_params']:
         del request.session[key]
 
 def expe_end(request):
+    expe_name = request.session.get('expe')
+    scene_name = request.session.get('scene')
     
     # expe is ended before we can now reinit experiment
     request.session['expe_finished'] = False
@@ -378,9 +392,27 @@ def expe_end(request):
     data = get_base_data()
     data['userId'] = request.session.get('id')    
     data['end_text'] = request.session.get('end_text')
-    expe_name = request.session.get('expe')
     data['expe_name'] = expe_name
     data['prolific'] = request.session.get('prolific')
+    
+#    results_folder = request.session.get('results_folder')
+#    result_filename = scene_name + '_' + request.session.get('timestamp') +".csv"
+#    results_filepath = os.path.join(results_folder, result_filename)
+#    
+#    function_name = 'eval_' + expe_name
+#    try:
+#        eval_func = getattr(run_expe, function_name)
+#    except AttributeError:
+#        raise NotImplementedError("Run expe method `{}` not implement `{}`".format(run_expe.__name__, function_name))
+
+    #eval_data = eval_func(request, results_filepath)
+    
+#    if eval_data == False:
+#        data['reward'] = "Le temps minimum pour l'expérience n'a pas été atteint. Votre idetifiant est :"
+#        data["end_text"] = "Si vous avez une remarque merci de nous contacter en précisant bien votre identifiant"
+#        data['prolific'] = None
+#    else:
+    
     if data['prolific'] == 1:
         data['redirect']=cfg.expes_configuration[expe_name]['redirect']
         data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['prolific'][lang]
@@ -389,8 +421,6 @@ def expe_end(request):
         data['prolific'] = None
         data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['default'][lang]
 
-        
-    data['next'] = cfg.expes_configuration[expe_name]['text']['next'][lang]
     # reinit session as default value
     # here generic expe params
     if 'expe' in request.session:

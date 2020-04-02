@@ -4,6 +4,7 @@ import time
 import numpy as np
 import pickle
 import sys
+import json
 
 from datetime import datetime
 
@@ -110,8 +111,9 @@ def run_quest_one_image(request, model_filepath, output_file):
     if request.session.get('expe_started'):
 
          # does not change expe parameters
-        if request.session['expe_data']['expe_previous_iteration'] == iteration:
-            return None
+        if request.session['expe_data']['expe_previous_iteration']+1 != iteration:
+            data_expe = request.session['expe_data']
+            return data_expe
         elif iteration > cfg.expes_configuration[expe_name]['params']['max_iterations']:
             return None
         else:
@@ -292,3 +294,62 @@ def run_quest_one_image(request, model_filepath, output_file):
     request.session['expe_started'] = True
 
     return data_expe
+
+def eval_quest_one_image(request, output_filename):
+    expe_name = request.session.get('expe')
+
+    lines = []
+    with open(output_filename, 'r') as output_file:
+        lines = output_file.readlines()
+  
+    iters = len(lines)-1
+    if iters < cfg.expes_configuration[expe_name]['params']['min_iterations']:
+        return False
+    
+    time=[]
+    checkbox=[]
+    nb_check=0
+    for i in range(1,len(lines)):
+        l = lines[i]
+        line_split = l.split(";")
+        time.append(float(line_split[6]))
+        checkbox.append(line_split[8])
+    time_total = np.sum(time)/60
+    for i in range(cfg.expes_configuration[expe_name]['checkbox']['frequency']-1,len(checkbox),cfg.expes_configuration[expe_name]['checkbox']['frequency']):
+        if checkbox[i]=='true\n':
+            nb_check = nb_check + 1
+    if nb_check < len(checkbox)/cfg.expes_configuration[expe_name]['checkbox']['frequency']:
+        return False
+    
+    if time_total<7.:
+        return False
+  
+    json_file = os.path.splitext(output_filename)[0] + ".json"
+    with open(json_file, 'r') as f:
+        metadata = json.load(f)
+    points =[]
+    if metadata['condition']=="Yes" or metadata['condition']=="Oui":
+        points.append(1)
+    else:
+        points.append(0)
+    if metadata['dark']=="No" or metadata['dark']=="Non":
+        points.append(1)
+    else:
+        points.append(0)
+    if metadata['glasses']=="No" or metadata['glasses']=="Non":
+        points.append(0)
+    else:
+        points.append(1)
+    if metadata['trust']=="Yes" or metadata['trust']=="Oui":
+        points.append(1)
+    else:
+        points.append(0)
+    if metadata['attention']=="Left" or metadata['attention']=="Gauche":
+        points.append(1)
+    else:
+        points.append(0)
+    points_total= np.sum(points)
+    
+    if points_total == 5: 
+        return True
+
