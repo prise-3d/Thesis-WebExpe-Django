@@ -93,7 +93,30 @@ def run_quest_one_image(request, model_filepath, output_file):
     #qualities = request.session.get('qualities')
     scene_name = request.session.get('scene')
     expe_name = request.session.get('expe')
+    
+    # Check if values are correct:
+    if 'expe_started' in request.session and request.session.get('expe_started') == True:
+        def isint(s):
+            try: 
+                int(s)
+                return True
+            except ValueError:
+                return False
+    
+        data_expe = request.session['expe_data']
 
+        if not 'iteration' in request.GET or isint(request.GET.get('iteration')) == False:
+            return data_expe
+        
+        if not 'answer' in request.GET or \
+           isint(request.GET.get('answer')) == False or \
+           (int(request.GET.get('answer')) != 0 and int(request.GET.get('answer')) != 1):
+               return data_expe
+           
+        if not 'check' in request.GET or \
+           (request.GET.get('check') != "true" and request.GET.get('check') != "false"):
+               return data_expe
+        
     checked = request.GET.get('check')
 
     # by default

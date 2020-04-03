@@ -111,8 +111,8 @@
         
         var urlParams = new URLSearchParams(window.location.search)
          if (urlParams.has('iteration')) {
-            iteration = urlParams.get('iteration')
-            var iter = "{{request.session.expe_data|get_value_from_dict:'expe_previous_iteration'}}"
+            iteration = Number(urlParams.get('iteration'))
+            var iter = Number("{{request.session.expe_data|get_value_from_dict:'expe_previous_iteration'}}")
             if(iteration > iter){
                 const params = `?scene=${sceneName}&expe=${expeName}&iteration=${iter}`
                 window.location = expeUrl + params

@@ -245,11 +245,11 @@ expes_configuration            = {
             'beginning':{
                 'fr': ["Nous arrivons au début de l’expérience. L’expérience dure environ {0} minutes. Vous ne pouvez pas dépasser {1} minutes.",
                        "Merci de nous indiquer votre genre (Femme, Homme, Autre), votre année de naissance, votre nationalité, et un code si vous en avez reçu un.",
-                       "A la fin de l’expérience nous vous donnerons un identifiant qui vous permettra d’obtenir votre récompense."
+                       "A la fin de l’expérience nous vous donnerons un identifiant qui vous permettra d’obtenir votre justificatif de participation."
                 ],
                 'en': ['This is the beginning of this study. The expected duration is about {0} minutes. The maximum duration to conclude the experiment is {1} minutes.',
                         'Please enter the following information before starting the experiment.',
-                        'At the end of the experiment, you will be given an identifier. This identifier will allow you to receive your reward.'
+                        'At the end of the experiment, you will be given an identifier. This identifier will allow you to receive your confirmation of participation.'
                 ]
             },
             'end_indication_note':{
@@ -282,8 +282,8 @@ expes_configuration            = {
                                 },
                         'default':
                             {
-                                'fr' : 'Pour recevoir votre récompense notez bien votre identifiant : ',
-                                'en' : 'To receive your reward, please make sure to note the following identifier :'
+                                'fr' : 'Si vous avez besoin d\'un justificatif de participation, merci de nous contacter en précisant bien votre identifiant : ',
+                                'en' : 'If you need a confirmation of participation, please contact us, by specifying the following identifier : '
                             }
                             
                         }
