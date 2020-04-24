@@ -154,8 +154,6 @@ def indications(request):
         
     example_number = request.GET.get('example')
 
-    print(example_number)
-
     # get base data
     data = get_base_data()
     # expe parameters
@@ -284,7 +282,8 @@ def expe(request):
         "max_iter" : cfg.expes_configuration[expe_name]['params']['max_iterations'],
         "max_time" : cfg.expes_configuration[expe_name]['params']['max_time'],
         "crit_entropy" : cfg.expes_configuration[expe_name]['params']['entropy'],
-        "prolific" : request.session.get('prolific')
+        "prolific" : request.session.get('prolific'),
+        'terminated': False
     }
         with open(result_structure, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=4)
@@ -322,6 +321,16 @@ def expe(request):
     data['scene_name']  = scene_name
     data['userId']      = user_identifier
     if expe_data is not None and 'timeout' in expe_data and expe_data['timeout']==True:
+        result_structure = request.session.get('result_structure')
+        metadata = {}
+        with open(result_structure, 'r', encoding='utf-8') as f:
+            metadata = json.load(f)
+        metadata['timeout'] = True
+        metadata['terminated'] = True
+        metadata['reject'] = False
+        with open(result_structure, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=4)
+        
         data['timeout'] = True
         data['end_text']  = cfg.expes_configuration[expe_name]['text']['end_text']['timeout'][lang]
         clear_session(request)
@@ -395,31 +404,51 @@ def expe_end(request):
     data['expe_name'] = expe_name
     data['prolific'] = request.session.get('prolific')
     
-#    results_folder = request.session.get('results_folder')
-#    result_filename = scene_name + '_' + request.session.get('timestamp') +".csv"
-#    results_filepath = os.path.join(results_folder, result_filename)
-#    
-#    function_name = 'eval_' + expe_name
-#    try:
-#        eval_func = getattr(run_expe, function_name)
-#    except AttributeError:
-#        raise NotImplementedError("Run expe method `{}` not implement `{}`".format(run_expe.__name__, function_name))
-
-    #eval_data = eval_func(request, results_filepath)
+    results_folder = request.session.get('results_folder')
+    result_filename = scene_name + '_' + request.session.get('timestamp') +".csv"
+    results_filepath = os.path.join(results_folder, result_filename)
     
-#    if eval_data == False:
-#        data['reward'] = "Le temps minimum pour l'expérience n'a pas été atteint. Votre idetifiant est :"
-#        data["end_text"] = "Si vous avez une remarque merci de nous contacter en précisant bien votre identifiant"
-#        data['prolific'] = None
-#    else:
-    
-    if data['prolific'] == 1:
-        data['redirect']=cfg.expes_configuration[expe_name]['redirect']
-        data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['prolific'][lang]
+    function_name = 'eval_' + expe_name
+    try:
+        eval_func = getattr(run_expe, function_name)
+    except AttributeError:
+        raise NotImplementedError("Run expe method `{}` not implement `{}`".format(run_expe.__name__, function_name))
 
-    else:
+    eval_data = eval_func(request, results_filepath)
+    
+    if eval_data == False:
+        result_structure = request.session.get('result_structure')
+        metadata = {}
+        with open(result_structure, 'r', encoding='utf-8') as f:
+            metadata = json.load(f)
+        metadata['terminated'] = True
+        metadata['timeout'] = False
+        metadata['reject'] = True
+        with open(result_structure, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=4)
+            
+        data['reject'] = True
+        data["end_text"] = cfg.expes_configuration[expe_name]['text']['end_text']['reject'][lang]
         data['prolific'] = None
-        data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['default'][lang]
+    else:
+        result_structure = request.session.get('result_structure')
+        metadata = {}
+        with open(result_structure, 'r', encoding='utf-8') as f:
+            metadata = json.load(f)
+        metadata['terminated'] = True
+        metadata['timeout'] = False
+        metadata['reject'] = False
+        with open(result_structure, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=4)
+            
+        data['reject'] = False
+        if data['prolific'] == 1:
+            data['redirect']=cfg.expes_configuration[expe_name]['redirect']
+            data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['prolific'][lang]
+    
+        else:
+            data['prolific'] = None
+            data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['default'][lang]
 
     # reinit session as default value
     # here generic expe params
@@ -434,6 +463,45 @@ def list_results(request, expe=None):
     """
     Return all results obtained from experiments
     """
+
+    valid_color = "green"
+    timeout_color = "blue"
+    unterm_color = "red"
+    reject_color = "magenta"
+    colors = {
+            'validated': valid_color, 
+            'timeout': timeout_color, 
+            'rejected': reject_color, 
+            'unterminated': unterm_color
+            }
+
+    def create_file_color(filenames):
+        files = {}
+        json_files = [f for f in filenames if f.endswith("json")]
+        for json_file in json_files:
+            csv_file = os.path.splitext(json_file)[0] + ".csv"
+
+            metadata = {}
+            with open(os.path.join(user_path, json_file), 'r', encoding='utf-8') as f:
+                metadata = json.load(f)
+
+            if 'terminated' not in metadata or metadata['terminated'] == False:
+                files[json_file] = unterm_color
+                files[csv_file] = unterm_color
+
+            elif metadata['timeout'] == True:
+                files[json_file] = timeout_color
+                files[csv_file] = timeout_color
+
+            elif metadata["reject"] == True:
+                files[json_file] = reject_color
+                files[csv_file] = reject_color
+
+            else:
+                files[json_file] = valid_color
+                files[csv_file] = valid_color      
+
+        return files
 
     if expe is None:
         folders = cfg.expe_name_list
@@ -453,7 +521,7 @@ def list_results(request, expe=None):
             folders_date = {}
 
             if os.path.exists(folder_date_path):
-            
+
                 days = sorted(os.listdir(folder_date_path), reverse=True)
 
                 # get all days
@@ -464,11 +532,11 @@ def list_results(request, expe=None):
                     folders_user = {}
                     # get all users files
                     for user in users:
-                        
+
                         # add to date
                         user_path = os.path.join(day_path, user)
                         filenames = os.listdir(user_path)
-                        folders_user[user] = filenames
+                        folders_user[user] = create_file_color(filenames)
 
                         # add to userId
                         if user not in folder_user_id:
@@ -478,7 +546,7 @@ def list_results(request, expe=None):
                             folder_user_id[user]['date'] = {}
 
                         if day not in folder_user_id[user]['date']:
-                            folder_user_id[user]['date'][day] = filenames
+                            folder_user_id[user]['date'][day] = folders_user[user]
 
                              
                     # attach users to this day
@@ -508,7 +576,7 @@ def list_results(request, expe=None):
 
                             user_path = os.path.join(day_path, user)
                             filenames = os.listdir(user_path)
-                            folders_user[user] = filenames
+                            folders_user[user] = create_file_color(filenames)
 
                             # add filepaths to user id
                             if user not in folder_user_id:
@@ -521,7 +589,7 @@ def list_results(request, expe=None):
                                 folder_user_id[user]['expeid'][identifier] = {}
 
                             if day not in folder_user_id[user]['expeid'][identifier]:
-                                folder_user_id[user]['expeid'][identifier][day] = filenames
+                                folder_user_id[user]['expeid'][identifier][day] = folders_user[user]
                         
                         # attach users to this day
                         folder_days[day] = folders_user
@@ -535,6 +603,7 @@ def list_results(request, expe=None):
     # get base data
     data = get_base_data()
     # expe parameters
+    data['colors'] = colors
     data['expe']    = expe
     data['folders'] = folders
     data['infos_question']   = cfg.expes_configuration[expe]['text']['question'][lang]

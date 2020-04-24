@@ -11,6 +11,8 @@
     <div id="parent-vertical">
          {% if timeout %}
              <h2> {{end_text | linebreaks}} {{userId}} </h2>
+         {% elif reject %}
+             <h2> {{end_text | linebreaks}} {{userId}} </h2>
          {% else %}
 
             <br/>

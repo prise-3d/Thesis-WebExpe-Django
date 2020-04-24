@@ -41,7 +41,7 @@ expes_configuration            = {
     'quest_one_image':{
         # do not forget to add slopes and new scenes is added for this experiment
         'scenes':['contemporary', 'bathroom', 'p3d_kitchen_800_800'], 
-        'expected_duration': 40,
+        'expected_duration': 30,
         'forms':{
             'end_form':{
                 'fr': {
@@ -265,6 +265,10 @@ expes_configuration            = {
                         'fr' : "Malheureusement, le temps maximum pour réaliser l'expérience est dépassé. \n Si vous avez des remarques, merci de nous contacter en précisant bien votre identifiant :  ", 
                         'en' : "Unfortunately, the maximum duration to conclude the experiment has been reached. \n If you have any remarks, please contact us by specifying your identifier : "
                         },
+                'reject' :{
+                        'fr' : "Malheureusement, le temps minimum de l'expérience n'a pas été atteint. \n Si vous avez des remarques, merci de nous contacter en précisant bien votre identifiant :  ",
+                        'en' : " Unfortunately, the minimum duration to conclude the experiment has not been respected. \n If you have any remarks, please contact us by specifying your identifier : "
+                        },
                 'results': {
                         'fr': ["Félicitations, vous faites partie des 25% de la population qui peut parfaitement voir les détails d’une image !",
                                "Bravo, vous êtes dans la moyenne de la population. La plupart des gens sont comme vous et peuvent voir les détails d’une image !",
@@ -455,7 +459,7 @@ expes_configuration            = {
              # expected text to be develop
             'text':  {
                 'fr': "Cochez cette case pour continuer l'expérience",
-                'en': 'check the box and continue the experiment'
+                'en': 'Check the box and continue the experiment'
             }
         },
 
