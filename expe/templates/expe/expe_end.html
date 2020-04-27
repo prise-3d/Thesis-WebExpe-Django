@@ -9,18 +9,50 @@
 {% block content %}
 
     <div id="parent-vertical">
-        <br/>
-        <h2>To receive your reward, please make sure to note the following identifier : {{userId}}</h2>
-        <br/>
-        <br/>
+         {% if timeout %}
+             <h2> {{end_text | linebreaks}} {{userId}} </h2>
+         {% elif reject %}
+             <h2> {{end_text | linebreaks}} {{userId}} </h2>
+         {% else %}
 
-        <div id="child-vertical">
-            <h3>{{end_text|linebreaks}}</h3>
-        </div>
+            <br/>
+            {% if prolific %}
+                <h2> {{reward}} <span id="refreshTime">15</span></h2>
+                <a href={{redirect}} >{{redirect}}</a>
+            {% else %}
+               <h2> {{reward}} {{userId}}</h2>
+    
+            {% endif %}
+    
+            <br/>
+            <br/>
+    
+            <div id="child-vertical">
+                <h3>{{end_text|linebreaks}}</h3>
+            </div>
+        {% endif %}
     </div>
 
 {% endblock %}
 
 {% block javascripts %} 
+        {% if prolific %}
+            <script type="text/javascript">
+                var url = "{{redirect}}";
+        
+                function sleep(ms) {
+                    return new Promise(res => setTimeout(res, ms));
+                }
+        
+                async function redirect(sec, r) {
+                    for (let i = sec; i > 0; i--) {
+                        document.getElementById('refreshTime').textContent = i;
+                        await sleep(1000);      
+                    }
+                    window.location = r;  
+                }
+                redirect(15, url);
+            </script>
+        {% endif %}
 {% endblock %}
 

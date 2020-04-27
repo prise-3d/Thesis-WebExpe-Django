@@ -23,7 +23,13 @@
                 <p><strong>Question:</strong> {{infos_question}} </p>
                 <p class="mb-0"><strong>Indication:</strong> {{infos_indication | safe}} </p>
             </div>
-
+           <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading"><strong>Color legend</strong></h4>
+                <hr>
+                {% for name, color in colors.items %} 
+                    <p class="mb-0"><strong><font color="{{color}}">{{name}}</font></strong></p>
+                {% endfor %}
+            </div>
             <br/>
             {% if folders %}
 
@@ -84,12 +90,12 @@
                                                                 <ul class="list-group files-list" style="display: none">
 
                                                                     <hr />
-                                                                    {% for file in user %}
+                                                                    {% for file, color in user.items %}
 
                                                                         <li class="list-group-item">
                                                                         
                                                                             <div class="row">
-                                                                                <div class="col-md-11">{{file}}</div>
+                                                                                <div class="col-md-11"><font color="{{color}}">{{file}}</font></div>
                                                                                 <div class="col-md-1 download-list" data-download-path="expeId/{{expe}}/{{id_name}}/{{day_name}}/{{user_name}}/{{file}}"><i class="fas fa-download"></i></div>
                                                                             </div>
                                                                                     
@@ -150,12 +156,12 @@
                                                         <ul class="list-group files-list" style="display: none">
 
                                                             <hr />
-                                                            {% for file in user %}
+                                                            {% for file, color in user.items %}
 
                                                                 <li class="list-group-item">
                                                                 
                                                                     <div class="row">
-                                                                        <div class="col-md-11">{{file}}</div>
+                                                                        <div class="col-md-11"><font color="{{color}}">{{file}}</font></div>
                                                                         <div class="col-md-1 download-list" data-download-path="date/{{expe}}/{{day_name}}/{{user_name}}/{{file}}"><i class="fas fa-download"></i></div>
                                                                     </div>
                                                                             
@@ -223,12 +229,12 @@
                                                                 <ul class="list-group files-list" style="display: none">
 
                                                                     <hr />
-                                                                    {% for file in day %}
+                                                                    {% for file, color in day.items %}
 
                                                                         <li class="list-group-item">
                                                                         
                                                                             <div class="row">
-                                                                                <div class="col-md-11">{{file}}</div>
+                                                                                <div class="col-md-11"><font color="{{color}}">{{file}}</font></div>
                                                                                 <div class="col-md-1 download-list" data-download-path="date/{{expe}}/{{day_name}}/{{user_name}}/{{file}}"><i class="fas fa-download"></i></div>
                                                                             </div>
                                                                                     
@@ -287,12 +293,12 @@
                                                                             <ul class="list-group files-list" style="display: none">
 
                                                                                 <hr />
-                                                                                {% for file in day %}
+                                                                                {% for file, color in day.items %}
 
                                                                                     <li class="list-group-item">
                                                                                     
                                                                                         <div class="row">
-                                                                                            <div class="col-md-11">{{file}}</div>
+                                                                                            <div class="col-md-11"><font color="{{color}}">{{file}}</font></div>
                                                                                             <div class="col-md-1 download-list" data-download-path="expeId/{{expe}}/{{expe_name}}/{{day_name}}/{{user_name}}/{{file}}"><i class="fas fa-download"></i></div>
                                                                                         </div>
                                                                                                 

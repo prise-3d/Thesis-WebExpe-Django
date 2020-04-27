@@ -93,9 +93,15 @@ def expe_list(request):
     # by default user restart expe
     request.session['expe_started'] = False
     request.session['expe_finished'] = False
+    if 'experimentId' in request.session:
+        del request.session['experimentId']
+    if 'results_folder' in request.session:
+        del request.session['results_folder']
     
     # get base data
     data = get_base_data()
+    data['choice']   = cfg.label_expe_list[lang]
+    data['submit']  = cfg.submit_button[lang]
 
     return render(request, 'expe/expe_list.html', data)
 
@@ -103,11 +109,16 @@ def expe_list(request):
 def presentation(request):
     # get param 
     expe_name = request.GET.get('expe')
-
+    try:
+        prolific = int( request.GET.get('p'))
+    except:
+        prolific = 0
+    request.session['prolific'] = prolific
     # get base data
     data = get_base_data()
     data['expe_name'] = expe_name
     data['pres_text'] = cfg.expes_configuration[expe_name]['text']['presentation'][lang]
+    data['next'] = cfg.expes_configuration[expe_name]['text']['next'][lang]
     
     return render(request, 'expe/expe_presentation.html', data)
     
@@ -134,15 +145,14 @@ def indications(request):
         # if empty.. redirect to default page
         if len(available_scenes) == 0:
             data = get_base_data()
-            data['userId'] = request.session.get('id')    
+            data['userId'] = request.session.get('id')   
+            data['finished'] = cfg.expes_configuration[expe_name]['text']['finished'][lang]
             
             return render(request, 'expe/expe_finished.html', data)
 
         scene_name = random.choice(available_scenes)
         
     example_number = request.GET.get('example')
-
-    print(example_number)
 
     # get base data
     data = get_base_data()
@@ -153,6 +163,11 @@ def indications(request):
     data['indication'] = cfg.expes_configuration[expe_name]['text']['indication'][lang]
     data['beginning'] = cfg.expes_configuration[expe_name]['text']['beginning'][lang]
     data['end_indication_note'] = cfg.expes_configuration[expe_name]['text']['end_indication_note'][lang]
+    data['gender']      = cfg.expes_configuration[expe_name]['text']['info_participant']['gender'][lang]
+    data['birth_year']  = cfg.expes_configuration[expe_name]['text']['info_participant']['birth_year'][lang]
+    data['nationality'] = cfg.expes_configuration[expe_name]['text']['info_participant']['nationality'][lang]
+    data['code']        = cfg.expes_configuration[expe_name]['text']['info_participant']['code'][lang]
+    data['submit']  = cfg.submit_button[lang]
 
     # format sentence using information
     data['beginning'][0] = data['beginning'][0].format(cfg.expes_configuration[expe_name]['expected_duration'], 
@@ -217,13 +232,20 @@ def expe(request):
 #    else:
 #        ip = request.META.get('REMOTE_ADDR')
     
-    # check if experimentId is used or not
-    if len(experiment_id) == 0:
-        output_expe_folder = cfg.output_expe_folder_name_day.format(expe_name, current_day, user_identifier)
+    #check if it's the beginning
+    if 'results_folder' not in request.session:
+        # check if experimentId is used or not
+        if len(experiment_id) == 0:
+            output_expe_folder = cfg.output_expe_folder_name_day.format(expe_name, current_day, user_identifier)
+        else:
+            output_expe_folder = cfg.output_expe_folder_name_id_day.format(expe_name, experiment_id, current_day, user_identifier)
+                
+        results_folder = os.path.join(settings.MEDIA_ROOT, output_expe_folder)
+        request.session['results_folder'] = results_folder
     else:
-        output_expe_folder = cfg.output_expe_folder_name_id_day.format(expe_name, experiment_id, current_day, user_identifier)
-
-    results_folder = os.path.join(settings.MEDIA_ROOT, output_expe_folder)
+        results_folder = request.session.get('results_folder')
+    
+    print(results_folder)
     if not os.path.exists(results_folder):
         os.makedirs(results_folder)
 
@@ -259,7 +281,9 @@ def expe(request):
         "min_iter" : cfg.expes_configuration[expe_name]['params']['min_iterations'],
         "max_iter" : cfg.expes_configuration[expe_name]['params']['max_iterations'],
         "max_time" : cfg.expes_configuration[expe_name]['params']['max_time'],
-        "crit_entropy" : cfg.expes_configuration[expe_name]['params']['entropy']
+        "crit_entropy" : cfg.expes_configuration[expe_name]['params']['entropy'],
+        "prolific" : request.session.get('prolific'),
+        'terminated': False
     }
         with open(result_structure, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=4)
@@ -291,18 +315,35 @@ def expe(request):
 
         # get base data
     data = get_base_data(expe_name)
-
+    
     # other experimentss information
-    data['expe_name']  = expe_name
-    data['scene_name'] = scene_name
-    data['end_text']   = cfg.expes_configuration[expe_name]['text']['end_text'][lang]
-    data['userId']     = user_identifier
-    data['indication'] = cfg.expes_configuration[expe_name]['text']['indication'][lang]
-    data['end_form']   = cfg.expes_configuration[expe_name]['forms']['end_form'][lang]
-    
-    if expe_data is not None and 'end_message' in expe_data:
-        data['end_text'] += "\n" + expe_data['end_message']
-    
+    data['expe_name']   = expe_name
+    data['scene_name']  = scene_name
+    data['userId']      = user_identifier
+    if expe_data is not None and 'timeout' in expe_data and expe_data['timeout']==True:
+        result_structure = request.session.get('result_structure')
+        metadata = {}
+        with open(result_structure, 'r', encoding='utf-8') as f:
+            metadata = json.load(f)
+        metadata['timeout'] = True
+        metadata['terminated'] = True
+        metadata['reject'] = False
+        with open(result_structure, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=4)
+        
+        data['timeout'] = True
+        data['end_text']  = cfg.expes_configuration[expe_name]['text']['end_text']['timeout'][lang]
+        clear_session(request)
+        return render(request, 'expe/expe_end.html', data)
+
+    else:
+        data['indication']  = cfg.expes_configuration[expe_name]['text']['indication'][lang]
+        data['end_form']    = cfg.expes_configuration[expe_name]['forms']['end_form'][lang]
+        data['end_text']  = cfg.expes_configuration[expe_name]['text']['end_text']['thanks'][lang]
+
+        if expe_data is not None and 'end_message' in expe_data:
+            data['end_text'] += "\n" + expe_data['end_message']  
+            
     request.session['end_text'] = data['end_text']
 
     # check if necessary to use checkbox or not
@@ -319,8 +360,25 @@ def expe(request):
 
     return render(request, cfg.expes_configuration[expe_name]['template'], data)
 
+def clear_session(request):
+    expe_name = request.session.get('expe')
+
+    del request.session['expe']
+    del request.session['scene']
+    del request.session['experimentId']
+    del request.session['qualities']
+    del request.session['timestamp']
+    del request.session['end_text']
+    del request.session['prolific']
+    del request.session['results_folder']
+
+    # specific current expe session params (see `config.py`)
+    for key in cfg.expes_configuration[expe_name]['session_params']:
+        del request.session[key]
 
 def expe_end(request):
+    expe_name = request.session.get('expe')
+    scene_name = request.session.get('scene')
     
     # expe is ended before we can now reinit experiment
     request.session['expe_finished'] = False
@@ -343,22 +401,59 @@ def expe_end(request):
     data = get_base_data()
     data['userId'] = request.session.get('id')    
     data['end_text'] = request.session.get('end_text')
-    expe_name = request.session.get('expe')
     data['expe_name'] = expe_name
+    data['prolific'] = request.session.get('prolific')
+    
+    results_folder = request.session.get('results_folder')
+    result_filename = scene_name + '_' + request.session.get('timestamp') +".csv"
+    results_filepath = os.path.join(results_folder, result_filename)
+    
+    function_name = 'eval_' + expe_name
+    try:
+        eval_func = getattr(run_expe, function_name)
+    except AttributeError:
+        raise NotImplementedError("Run expe method `{}` not implement `{}`".format(run_expe.__name__, function_name))
+
+    eval_data = eval_func(request, results_filepath)
+    
+    if eval_data == False:
+        result_structure = request.session.get('result_structure')
+        metadata = {}
+        with open(result_structure, 'r', encoding='utf-8') as f:
+            metadata = json.load(f)
+        metadata['terminated'] = True
+        metadata['timeout'] = False
+        metadata['reject'] = True
+        with open(result_structure, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=4)
+            
+        data['reject'] = True
+        data["end_text"] = cfg.expes_configuration[expe_name]['text']['end_text']['reject'][lang]
+        data['prolific'] = None
+    else:
+        result_structure = request.session.get('result_structure')
+        metadata = {}
+        with open(result_structure, 'r', encoding='utf-8') as f:
+            metadata = json.load(f)
+        metadata['terminated'] = True
+        metadata['timeout'] = False
+        metadata['reject'] = False
+        with open(result_structure, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=4)
+            
+        data['reject'] = False
+        if data['prolific'] == 1:
+            data['redirect']=cfg.expes_configuration[expe_name]['redirect']
+            data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['prolific'][lang]
+    
+        else:
+            data['prolific'] = None
+            data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['default'][lang]
 
     # reinit session as default value
     # here generic expe params
     if 'expe' in request.session:
-        del request.session['expe']
-        del request.session['scene']
-        del request.session['experimentId']
-        del request.session['qualities']
-        del request.session['timestamp']
-        del request.session['end_text']
-
-        # specific current expe session params (see `config.py`)
-        for key in cfg.expes_configuration[expe_name]['session_params']:
-            del request.session[key]
+        clear_session(request)
 
     return render(request, 'expe/expe_end.html', data)
 
@@ -368,6 +463,45 @@ def list_results(request, expe=None):
     """
     Return all results obtained from experiments
     """
+
+    valid_color = "green"
+    timeout_color = "blue"
+    unterm_color = "red"
+    reject_color = "magenta"
+    colors = {
+            'validated': valid_color, 
+            'timeout': timeout_color, 
+            'rejected': reject_color, 
+            'unterminated': unterm_color
+            }
+
+    def create_file_color(filenames):
+        files = {}
+        json_files = [f for f in filenames if f.endswith("json")]
+        for json_file in json_files:
+            csv_file = os.path.splitext(json_file)[0] + ".csv"
+
+            metadata = {}
+            with open(os.path.join(user_path, json_file), 'r', encoding='utf-8') as f:
+                metadata = json.load(f)
+
+            if 'terminated' not in metadata or metadata['terminated'] == False:
+                files[json_file] = unterm_color
+                files[csv_file] = unterm_color
+
+            elif metadata['timeout'] == True:
+                files[json_file] = timeout_color
+                files[csv_file] = timeout_color
+
+            elif metadata["reject"] == True:
+                files[json_file] = reject_color
+                files[csv_file] = reject_color
+
+            else:
+                files[json_file] = valid_color
+                files[csv_file] = valid_color      
+
+        return files
 
     if expe is None:
         folders = cfg.expe_name_list
@@ -387,7 +521,7 @@ def list_results(request, expe=None):
             folders_date = {}
 
             if os.path.exists(folder_date_path):
-            
+
                 days = sorted(os.listdir(folder_date_path), reverse=True)
 
                 # get all days
@@ -398,11 +532,11 @@ def list_results(request, expe=None):
                     folders_user = {}
                     # get all users files
                     for user in users:
-                        
+
                         # add to date
                         user_path = os.path.join(day_path, user)
                         filenames = os.listdir(user_path)
-                        folders_user[user] = filenames
+                        folders_user[user] = create_file_color(filenames)
 
                         # add to userId
                         if user not in folder_user_id:
@@ -412,7 +546,7 @@ def list_results(request, expe=None):
                             folder_user_id[user]['date'] = {}
 
                         if day not in folder_user_id[user]['date']:
-                            folder_user_id[user]['date'][day] = filenames
+                            folder_user_id[user]['date'][day] = folders_user[user]
 
                              
                     # attach users to this day
@@ -442,7 +576,7 @@ def list_results(request, expe=None):
 
                             user_path = os.path.join(day_path, user)
                             filenames = os.listdir(user_path)
-                            folders_user[user] = filenames
+                            folders_user[user] = create_file_color(filenames)
 
                             # add filepaths to user id
                             if user not in folder_user_id:
@@ -455,7 +589,7 @@ def list_results(request, expe=None):
                                 folder_user_id[user]['expeid'][identifier] = {}
 
                             if day not in folder_user_id[user]['expeid'][identifier]:
-                                folder_user_id[user]['expeid'][identifier][day] = filenames
+                                folder_user_id[user]['expeid'][identifier][day] = folders_user[user]
                         
                         # attach users to this day
                         folder_days[day] = folders_user
@@ -469,6 +603,7 @@ def list_results(request, expe=None):
     # get base data
     data = get_base_data()
     # expe parameters
+    data['colors'] = colors
     data['expe']    = expe
     data['folders'] = folders
     data['infos_question']   = cfg.expes_configuration[expe]['text']['question'][lang]

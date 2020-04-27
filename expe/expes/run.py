@@ -4,6 +4,7 @@ import time
 import numpy as np
 import pickle
 import sys
+import json
 
 from datetime import datetime
 
@@ -61,10 +62,7 @@ def example_quest_one_image(request, expe_name, scene_name):
             draw.line((left, top, right, bottom), fill='black', width=5)
     example_sentence = cfg.expes_configuration[expe_name]['text']['examples']['sentence'][lang][int(example_number)]
 
-    if orientation == 0:
-        example_sentence = example_sentence.format('vertically', str(percentage*100))
-    else:
-        example_sentence = example_sentence.format('horizontally', str(percentage*100))
+    example_sentence = example_sentence.format(cfg.expes_configuration[expe_name]['text']['examples']['cut_name'][lang][orientation], str(percentage*100))
     
     
     # Temporary save of image
@@ -92,10 +90,33 @@ def example_quest_one_image(request, expe_name, scene_name):
 def run_quest_one_image(request, model_filepath, output_file):
 
     # 1. get session parameters
-    qualities = request.session.get('qualities')
+    #qualities = request.session.get('qualities')
     scene_name = request.session.get('scene')
     expe_name = request.session.get('expe')
+    
+    # Check if values are correct:
+    if 'expe_started' in request.session and request.session.get('expe_started') == True:
+        def isint(s):
+            try: 
+                int(s)
+                return True
+            except ValueError:
+                return False
+    
+        data_expe = request.session['expe_data']
 
+        if not 'iteration' in request.GET or isint(request.GET.get('iteration')) == False:
+            return data_expe
+        
+        if not 'answer' in request.GET or \
+           isint(request.GET.get('answer')) == False or \
+           (int(request.GET.get('answer')) != 0 and int(request.GET.get('answer')) != 1):
+               return data_expe
+           
+        if not 'check' in request.GET or \
+           (request.GET.get('check') != "true" and request.GET.get('check') != "false"):
+               return data_expe
+        
     checked = request.GET.get('check')
 
     # by default
@@ -113,7 +134,10 @@ def run_quest_one_image(request, model_filepath, output_file):
     if request.session.get('expe_started'):
 
          # does not change expe parameters
-        if request.session['expe_data']['expe_previous_iteration'] == iteration:
+        if request.session['expe_data']['expe_previous_iteration']+1 != iteration:
+            data_expe = request.session['expe_data']
+            return data_expe
+        elif iteration > cfg.expes_configuration[expe_name]['params']['max_iterations']:
             return None
         else:
             current_expe_data = request.session['expe_data']
@@ -216,7 +240,8 @@ def run_quest_one_image(request, model_filepath, output_file):
     max_time = cfg.expes_configuration[expe_name]['params']['max_time'] * 60
     if current_time - started_time >= max_time:
         request.session['expe_finished'] = True
-        return None
+        timeout = { 'timeout' : True }
+        return timeout
     
     # 5. Contruct new image and save it
     # construct image 
@@ -246,13 +271,11 @@ def run_quest_one_image(request, model_filepath, output_file):
     else:
         request.session['expe_finished'] = True
         if threshold < stim_space[-1]/3:
-            end_message = { 'end_message' : "You are part of the 25% of the population for whom the images always look perfect for you!"}
+            end_message = { 'end_message' : cfg.expes_configuration[expe_name]['text']['end_text']['results'][lang][0]}
         elif threshold < 2*stim_space[-1]/3:
-            end_message = { 'end_message' : "Bravo, you are part of the average population.\n" + 
-                           "Most people see as you do and you can detect details in a scene and perceive aberrations in an image."}
+            end_message = { 'end_message' : cfg.expes_configuration[expe_name]['text']['end_text']['results'][lang][1]}
         else:
-            end_message = { 'end_message' : "Congratulations, you are part of the 25% of the population that can detect all the details " +
-                           "in a scene and perceive perfectly the aberrations!"}
+            end_message = { 'end_message' : cfg.expes_configuration[expe_name]['text']['end_text']['results'][lang][2]}
             
         return end_message
     
@@ -294,3 +317,61 @@ def run_quest_one_image(request, model_filepath, output_file):
     request.session['expe_started'] = True
 
     return data_expe
+
+def eval_quest_one_image(request, output_filename):
+    expe_name = request.session.get('expe')
+    lines = []
+    with open(output_filename, 'r') as output_file:
+        lines = output_file.readlines()
+  
+    iters = len(lines)-1
+    if iters < cfg.expes_configuration[expe_name]['params']['min_iterations']:
+        return False
+    
+    time=[]
+    checkbox=[]
+    nb_check=0
+    for i in range(1,len(lines)):
+        l = lines[i]
+        line_split = l.split(";")
+        time.append(float(line_split[6]))
+        checkbox.append(line_split[8])
+    time_total = np.sum(time)/60
+    for i in range(cfg.expes_configuration[expe_name]['checkbox']['frequency']-1,len(checkbox),cfg.expes_configuration[expe_name]['checkbox']['frequency']):
+        if checkbox[i]=='true\n':
+            nb_check = nb_check + 1
+    if nb_check < len(checkbox)/cfg.expes_configuration[expe_name]['checkbox']['frequency']:
+        return False
+    
+    if time_total<7.:
+        return False
+  
+#    json_file = os.path.splitext(output_filename)[0] + ".json"
+#    with open(json_file, 'r') as f:
+#        metadata = json.load(f)
+#    points =[]
+#    if metadata['condition']=="Yes" or metadata['condition']=="Oui":
+#        points.append(1)
+#    else:
+#        points.append(0)
+#    if metadata['dark']=="No" or metadata['dark']=="Non":
+#        points.append(1)
+#    else:
+#        points.append(0)
+#    if metadata['glasses']=="No" or metadata['glasses']=="Non":
+#        points.append(0)
+#    else:
+#        points.append(1)
+#    if metadata['trust']=="Yes" or metadata['trust']=="Oui":
+#        points.append(1)
+#    else:
+#        points.append(0)
+#    if metadata['attention']=="Left" or metadata['attention']=="Gauche":
+#        points.append(1)
+#    else:
+#        points.append(0)
+#    points_total= np.sum(points)
+#    
+#    if points_total == 5: 
+#        return True
+
