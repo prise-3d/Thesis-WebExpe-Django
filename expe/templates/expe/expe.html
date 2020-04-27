@@ -91,7 +91,7 @@
 
         /* When the openFullscreen() function is executed, open the video in fullscreen.
         Note that we must include prefixes for different browsers, as they don't support the requestFullscreen method yet */
-        function openFullscreen() {
+        {% comment %} function openFullscreen() {
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
             } else if (elem.mozRequestFullScreen) { /* Firefox */
@@ -103,7 +103,7 @@
             }
         }
 
-        openFullscreen()
+        openFullscreen() {% endcomment %}
     </script>
     <script>
         var expeName = "{{expe_name}}"
