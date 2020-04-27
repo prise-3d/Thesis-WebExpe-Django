@@ -2,7 +2,7 @@ Django
 numpy
 Pillow
 questplus
-psychopy
+#psychopy
 pandas
 requests
 docker-compose

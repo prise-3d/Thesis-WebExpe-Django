@@ -9,7 +9,12 @@ urlParams = new URLSearchParams(window.location.search)
 const scene = urlParams.get('scene')
 const expe  = urlParams.get('expe')
 
+// store if necessary or not to use key and redirect one more time
+var keyUsed = false;
+
 const checkKey = e => {
+
+
    if (e.keyCode === KEYCODE_Q) {
       // `q` to quit expe
       console.log('`q` key is pressed')
@@ -22,7 +27,7 @@ const checkKey = e => {
          window.location = window.location.href + '&begin=true'
       } 
    }
-   else if (e.keyCode === KEYCODE_LEFT_ARROW || e.keyCode === KEYCODE_RIGHT_ARROW) {
+   else if ((e.keyCode === KEYCODE_LEFT_ARROW || e.keyCode === KEYCODE_RIGHT_ARROW) && !keyUsed) {
       // only do something is experiments has begun
       if (BEGIN_EXPE && !END_EXPE) {
          let answer
@@ -56,6 +61,10 @@ const checkKey = e => {
          {
             if(validation_checkbox.checked)
             {
+               // disabled access during 5 seconds
+               keyUsed = true;
+               setTimeout(() => { keyUsed = false;  }, 15000);
+
                // construct url with params for experiments
                const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}&check=true`
                window.location = expeUrl + params
@@ -66,6 +75,9 @@ const checkKey = e => {
          }
          else
          {
+            keyUsed = true;
+            setTimeout(() => { keyUsed = false;  }, 15000);
+
             // construct url with params for experiments
             const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}&check=false`
             window.location = expeUrl + params
@@ -74,9 +86,11 @@ const checkKey = e => {
    }
 }
 
-// implement `key` events
-document.addEventListener('keydown', checkKey)
+document.addEventListener('DOMContentLoaded', e => {
 
+   // implement `key` events when document loaded
+   document.addEventListener('keydown', checkKey)
+})
 
 // avoid back button return 30 times... (Need to improve this..)
 for (var i = 0; i < 30; i++){
