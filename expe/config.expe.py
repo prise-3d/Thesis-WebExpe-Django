@@ -472,7 +472,7 @@ expes_configuration            = {
             'keyEvents.js'
         ],
         'output_header': 
-            "stimulus;name_stimulus;cropping_percentage;orientation;image_ref_position;answer;time_reaction;entropy;checkbox\n",
+            "stimulus;name_stimulus;cropping_percentage;orientation;image_ref_position;answer;time_reaction;entropy;checkbox;iteration\n",
         'redirect' :
             "https://app.prolific.co/submissions/complete?cc=51785F52"
     }

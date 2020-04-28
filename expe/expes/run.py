@@ -147,7 +147,7 @@ def run_quest_one_image(request, model_filepath, output_file):
             previous_orientation = current_expe_data['expe_orientation']
             previous_position = current_expe_data['expe_position']
             previous_stim = current_expe_data['expe_stim']
-
+            previous_iter = current_expe_data['expe_previous_iteration']
             print("Answer time is ", expe_answer_time)
 
     # 3. Load or create Quest instance
@@ -220,6 +220,7 @@ def run_quest_one_image(request, model_filepath, output_file):
         line += ";" + str(expe_answer_time) 
         line += ";" + str(entropy) 
         line += ";" + str(checked)
+        line += ";" + str(previous_iter)
         line += '\n'
 
         output_file.write(line)
@@ -324,25 +325,33 @@ def eval_quest_one_image(request, output_filename):
     with open(output_filename, 'r') as output_file:
         lines = output_file.readlines()
   
-    iters = len(lines)-1
-    if iters < cfg.expes_configuration[expe_name]['params']['min_iterations']:
-        return False
     
     time=[]
     checkbox=[]
     nb_check=0
+    previous_iter = -1
+    iters = 0
+
     for i in range(1,len(lines)):
         l = lines[i]
         line_split = l.split(";")
-        time.append(float(line_split[6]))
-        checkbox.append(line_split[8])
+        iter = int(line_split[9])
+        if iter != previous_iter:
+            time.append(float(line_split[6]))
+            checkbox.append(line_split[8])
+            iters = iters + 1
+            previous_iter = iter
     time_total = np.sum(time)/60
+    
+   
+    if iters < cfg.expes_configuration[expe_name]['params']['min_iterations']:
+        return False
+    
     for i in range(cfg.expes_configuration[expe_name]['checkbox']['frequency']-1,len(checkbox),cfg.expes_configuration[expe_name]['checkbox']['frequency']):
-        if checkbox[i]=='true\n':
+        if checkbox[i]=='true':
             nb_check = nb_check + 1
     if nb_check < len(checkbox)/cfg.expes_configuration[expe_name]['checkbox']['frequency']:
         return False
-    
     if time_total<7.:
         return False
   
