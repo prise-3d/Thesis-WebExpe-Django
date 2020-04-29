@@ -344,16 +344,20 @@ def eval_quest_one_image(request, output_filename):
     time_total = np.sum(time)/60
     
    
+   
     if iters < cfg.expes_configuration[expe_name]['params']['min_iterations']:
         return False
     
     for i in range(cfg.expes_configuration[expe_name]['checkbox']['frequency']-1,len(checkbox),cfg.expes_configuration[expe_name]['checkbox']['frequency']):
         if checkbox[i]=='true':
             nb_check = nb_check + 1
-    if nb_check < len(checkbox)/cfg.expes_configuration[expe_name]['checkbox']['frequency']:
+
+    if nb_check < int(len(checkbox)/cfg.expes_configuration[expe_name]['checkbox']['frequency']):
         return False
+
     if time_total<7.:
         return False
+
   
 #    json_file = os.path.splitext(output_filename)[0] + ".json"
 #    with open(json_file, 'r') as f:
