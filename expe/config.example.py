@@ -434,7 +434,7 @@ expes_configuration            = {
         'params':{
             'min_iterations': 2,
             'max_iterations': 5,
-            'max_time': 105, #minutes
+            'max_time': 87, #minutes
             'entropy': 0.05,
             'thresholds':{
                 'contemporary' : [50, 20000, 100], #start, stop (non inclusive), step
