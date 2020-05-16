@@ -34,6 +34,9 @@ const checkKey = e => {
 
                // check field we want
                names = ['gender', 'birth', 'nationality']
+               if (prolific == 1 || prolific == '1'){
+                   names = ['gender', 'birth', 'nationality', 'experimentId']
+               }
                formError = false
 
                for (name of names){     
@@ -79,6 +82,9 @@ if (document.forms.length > 0){
 
           // check field we want
           names = ['gender', 'birth', 'nationality']
+          if (prolific == 1 || prolific == '1'){
+              names = ['gender', 'birth', 'nationality', 'experimentId']
+          }
           formError = false
 
           for (name of names){     

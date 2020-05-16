@@ -253,7 +253,11 @@
                         </select><br />
                         <br/>
                         <label for="experimentId">{{code}}</label>
-                        <input type="text" class="form-control" name="experimentId" placeholder="Enter your code"/>
+                        {% if prolific %}
+                            <input type="text" class="form-control" name="experimentId" placeholder="Enter your code" required/>
+                        {% else %}
+                            <input type="text" class="form-control" name="experimentId" placeholder="Enter your code"/>
+                        {% endif %}
                         <br/>
                       
 
@@ -275,6 +279,10 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script> 
+        var prolific = "{{prolific}}"
+    </script>
+        
     <script src="{% static "js/indications.js" %}"></script>
 
      <script>

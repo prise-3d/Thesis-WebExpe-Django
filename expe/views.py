@@ -93,10 +93,7 @@ def expe_list(request):
     # by default user restart expe
     request.session['expe_started'] = False
     request.session['expe_finished'] = False
-    if 'experimentId' in request.session:
-        del request.session['experimentId']
-    if 'results_folder' in request.session:
-        del request.session['results_folder']
+    clear_session(request)
     
     # get base data
     data = get_base_data()
@@ -166,7 +163,11 @@ def indications(request):
     data['gender']      = cfg.expes_configuration[expe_name]['text']['info_participant']['gender'][lang]
     data['birth_year']  = cfg.expes_configuration[expe_name]['text']['info_participant']['birth_year'][lang]
     data['nationality'] = cfg.expes_configuration[expe_name]['text']['info_participant']['nationality'][lang]
-    data['code']        = cfg.expes_configuration[expe_name]['text']['info_participant']['code'][lang]
+    if 'prolific' in request.session and request.session['prolific'] == 1:
+        data['code'] = cfg.expes_configuration[expe_name]['text']['info_participant']['code']['prolific'][lang]
+        data['prolific'] = 1
+    else:
+        data['code'] = cfg.expes_configuration[expe_name]['text']['info_participant']['code']['default'][lang]
     data['submit']  = cfg.submit_button[lang]
 
     # format sentence using information
@@ -235,7 +236,7 @@ def expe(request):
     #check if it's the beginning
     if 'results_folder' not in request.session:
         # check if experimentId is used or not
-        if len(experiment_id) == 0:
+        if experiment_id is None or len(experiment_id) == 0:
             output_expe_folder = cfg.output_expe_folder_name_day.format(expe_name, current_day, user_identifier)
         else:
             output_expe_folder = cfg.output_expe_folder_name_id_day.format(expe_name, experiment_id, current_day, user_identifier)
@@ -360,21 +361,26 @@ def expe(request):
 
     return render(request, cfg.expes_configuration[expe_name]['template'], data)
 
+def del_session_value(request, name):
+    if name in request.session:
+        del request.session[name]
+        
 def clear_session(request):
     expe_name = request.session.get('expe')
+    
+    del_session_value(request, 'expe')
+    del_session_value(request, 'scene')
+    del_session_value(request, 'experimentId')
+    del_session_value(request, 'qualities')
+    del_session_value(request, 'timestamp')
+    del_session_value(request, 'end_text')
+    del_session_value(request, 'prolific')
+    del_session_value(request, 'results_folder')
 
-    del request.session['expe']
-    del request.session['scene']
-    del request.session['experimentId']
-    del request.session['qualities']
-    del request.session['timestamp']
-    del request.session['end_text']
-    del request.session['prolific']
-    del request.session['results_folder']
-
-    # specific current expe session params (see `config.py`)
-    for key in cfg.expes_configuration[expe_name]['session_params']:
-        del request.session[key]
+    if expe_name in cfg.expes_configuration:
+        # specific current expe session params (see `config.py`)
+        for key in cfg.expes_configuration[expe_name]['session_params']:
+            del_session_value(request, key)
 
 def expe_end(request):
     expe_name = request.session.get('expe')
@@ -693,6 +699,7 @@ def refresh_data(request, expe_name, scene_name):
 
     # retrieve and store experimentId
     expe_id = request.GET.get('experimentId')
+    print('experiment id = ', expe_id)
     request.session['experimentId'] = expe_id
 
     # TODO : add in cache ref_image

@@ -312,8 +312,14 @@ expes_configuration            = {
                           'en' : 'Nationality'  
                     },
                     'code' : {
-                          'fr' : 'Code (facultatif)',
-                          'en' : 'Code (optional)'  
+                          'prolific' : {
+                                  'fr' : 'Prolific ID', 
+                                  'en' : 'Prolific ID'
+                          },
+                          'default' : {
+                                  'fr' : 'Code (facultatif)',
+                                  'en' : 'Code (optional)'  
+                          }
                     }
             },
                     
@@ -432,8 +438,8 @@ expes_configuration            = {
             }
         },
         'params':{
-            'min_iterations': 2,
-            'max_iterations': 5,
+            'min_iterations': 20,
+            'max_iterations': 25,
             'max_time': 87, #minutes
             'entropy': 0.05,
             'thresholds':{

@@ -312,8 +312,14 @@ expes_configuration            = {
                           'en' : 'Nationality'  
                     },
                     'code' : {
-                          'fr' : 'Code (facultatif)',
-                          'en' : 'Code (optional)'  
+                          'prolific' : {
+                                  'fr' : 'Prolific ID', 
+                                  'en' : 'Prolific ID'
+                          },
+                          'default' : {
+                                  'fr' : 'Code (facultatif)',
+                                  'en' : 'Code (optional)'  
+                          }
                     }
             },
                     
