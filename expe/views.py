@@ -133,6 +133,7 @@ def indications(request):
         available_scenes = []
         # load string
         expes_user_info = json.loads(request.session['user_expes'])
+        print(request.session['user_expes'])
 
         for scene in expes_user_info[expe_name]:
             if not expes_user_info[expe_name][scene]['done']:
