@@ -88,7 +88,7 @@ if (document.forms.length > 0){
           formError = false
 
           for (name of names){     
-               if (form[name].value == ""){
+               if (form[name] != undefined && form[name].value == ""){
                     formError = true
                }
           }
