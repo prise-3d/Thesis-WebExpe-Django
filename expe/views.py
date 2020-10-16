@@ -93,10 +93,7 @@ def expe_list(request):
     # by default user restart expe
     request.session['expe_started'] = False
     request.session['expe_finished'] = False
-    if 'experimentId' in request.session:
-        del request.session['experimentId']
-    if 'results_folder' in request.session:
-        del request.session['results_folder']
+    clear_session(request)
     
     # get base data
     data = get_base_data()
@@ -111,9 +108,16 @@ def presentation(request):
     expe_name = request.GET.get('expe')
     try:
         prolific = int( request.GET.get('p'))
+        if request.GET.get(('PROLIFIC_PID')) != "":
+            prolific_id = request.GET.get(('PROLIFIC_PID'))
+        else:
+            prolific_id = None
     except:
         prolific = 0
+        prolific_id = None
+        
     request.session['prolific'] = prolific
+    request.session['prolific_id'] = prolific_id
     # get base data
     data = get_base_data()
     data['expe_name'] = expe_name
@@ -134,18 +138,36 @@ def indications(request):
 
         # only let access to scene of expe not already done by user
         available_scenes = []
+        done_scenes = []
         # load string
         expes_user_info = json.loads(request.session['user_expes'])
+        print(request.session['user_expes'])
 
         for scene in expes_user_info[expe_name]:
-            if not expes_user_info[expe_name][scene]['done']:
-                available_scenes.append(scene)
-        
+            if expes_user_info[expe_name][scene]['done']:
+                done_scenes.append(scene)
+                
+        if request.session.get('prolific') == 1 and request.session.get('prolific_id') is not None:
+            
+            prolific_folder = os.path.join(settings.MEDIA_ROOT, "prolific", expe_name)
+            user_prolific_file = os.path.join(prolific_folder, request.session.get('prolific_id') + '.json')
+            if os.path.exists(user_prolific_file):
+                with open(user_prolific_file, 'r', encoding='utf-8') as f:
+                    expe_user_done = json.load(f)
+                for scene in expe_user_done.keys():
+                    done_scenes.append(scene)
+                    
+        all_scenes = cfg.expes_configuration[expe_name]['scenes']
+        for i in range(len(all_scenes)):
+            if not all_scenes[i] in done_scenes:
+                available_scenes.append(all_scenes[i])
 
         # if empty.. redirect to default page
         if len(available_scenes) == 0:
             data = get_base_data()
             data['userId'] = request.session.get('id')   
+            if request.session.get('prolific') == 1 and request.session.get('prolific_id') is not None:
+                data['userId'] = request.session.get('prolific_id')
             data['finished'] = cfg.expes_configuration[expe_name]['text']['finished'][lang]
             
             return render(request, 'expe/expe_finished.html', data)
@@ -166,7 +188,12 @@ def indications(request):
     data['gender']      = cfg.expes_configuration[expe_name]['text']['info_participant']['gender'][lang]
     data['birth_year']  = cfg.expes_configuration[expe_name]['text']['info_participant']['birth_year'][lang]
     data['nationality'] = cfg.expes_configuration[expe_name]['text']['info_participant']['nationality'][lang]
-    data['code']        = cfg.expes_configuration[expe_name]['text']['info_participant']['code'][lang]
+    if 'prolific' in request.session and request.session['prolific'] == 1:
+        data['prolific'] = 1
+        if 'prolific_id' not in request.session or request.session['prolific_id'] == None:
+            data['code'] = cfg.expes_configuration[expe_name]['text']['info_participant']['code']['prolific'][lang]
+    else:
+        data['code'] = cfg.expes_configuration[expe_name]['text']['info_participant']['code']['default'][lang]
     data['submit']  = cfg.submit_button[lang]
 
     # format sentence using information
@@ -222,7 +249,10 @@ def expe(request):
     current_day = datetime.strftime(datetime.utcnow(), "%Y-%m-%d")
 
     user_identifier = request.session.get('id')
-    experiment_id = request.session.get('experimentId')
+    if 'prolific_id' in request.session and request.session['prolific_id'] is not None:
+        experiment_id = request.session['prolific_id']
+    else:
+        experiment_id = request.session.get('experimentId')
     user_gender = request.GET.get('gender')
     user_year= request.GET.get('birth')
     user_nationality = request.GET.get('nationality')
@@ -235,7 +265,7 @@ def expe(request):
     #check if it's the beginning
     if 'results_folder' not in request.session:
         # check if experimentId is used or not
-        if len(experiment_id) == 0:
+        if experiment_id is None or len(experiment_id) == 0:
             output_expe_folder = cfg.output_expe_folder_name_day.format(expe_name, current_day, user_identifier)
         else:
             output_expe_folder = cfg.output_expe_folder_name_id_day.format(expe_name, experiment_id, current_day, user_identifier)
@@ -288,6 +318,7 @@ def expe(request):
         with open(result_structure, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=4)
     
+
 
     # TODO : add crontab task to erase generated img and model data
     # create `quest` object if not exists    
@@ -360,21 +391,26 @@ def expe(request):
 
     return render(request, cfg.expes_configuration[expe_name]['template'], data)
 
+def del_session_value(request, name):
+    if name in request.session:
+        del request.session[name]
+        
 def clear_session(request):
     expe_name = request.session.get('expe')
+    
+    del_session_value(request, 'expe')
+    del_session_value(request, 'scene')
+    del_session_value(request, 'experimentId')
+    del_session_value(request, 'qualities')
+    del_session_value(request, 'timestamp')
+    del_session_value(request, 'end_text')
+    del_session_value(request, 'prolific')
+    del_session_value(request, 'results_folder')
 
-    del request.session['expe']
-    del request.session['scene']
-    del request.session['experimentId']
-    del request.session['qualities']
-    del request.session['timestamp']
-    del request.session['end_text']
-    del request.session['prolific']
-    del request.session['results_folder']
-
-    # specific current expe session params (see `config.py`)
-    for key in cfg.expes_configuration[expe_name]['session_params']:
-        del request.session[key]
+    if expe_name in cfg.expes_configuration:
+        # specific current expe session params (see `config.py`)
+        for key in cfg.expes_configuration[expe_name]['session_params']:
+            del_session_value(request, key)
 
 def expe_end(request):
     expe_name = request.session.get('expe')
@@ -416,6 +452,8 @@ def expe_end(request):
 
     eval_data = eval_func(request, results_filepath)
     
+    experiment_id = None
+    
     if eval_data == False:
         result_structure = request.session.get('result_structure')
         metadata = {}
@@ -424,6 +462,8 @@ def expe_end(request):
         metadata['terminated'] = True
         metadata['timeout'] = False
         metadata['reject'] = True
+        experiment_id = metadata["experiment_id"]
+        
         with open(result_structure, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=4)
             
@@ -438,6 +478,8 @@ def expe_end(request):
         metadata['terminated'] = True
         metadata['timeout'] = False
         metadata['reject'] = False
+        experiment_id = metadata["experiment_id"]
+
         with open(result_structure, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=4)
             
@@ -449,7 +491,31 @@ def expe_end(request):
         else:
             data['prolific'] = None
             data['reward'] = cfg.expes_configuration[expe_name]['text']['end_text']['reward']['default'][lang]
+            
+            
+    #create prolific folder to save prolific id and scenes
+    prolific_folder = os.path.join(settings.MEDIA_ROOT, "prolific", expe_name)
+    if not os.path.exists(prolific_folder):
+        os.makedirs(prolific_folder)   
 
+    if request.session.get('prolific') == 1:
+        user_prolific_file = os.path.join(prolific_folder, experiment_id + '.json')
+        print(user_prolific_file)
+        if not os.path.exists(user_prolific_file):
+            user_scenes = {
+                scene_name : 1
+            }
+        else:
+            user_scenes = {}
+            with open(user_prolific_file, 'r', encoding='utf-8') as f:
+                user_scenes = json.load(f)
+            if not scene_name in user_scenes:
+                user_scenes[scene_name] = len(user_scenes.keys()) + 1
+                
+        with open(user_prolific_file, 'w', encoding='utf-8') as f:
+            json.dump(user_scenes, f, ensure_ascii=False, indent=4)
+    
+    
     # reinit session as default value
     # here generic expe params
     if 'expe' in request.session:
@@ -693,6 +759,7 @@ def refresh_data(request, expe_name, scene_name):
 
     # retrieve and store experimentId
     expe_id = request.GET.get('experimentId')
+    print('experiment id = ', expe_id)
     request.session['experimentId'] = expe_id
 
     # TODO : add in cache ref_image
