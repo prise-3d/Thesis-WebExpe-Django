@@ -16,6 +16,7 @@ GET_SCENES_API_URL             = DIRAN_DOMAIN_NAME + WEB_API_PREFIX_URL + "/list
 # TODO : dispatch into day and experiment ID
 model_expe_folder              = "expes_models/{0}/{1}"
 output_expe_folder             = "expes_results"
+output_prolific_folder         = "prolific"
 output_expe_folder_date        = "expes_results/date"
 output_expe_folder_id          = "expes_results/expeId"
 output_expe_folder_name_id_day = "expes_results/expeId/{0}/{1}/{2}/{3}"

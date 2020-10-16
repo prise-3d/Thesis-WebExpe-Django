@@ -579,6 +579,7 @@ def list_results(request, expe=None):
 
             folder_date_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder_date, expe)
             folder_id_path   = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder_id, expe)
+            folder_prolific_path   = os.path.join(settings.MEDIA_ROOT, cfg.output_prolific_folder, expe)
 
             # extract folder for user ID
             folder_user_id = {}
@@ -662,7 +663,10 @@ def list_results(request, expe=None):
 
                     folders_id[identifier] = folder_days
 
-            folders = { 'date': folders_date, 'expeId': folders_id, 'users': folder_user_id}
+            folders = { 'date': folders_date, 'expeId': folders_id, 'users': folder_user_id }
+
+            if os.path.exists(folder_prolific_path):
+                folders['prolific'] = sorted(os.listdir(folder_prolific_path))
         else:
             raise Http404("Expe does not exists")
 
@@ -682,7 +686,12 @@ def list_results(request, expe=None):
 def download_result(request):
     
     path = request.POST.get('path')
-    folder_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder, path)
+    
+    # TOOD : check to improve this..
+    if 'prolific' == path.split('/')[0]:
+        folder_path = os.path.join(settings.MEDIA_ROOT, path)
+    else:
+        folder_path = os.path.join(settings.MEDIA_ROOT, cfg.output_expe_folder, path)
 
     # Folder is required
     if os.path.exists(folder_path):

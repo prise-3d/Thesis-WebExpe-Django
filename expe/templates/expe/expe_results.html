@@ -325,6 +325,33 @@
                             {% endwith %}
                         </ul>
                     </li>
+
+                    <!-- List of prolific file -->
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-10"><h3>Profilic files</h3></div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-1 date-folder-list"><i class="fas fa-arrow-circle-right"></i></div>
+                        </div>
+                    
+                        <ul class="list-group" style="display: none">
+
+                            {% with folders|get_value_from_dict:'prolific' as prolific_folder %}
+
+                                {% for profilic_name in prolific_folder %} 
+
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-md-11">{{profilic_name}}</div>
+                                            <div class="col-md-1 download-list" data-download-path="prolific/{{expe}}/{{profilic_name}}"><i class="fas fa-download"></i></div>
+                                        </div>
+
+                                    </li>
+                                    
+                                {% endfor %} 
+                            {% endwith %}
+                        </ul>
+                    </li>
                 </ul>
 
             {% else %}
