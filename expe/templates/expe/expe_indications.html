@@ -252,14 +252,15 @@
                           <option value="zimbabwean">Zimbabwean</option>
                         </select><br />
                         <br/>
-                        <label for="experimentId">{{code}}</label>
-                        {% if prolific %}
-                            <input type="text" class="form-control" name="experimentId" placeholder="Enter your code" required/>
-                        {% else %}
-                            <input type="text" class="form-control" name="experimentId" placeholder="Enter your code"/>
-                        {% endif %}
-                        <br/>
-                      
+                        {% if code %}
+                            <label for="experimentId">{{code}}</label>
+                            {% if prolific %}
+                                <input type="text" class="form-control" name="experimentId" placeholder="Enter your code" required/>
+                            {% else %}
+                                <input type="text" class="form-control" name="experimentId" placeholder="Enter your code"/>
+                            {% endif %}
+                            <br/>
+                      {% endif %}
 
                         <button type="submit" name="submit-indication" class="btn btn-primary">{{submit}}</button>
                     </div>
