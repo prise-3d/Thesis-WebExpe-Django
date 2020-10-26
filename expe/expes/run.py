@@ -715,7 +715,7 @@ def eval_quest_five_scenes(request, output_filename):
     if nb_check < int(len(checkbox)/cfg.expes_configuration[expe_name]['checkbox']['frequency']):
         return False
 
-    if time_total<1.:
+    if time_total<7.:
         return False
 
     return True

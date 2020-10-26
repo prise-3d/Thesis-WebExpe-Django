@@ -664,7 +664,7 @@ expes_configuration            = {
                       "Nous avons conçu une expérience pour savoir si vous êtes capable de détecter des différences de qualité dans une image.\n\n"+
                       "Chaque image a été coupée en deux, horizontalement ou verticalement, puis collée à une autre partie d’image qui a soit la même qualité soit une qualité différente.\n\n "+
                       "Dans cette expérience vous devez nous dire si l’image que vous voyez a la même qualité partout, ou si elle provient de la combinaison de deux images de qualité différentes.",
-                'en': " This study has 5 parts. It is required to complete the 5 parts to get your reward. You have 10 days to complete the whole study (all 5 parts).\n \n"+
+                'en': " This study has 5 parts. It is required to complete the 5 parts to get your reward. You have 15 days to complete the whole study (all 5 parts).\n \n"+
                       "The computer generated images are widely used nowadays." +
                       "\n We have designed an experiment that will allow you to find out whether you are capable of detecting aberrations in computer generated images. " +
                       "\n \n We will show you some computer generated images. " +
@@ -817,7 +817,7 @@ expes_configuration            = {
                     'en': ["Let's see some examples to illustrate the task! \n Example 1 from 6 : ", 
                            
                              "The image is composed of two subparts with different qualities! \n" +
-                             "This image is cropped {0} with {1}% on the left coming from a low-quality image " +
+                             "This image is cropped {0} with {1}% on the left coming from a low quality image " +
                              "and the right part coming from a high quality image. \n So, here, you should press RIGHT (&#8594;).",
                              
                              "Example 2 from 6 : ",
@@ -830,25 +830,25 @@ expes_configuration            = {
                              "Example 3 from 6 : ",
                              
                              "The image is composed of two subparts with different qualities! \n " +
-                             "This image is cropped {0}. \n {1}% on the upper part comes from a low-quality image " +
+                             "This image is cropped {0}. \n {1}% on the upper part comes from a low quality image " +
                              "and the bottom part comes from a high quality image. \n So, here, you should press RIGHT (&#8594;).",
                              
                              "Example 4 from 6 : ",
                              
                              "The image is composed of two subparts with different qualities! \n " +
-                             "This image is cropped {0}. \n {1}% on the upper part comes from a low-quality image " +
-                             "and the bottom part comes from a high quality image. \n So, here, you should press RIGHT (&#8594;).",
+                             "This image is cropped {0}. \n {1}% on the upper part comes from a high quality image " +
+                             "and the bottom part comes from a low quality image. \n So, here, you should press RIGHT (&#8594;).",
                              
                              "Example 5 from 6 : ",
                              
                              "The image is composed of two subparts with different qualities! \n " +
-                             "This image is cropped {0}. \n {1}% on the upper part comes from a high-quality image " +
-                             "and the bottom part comes from a low-quality quality image.\n So, here, you should press RIGHT (&#8594;).",
+                             "This image is cropped {0}. \n {1}% on the left comes from a high quality image " +
+                             "and the right part comes from a low quality image.\n So, here, you should press RIGHT (&#8594;).",
                              
                              "Example 6 from 6 : ",
                              "Even if it is more difficult to detect it, the images is composed of two subparts with different qualities! \n " +
                              "Pay attention to the details ! \n This image is cropped {0}. \n {1}% on the left " +
-                             "comes from a low-quality image and the right part comes from a high quality image.\n  \n " +
+                             "comes from a low quality image and the right part comes from a high quality image.\n  \n " +
                              "So, here, you should press RIGHT (&#8594;).",
                              ]
                 },  
@@ -863,10 +863,10 @@ expes_configuration            = {
                     [0.3, 0, 0],
                     [0.7, 1, 0],
                     [0.7, 1, 0],
-                    [0.2, 1, 0],
-                    [0.2, 1, 0],
-                    [0.8, 1, 1],
-                    [0.8, 1, 1],
+                    [0.2, 1, 1],
+                    [0.2, 1, 1],
+                    [0.8, 0, 1],
+                    [0.8, 0, 1],
                     [0.2, 0, 0],
                     [0.2, 0, 0]
                 ],
@@ -875,19 +875,19 @@ expes_configuration            = {
                     [1, -1],
                     [-1, -1],
                     [-1, -1],
-                    [15, -1],
-                    [15, -1],
-                    [25, -1],
-                    [25, -1],
-                    [40, -1],
-                    [40, -1],
+                    [7, -1],
+                    [7, -1],
+                    [12, -1],
+                    [12, -1],
+                    [20, -1],
+                    [20, -1],
                     [30, -1],
                     [30, -1]
                 ]
             }
         },
         'params':{
-            'min_iterations': 2,
+            'min_iterations': 20,
             'max_iterations': 25,
             'max_time': 67, #minutes
             'entropy': 0.05,
