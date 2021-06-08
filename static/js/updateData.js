@@ -5,15 +5,13 @@ function updateSession(route, value){
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
     const updateUrl = BASE === '' ? `/${route}` : `/${BASE}/${route}`
 
-    fetch(updateUrl, {
+    return fetch(updateUrl, {
         method: 'POST',
         body: `value=${value}`,
         headers: {
             'Content-type': 'application/x-www-form-urlencoded',
             'X-CSRFToken': csrfToken
         }
-    }).then(async res => {
-        console.log('success udpate')
     })
 }
 
@@ -90,6 +88,7 @@ function updateId() {
         
         // update data into request.session object
         updateSession('update_session_user_id', localStorage.getItem('p3d-user-id'))
+        .then(res => console.log('Success update'))
     }
 
 }
@@ -120,6 +119,7 @@ function updateData() {
         // update data into request.session object and local storage
         localStorage.setItem('p3d-user-expes', JSON.stringify(user_expes))
         updateSession('update_session_user_expes', JSON.stringify(user_expes))
+        .then(res => console.log('Success update'))
     }
 }
 

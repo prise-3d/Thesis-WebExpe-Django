@@ -54,14 +54,13 @@
         // get current id from session if exists
         var currentId = "{{request.session.id}}"
     </script>
-
+        
+    <!-- Update user data stored into localStorage -->
+    <script src="{% static 'js/updateData.js' %}"></script>
     <!-- Custom Javascript file for experiments template is placed here -->
     {% block javascripts %}
         
     {% endblock %}
-
-    <!-- Update user data stored into localStorage -->
-    <script src="{% static 'js/updateData.js' %}"></script>
 
     <!-- Dynamically load JS file of experiments -->
     {% for file in javascript %}

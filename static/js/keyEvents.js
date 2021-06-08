@@ -6,6 +6,9 @@ const KEYCODE_RIGHT_ARROW = 39
 
 urlParams = new URLSearchParams(window.location.search)
 
+
+
+
 const scene = urlParams.get('scene')
 const expe  = urlParams.get('expe')
 
@@ -13,7 +16,6 @@ const expe  = urlParams.get('expe')
 var keyUsed = false;
 
 const checkKey = e => {
-
 
    if (e.keyCode === KEYCODE_Q) {
       // `q` to quit expe
@@ -31,6 +33,12 @@ const checkKey = e => {
       // only do something is experiments has begun
       if (BEGIN_EXPE && !END_EXPE) {
          let answer
+         
+         let answerTime = Date.now() - startAnswerTime
+         
+         console.log('Get data')
+         console.log('Answer took', answerTime)
+         
 
          // left arrow key
          if (e.keyCode === KEYCODE_LEFT_ARROW) {
@@ -61,9 +69,19 @@ const checkKey = e => {
          {
             if(validation_checkbox.checked)
             {
-               // disabled access during 5 seconds
-               keyUsed = true;
-               setTimeout(() => { keyUsed = false;  }, 15000);
+               
+               // Update session with answer time and then redirect
+               updateSession('update_session_user_answer_time', answerTime)
+               .then(_ => {
+
+                  // disabled access during 5 seconds
+                  keyUsed = true;
+                  setTimeout(() => { keyUsed = false;  }, 15000);
+
+                  // construct url with params for experiments
+                  const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}&check=true`
+                  window.location = expeUrl + params
+               })
 
                // construct url with params for experiments
                const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}&check=true`
@@ -75,12 +93,18 @@ const checkKey = e => {
          }
          else
          {
-            keyUsed = true;
-            setTimeout(() => { keyUsed = false;  }, 15000);
 
-            // construct url with params for experiments
-            const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}&check=false`
-            window.location = expeUrl + params
+            // Update session with answer time and then redirect
+            updateSession('update_session_user_answer_time', answerTime)
+            .then(_ => {
+
+               keyUsed = true;
+               setTimeout(() => { keyUsed = false;  }, 15000);
+
+               // construct url with params for experiments
+               const params = `?scene=${scene}&expe=${expe}&iteration=${iteration}&answer=${answer}&check=false`
+               window.location = expeUrl + params
+            })
          }
       }
    }
