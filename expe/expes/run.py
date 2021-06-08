@@ -142,13 +142,16 @@ def run_quest_one_image(request, model_filepath, output_file):
         else:
             current_expe_data = request.session['expe_data']
             answer = int(request.GET.get('answer'))
-            expe_answer_time = time.time() - current_expe_data['expe_answer_time']
+
+            # get answer time stored into session and computed from client front part 
+            expe_answer_time = request.session['expe_answer_time']
+
             previous_percentage = current_expe_data['expe_percentage']
             previous_orientation = current_expe_data['expe_orientation']
             previous_position = current_expe_data['expe_position']
             previous_stim = current_expe_data['expe_stim']
 
-            print("Answer time is ", expe_answer_time)
+            print(f"Answer time is: {expe_answer_time}")
 
     # 3. Load or create Quest instance
     # default params
@@ -308,7 +311,6 @@ def run_quest_one_image(request, model_filepath, output_file):
         'expe_percentage': percentage,
         'expe_orientation': orientation,
         'expe_position': position,
-        'expe_answer_time': time.time(),
         'expe_previous_iteration': iteration,
         'expe_stim': str(next_stim)
     }

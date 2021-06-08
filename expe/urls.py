@@ -15,6 +15,7 @@ urlpatterns = [
     path('presentation', views.presentation, name='presentation'),
     path('update_session_user_id', views.update_session_user_id, name='update_session_user_id'),
     path('update_session_user_expes', views.update_session_user_expes, name='update_session_user_expes'),
+    path('update_session_user_answer_time', views.update_session_user_answer_time, name='update_session_user_answer_time'),
     path('admin/results', views.list_results, name='results'),
     path('admin/results/<str:expe>', views.list_results, name='results_expe'),
     path('admin/download', views.download_result, name='download')

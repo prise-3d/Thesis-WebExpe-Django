@@ -87,6 +87,13 @@ def update_session_user_expes(request):
     request.session['user_expes'] = request.POST.get('value')
     return HttpResponse('`user_expes` session update done')
 
+def update_session_user_answer_time(request):
+    if not request.method =='POST':
+        return HttpResponseNotAllowed(['POST'])
+
+    request.session['expe_answer_time'] = request.POST.get('value')
+    return HttpResponse('`expe_answer_time` session update done')
+
 
 def expe_list(request):
 
