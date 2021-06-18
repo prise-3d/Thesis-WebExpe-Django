@@ -338,7 +338,7 @@ def eval_quest_one_image(request, output_filename):
         line_split = l.split(";")
         time.append(float(line_split[6]))
         checkbox.append(line_split[8])
-    time_total = np.sum(time)/60
+    time_total = np.sum(time)/60000
     for i in range(cfg.expes_configuration[expe_name]['checkbox']['frequency']-1,len(checkbox),cfg.expes_configuration[expe_name]['checkbox']['frequency']):
         if checkbox[i]=='true\n':
             nb_check = nb_check + 1
